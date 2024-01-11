@@ -16,6 +16,7 @@
 #include "TLine.h"
 #include "TGraph.h"
 #include "TRandom3.h"
+#include "TEfficiency.h"
 
 
 
@@ -270,17 +271,19 @@ void masterPlots() {
     mPt->SetTitle("Pair pT from Various Sources");
     mPt->GetXaxis()->SetTitle("Pair pT (GeV/c)");
     mPt->GetYaxis()->SetTitle("Normalized Counts");
-    mPt->Scale(1/mPt->Integral("Width"));
+    mPt->Scale(1/mPt->Integral(mPt->FindBin(0.04), mPt->FindBin(.1),"Width"));
+    mPt->SetMarkerSize(0.7);
+    mPt->SetMarkerStyle(kFullDotLarge);
     mPt->Draw("PE");
     mPt->SetStats(false);
     slightPt->SetLineColor(kRed);
-    slightPt->Scale(1/slightPt->Integral("Width"));
+    slightPt->Scale(1/slightPt->Integral(slightPt->FindBin(0.04), slightPt->FindBin(.1),"Width"));
     slightPt->Draw("PE;same");
     McPt->SetLineColor(kBlack);
-    McPt->Scale(1/McPt->Integral("Width"));
+    McPt->Scale(1/McPt->Integral(McPt->FindBin(0.04), McPt->FindBin(.1),"Width"));
     McPt->Draw("PE;same");
     RecoPt->SetLineColor(kGreen);
-    RecoPt->Scale(1/RecoPt->Integral("Width"));
+    RecoPt->Scale(1/RecoPt->Integral(RecoPt->FindBin(0.04), RecoPt->FindBin(.1),"Width"));
     RecoPt->Draw("PE;same");
     auto ptLegend = new TLegend(0.7,0.6,1,0.9);
     ptLegend->SetHeader("Legend","C"); // option "C" allows to center the header
@@ -297,17 +300,19 @@ void masterPlots() {
     mMass->SetTitle("Pair Mass from Various Sources");
     mMass->GetXaxis()->SetTitle("Pair Mass (GeV/c^2)");
     mMass->GetYaxis()->SetTitle("Normalized Counts");
-    mMass->Scale(1/mMass->Integral("Width"));
+    mMass->Scale(1/mMass->Integral(mMass->FindBin(0.5), mMass->FindBin(1), "Width"));
     mMass->SetStats(false);
+    mMass->SetMarkerSize(0.7);
+    mMass->SetMarkerStyle(kFullDotLarge);
     mMass->Draw("PE");
     slightMass->SetLineColor(kRed);
-    slightMass->Scale(1/slightMass->Integral("Width"));
+    slightMass->Scale(1/slightMass->Integral(slightMass->FindBin(0.5), slightMass->FindBin(1),"Width"));
     slightMass->Draw("PE;same");
     McMass->SetLineColor(kBlack);
-    McMass->Scale(1/McMass->Integral("Width"));
+    McMass->Scale(1/McMass->Integral(McMass->FindBin(0.5), McMass->FindBin(1),"Width"));
     McMass->Draw("PE;same");
     RecoMass->SetLineColor(kGreen);
-    RecoMass->Scale(1/RecoMass->Integral("Width"));
+    RecoMass->Scale(1/RecoMass->Integral(RecoMass->FindBin(0.5), RecoMass->FindBin(1),"Width"));
     RecoMass->Draw("PE;same");
     auto massLegend = new TLegend(0.7,0.6,1,0.9);
     massLegend->SetHeader("Legend","C"); // option "C" allows to center the header
@@ -322,30 +327,32 @@ void masterPlots() {
 
 
     makeCanvas2();
-    mEta->SetTitle("Pair #eta from Various Sources");
-    mEta->GetXaxis()->SetTitle("Pair #eta");
+    mEta->SetTitle("Pair Rapidity from Various Sources");
+    mEta->GetXaxis()->SetTitle("Pair Rapidity");
     mEta->GetYaxis()->SetTitle("Normalized Counts");
-    mEta->Scale(1/mEta->Integral("Width"));
+    mEta->Scale(1/mEta->Integral(mEta->FindBin(-1), mEta->FindBin(1),"Width"));
     mEta->Draw("PE");
     mEta->SetStats(false);
+    mEta->SetMarkerSize(0.7);
+    mEta->SetMarkerStyle(kFullDotLarge);
     slightEta->SetLineColor(kRed);
-    slightEta->Scale(1/slightEta->Integral("Width"));
+    slightEta->Scale(1/slightEta->Integral(slightEta->FindBin(-1), slightEta->FindBin(1),"Width"));
     slightEta->Draw("PE;same");
     McEta->SetLineColor(kBlack);
-    McEta->Scale(1/McEta->Integral("Width"));
+    McEta->Scale(1/McEta->Integral(McEta->FindBin(-1), McEta->FindBin(1),"Width"));
     McEta->Draw("PE;same");
     RecoEta->SetLineColor(kGreen);
-    RecoEta->Scale(1/RecoEta->Integral("Width"));
+    RecoEta->Scale(1/RecoEta->Integral(RecoEta->FindBin(-1), RecoEta->FindBin(1),"Width"));
     RecoEta->Draw("PE;same");
     auto etaLegend = new TLegend(0.7,0.6,1,0.9);
     etaLegend->SetHeader("Legend","C"); // option "C" allows to center the header
     etaLegend->AddEntry(mEta,"Data");
-    etaLegend->AddEntry(slightEta, "slight.out #eta (1M events)");
-    etaLegend->AddEntry(McEta, "MC #eta");
-    etaLegend->AddEntry(RecoEta, "Reco #eta (binned in MC)");
+    etaLegend->AddEntry(slightEta, "slight.out Rapidity (1M events)");
+    etaLegend->AddEntry(McEta, "MC Rapidity");
+    etaLegend->AddEntry(RecoEta, "Reco Rapidity (binned in MC)");
     etaLegend->SetTextSize(.03);
     etaLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pairEta.png");
+    gPad->Print("masterPlots/plot_pairRapidity.png");
 
 
 
@@ -366,9 +373,11 @@ void masterPlots() {
     m2Ptcos2phimoments->Draw("PE");
     m2Ptcos2phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
     m2Ptcos2phimoments->SetStats(false);
-    slight_2phiMoments->SetLineColor(kBlack);
+    m2Ptcos2phimoments->SetMarkerSize(0.7);
+    m2Ptcos2phimoments->SetMarkerStyle(kFullDotLarge);
+    slight_2phiMoments->SetLineColor(kRed);
     slight_2phiMoments->Draw("PE;same");
-    mc2phi->SetLineColor(kRed);
+    mc2phi->SetLineColor(kBlack);
     mc2phi->Draw("PE;same");
     reco2phi->SetLineColor(kGreen);
     reco2phi->Draw("PE;same");
@@ -398,9 +407,11 @@ void masterPlots() {
     m2Ptcos4phimoments->Draw("PE");
     m2Ptcos4phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
     m2Ptcos4phimoments->SetStats(false);
-    slight_4phiMoments->SetLineColor(kBlack);
+    m2Ptcos4phimoments->SetMarkerSize(0.7);
+    m2Ptcos4phimoments->SetMarkerStyle(kFullDotLarge);
+    slight_4phiMoments->SetLineColor(kRed);
     slight_4phiMoments->Draw("PE;same");
-    mc4phi->SetLineColor(kRed);
+    mc4phi->SetLineColor(kBlack);
     mc4phi->Draw("PE;same");
     reco4phi->SetLineColor(kGreen);
     reco4phi->Draw("PE;same");
@@ -421,6 +432,16 @@ void masterPlots() {
     fourphiLegend->SetTextSize(.03);
     fourphiLegend->Draw("same");
     gPad->Print("masterPlots/plot_pair4phimoments.png");
+
+    
+    makeCanvas2();
+    std::cout << "MADE CANVAS";
+    TH1F * pteffBetter = (TH1F*)McPt->Clone();
+    pteffBetter->Divide(RecoPt);
+    pteffBetter->SetTitle("pT Pair Efficiency; pT (GeV/c); Efficiency");
+    pteffBetter->Draw("PE");
+    gPad->Print("masterPlots/plot_pTEff.png");
+
 
 
 

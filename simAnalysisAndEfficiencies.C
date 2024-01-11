@@ -103,7 +103,8 @@ void simAnalysisAndEfficiencies() {
     TTreeReaderArray<short> MCIdx(myReader, "Tracks.mMcIndex");
     TTreeReaderArray<short> ParentIndex(myReader, "McTracks.mParentIndex");
 
-
+    int mc_pair_counter = 0;
+    int reco_pair_counter = 0;
 
     while (myReader.Next()) {
         
@@ -115,15 +116,16 @@ void simAnalysisAndEfficiencies() {
         if(ParentIndex.GetSize() > 1 ){ //check for two tracks
             mcPair = true; //we have an mc pair
             for(int j = 0; j < 2; j++){ //loop through parent indices first 2 tracks for an event
-                    if(ParentIndex[j] == -1){ //make sure parent index is -1
-                        if(PIDs[j] == 2){
-                            Mclvp.SetPtEtaPhiM(MCPtVals[j], MCEtaVals[j], MCPhiVals[j], .00051); //set tlorentz vector for positron
-                        }
-                        if(PIDs[j] == 3){
-                            Mclvm.SetPtEtaPhiM(MCPtVals[j], MCEtaVals[j], MCPhiVals[j], .00051); //set tlorentz vector for electron
-                        }
+                if(ParentIndex[j] == -1){ //make sure parent index is -1
+                    if(PIDs[j] == 2){
+                        Mclvp.SetPtEtaPhiM(MCPtVals[j], MCEtaVals[j], MCPhiVals[j], .00051); //set tlorentz vector for positron
                     }
-            }            
+                    if(PIDs[j] == 3){
+                        Mclvm.SetPtEtaPhiM(MCPtVals[j], MCEtaVals[j], MCPhiVals[j], .00051); //set tlorentz vector for electron
+                    }
+                }
+            }
+
             if(mcPair == true) { //check if we have an MCpairm fill histogram
                 Mclv = Mclvm + Mclvp;
                 McPtPair->Fill(Mclv.Pt());
@@ -132,40 +134,45 @@ void simAnalysisAndEfficiencies() {
                 double phival = calc_Phi(Mclvp, Mclvm);
                 cos2phivPtMC->Fill(2*cos(2*phival), Mclv.Pt());
                 cos4phivPtMC->Fill(2*cos(4*phival), Mclv.Pt());
-            }
+                mc_pair_counter +=1;
+            
 
-            //if we do have an mc pair, now check for reco
-            if(MCIdx.GetSize() > 1){ //check if we have more than one MCInx
-                int mcidx_counter = 0;
-                for(int i = 0; i < 2; i++){
-                    if(MCIdx[i] != 0 && recoPair != true){
-                        if(PIDs[i] == 2){
-                            lvp.SetPtEtaPhiM(MCPtVals[i], MCEtaVals[i], MCPhiVals[i], .00051);
-                            mcidx_counter +=1;
+                //if we do have an mc pair, now check for reco
+                if(MCIdx.GetSize() > 1){ //check if we have more than one MCInx
+                    int mcidx_counter = 0;
+                    for(int i = 0; i < 2; i++){
+                        if(MCIdx[i] != 0 && recoPair != true){
+                            if(PIDs[i] == 2){
+                                lvp.SetPtEtaPhiM(MCPtVals[i], MCEtaVals[i], MCPhiVals[i], .00051);
+                                mcidx_counter +=1;
 
+                            }
+                            if(PIDs[i] == 3){
+                                lvm.SetPtEtaPhiM(MCPtVals[i], MCEtaVals[i], MCPhiVals[i], .00051);
+                                mcidx_counter +=1;
+
+                            }
                         }
-                        if(PIDs[i] == 3){
-                            lvm.SetPtEtaPhiM(MCPtVals[i], MCEtaVals[i], MCPhiVals[i], .00051);
-                            mcidx_counter +=1;
-
+                        if(mcidx_counter == 2){
+                            recoPair = true;
+                            //std::cout << "Reconstructed \n";
                         }
+                        //else std::cout << "did not reconstruct \n";
                     }
-                    if(mcidx_counter == 2){
-                        recoPair = true;
-                    }
-                }
         
+                }
+            
+                if(recoPair == true){
+                    lv = lvp + lvm;
+                    mPtPairReco->Fill(lv.Pt());
+                    mEtaPairReco->Fill(lv.Rapidity());
+                    mMassPairReco->Fill(lv.M());
+                    double phival2 = calc_Phi(lvp, lvm);
+                    cos2phivPtReco->Fill(2*cos(2*phival2), lv.Pt());
+                    cos4phivPtReco->Fill(2*cos(4*phival2), lv.Pt()); 
+                    reco_pair_counter  += 1;               
+                }
             }
-            if(recoPair == true){
-                lv = lvp + lvm;
-                mPtPairReco->Fill(lv.Pt());
-                mEtaPairReco->Fill(lv.Rapidity());
-                mMassPairReco->Fill(lv.M());
-                double phival = calc_Phi(lvp, lvm);
-                cos2phivPtReco->Fill(2*cos(2*phival), lv.Pt());
-                cos4phivPtReco->Fill(2*cos(4*phival), lv.Pt());                   
-            }
-                //std::cout << "something got reconstructed";
         }
     }
 
@@ -254,6 +261,9 @@ void simAnalysisAndEfficiencies() {
     m2Ptcos4phimomentsReco->Write();
 
     std::cout << "wrote";
+
+    std::cout << "MC Pairs: " << mc_pair_counter << "\n";
+    std::cout << "Reco Pairs: " << reco_pair_counter;
 
 
 
