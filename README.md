@@ -1,1 +1,4 @@
-Explain your code and how to run it
+Steps to run the code for master plots:
+1. Run `root -l SLAna.C`, which calls on `SLAnalyze.cxx` and creates plots from a `slight.out` file. Be sure to change local paths to your `slight.out` file in both files. The output of this file is saved locally in `SL_plotsBetter.root`.
+2. Run `root -l simAnalysisAndEfficiencies.C`. This analyzes the output files of STAR simulation `FemtoDst` files (both MC and reconstructed events), and saves the plots locally in `sim_plots.root`. This piece of code is a work in progress and may contain bugs with identifying pairs properly.
+3. Run `root -l masterPlots.C`. This takes as input the previously created `SL_plotsBetter.root` and `sim_plots.root`, and does some basic analysis code on a data `PairDst` file, for which you should change the path to point to your local data file if you don't have it. 
