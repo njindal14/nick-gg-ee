@@ -23,6 +23,10 @@ void PairEff(){
     auto McMassPair = new TH1F("McMassPair", "McMassPair", 50, 0, 2);
     auto RcMassPair = new TH1F("RcMassPair", "RcMassPair", 50, 0, 2);
 
+    auto McRapidityPair = new TH1F("McRapidityPair", "McRapidityPair", 50, -1, 1);
+    auto RcRapidityPair = new TH1F("RcRapidityPair", "RcRapidityPair", 50, -1, 1);
+
+
 
     while(myReader.Next()) {
         
@@ -56,6 +60,7 @@ void PairEff(){
         mcpair = mcpos + mcneg;
         McPtPair->Fill( mcpair.Pt() );
         McMassPair->Fill(mcpair.M());
+        McRapidityPair->Fill(mcpair.Rapidity());
 
         short idxPos = -1, idxNeg = -1;
         for ( size_t i = 0; i < MCIdx.GetSize(); i++  ){
@@ -77,6 +82,7 @@ void PairEff(){
         rcpair = rcneg + rcpos;
         RcPtPair->Fill(rcpair.Pt());
         RcMassPair->Fill(rcpair.M());
+        RcRapidityPair->Fill(rcpair.Rapidity());
         
     }
 
@@ -88,16 +94,43 @@ void PairEff(){
     TCanvas *c2 = new TCanvas("c2");
     TH1* hEff = (TH1*)RcPtPair->Clone( "Eff" );
     hEff->Divide( McPtPair );
+    hEff->SetTitle("pT Pair Efficiency");
     hEff->Draw();
 
     TCanvas * c3 = new TCanvas("c3");
     TH1* mEff = (TH1*)RcMassPair->Clone("mEff");
     mEff->Divide(McMassPair);
+    mEff->SetTitle("Pair Invariant Mass Efficiency");
     mEff->Draw();
 
     TCanvas * c4 = new TCanvas("c4");
     McMassPair->Draw();
     RcMassPair->SetLineColor(kRed);
     RcMassPair->Draw("same");
+
+    TCanvas * c5 = new TCanvas("c5");
+    TH1* YEff = (TH1*)RcRapidityPair->Clone("etaEff");
+    YEff->Divide(McRapidityPair);
+    YEff->SetTitle("Pair Rapidity Efficiency");
+    YEff->Draw();
+
+    TCanvas * c6 = new TCanvas("c6");
+    McRapidityPair->Draw();
+    RcRapidityPair->SetLineColor(kRed);
+    RcRapidityPair->Draw("same");
+
+
+    TFile file("simulation_plots.root", "RECREATE");
+    McPtPair->Write();
+    RcPtPair->Write();   
+    McMassPair->Write(); 
+    RcMassPair->Write(); 
+    McRapidityPair->Write(); 
+    RcRapidityPair->Write(); 
+    hEff->Write();
+    mEff->Write();
+    YEff->Write();
+
+
  
 }
