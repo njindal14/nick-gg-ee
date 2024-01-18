@@ -3,7 +3,7 @@
 
 void PairEff(){
     TChain * ch = new TChain("FemtoDst");
-    ch->Add("JobResults/*");
+    ch->Add("/Users/Nick/STAR/docker_mount/JobResults/*");
     TTreeReader myReader(ch);
 
     
@@ -20,7 +20,11 @@ void PairEff(){
     auto McPtPair = new TH1F("McPtPair", "McPtPair", 50, 0, 0.4);
     auto RcPtPair = new TH1F("RcPtPair", "RcPtPair", 50, 0, 0.4);
 
-    while (myReader.Next()) {
+    auto McMassPair = new TH1F("McMassPair", "McMassPair", 50, 0, 2);
+    auto RcMassPair = new TH1F("RcMassPair", "RcMassPair", 50, 0, 2);
+
+
+    while(myReader.Next()) {
         
         TLorentzVector mcneg, mcpos, mcpair;
         TLorentzVector rcneg, rcpos, rcpair; //(these are still MC values, just from the RC tracks matched MC )
@@ -51,6 +55,7 @@ void PairEff(){
 
         mcpair = mcpos + mcneg;
         McPtPair->Fill( mcpair.Pt() );
+        McMassPair->Fill(mcpair.M());
 
         short idxPos = -1, idxNeg = -1;
         for ( size_t i = 0; i < MCIdx.GetSize(); i++  ){
@@ -70,7 +75,8 @@ void PairEff(){
         rcneg.SetPtEtaPhiM( MCPtVals[idxNeg], MCEtaVals[idxNeg], MCPhiVals[idxNeg], 0.00051099895000 );
         rcpos.SetPtEtaPhiM( MCPtVals[idxPos], MCEtaVals[idxPos], MCPhiVals[idxPos], 0.00051099895000 );
         rcpair = rcneg + rcpos;
-        RcPtPair->Fill( rcpair.Pt() );
+        RcPtPair->Fill(rcpair.Pt());
+        RcMassPair->Fill(rcpair.M());
         
     }
 
@@ -83,5 +89,15 @@ void PairEff(){
     TH1* hEff = (TH1*)RcPtPair->Clone( "Eff" );
     hEff->Divide( McPtPair );
     hEff->Draw();
+
+    TCanvas * c3 = new TCanvas("c3");
+    TH1* mEff = (TH1*)RcMassPair->Clone("mEff");
+    mEff->Divide(McMassPair);
+    mEff->Draw();
+
+    TCanvas * c4 = new TCanvas("c4");
+    McMassPair->Draw();
+    RcMassPair->SetLineColor(kRed);
+    RcMassPair->Draw("same");
  
 }
