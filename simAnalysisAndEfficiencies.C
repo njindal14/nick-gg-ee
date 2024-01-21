@@ -203,7 +203,7 @@ void simAnalysisAndEfficiencies() {
     etalegend->Draw("same");
 
 
-    makeCanvas();
+    /*makeCanvas();
     TEfficiency * rapidityPaireff = new TEfficiency(* mEtaPairReco, * McEtaPair);
     rapidityPaireff->SetTitle("Pair Rapidity Efficiency; y_{ee}; Efficiency");
     rapidityPaireff->Draw("PE");
@@ -212,7 +212,7 @@ void simAnalysisAndEfficiencies() {
     makeCanvas();
     TEfficiency * ptPaireff = new TEfficiency(* mPtPairReco, * McPtPair);
     ptPaireff->SetTitle("Pair pT Efficiency; pT(GeV/c); Efficiency");
-    ptPaireff->Draw("PE");
+    ptPaireff->Draw("PE");*/
 
 
     makeCanvas();
@@ -220,28 +220,28 @@ void simAnalysisAndEfficiencies() {
     m2Ptcos2phimomentsMC->SetLineColor(kBlack);
     m2Ptcos2phimomentsMC->GetYaxis()->SetTitle("2<cos(2#phi)>");
     m2Ptcos2phimomentsMC->Draw("PE");
-    gPad->Print("slightEff/plot_Starsimcos2phimomentsMC.png");
+    //gPad->Print("slightEff/plot_Starsimcos2phimomentsMC.png");
 
     makeCanvas();
     auto m2Ptcos4phimomentsMC = cos4phivPtMC->ProfileY("m2Ptcos4phimomentsMC",1, -1);
     m2Ptcos4phimomentsMC->SetLineColor(kBlack);
     m2Ptcos4phimomentsMC->GetYaxis()->SetTitle("2<cos(4#phi)>");
     m2Ptcos4phimomentsMC->Draw("PE");
-    gPad->Print("slightEff/plot_Starsimcos4phimomentsMC.png");
+    //gPad->Print("slightEff/plot_Starsimcos4phimomentsMC.png");
 
     makeCanvas();
     auto m2Ptcos2phimomentsReco = cos2phivPtReco->ProfileY("m2Ptcos2phimomentsReco",1, -1);
     m2Ptcos2phimomentsReco->SetLineColor(kBlack);
     m2Ptcos2phimomentsReco->GetYaxis()->SetTitle("2<cos(2#phi)>");
     m2Ptcos2phimomentsReco->Draw("PE");
-    gPad->Print("slightEff/plot_Starsimcos2phimomentsReco.png");
+    //gPad->Print("slightEff/plot_Starsimcos2phimomentsReco.png");
 
     makeCanvas();
     auto m2Ptcos4phimomentsReco = cos4phivPtReco->ProfileY("m2Ptcos4phimomentsReco",1, -1);
     m2Ptcos4phimomentsReco->SetLineColor(kBlack);
     m2Ptcos4phimomentsReco->GetYaxis()->SetTitle("2<cos(4#phi)>");
     m2Ptcos4phimomentsReco->Draw("PE");
-    gPad->Print("slightEff/plot_Starsimcos4phimomentsReco.png");
+    //gPad->Print("slightEff/plot_Starsimcos4phimomentsReco.png");
 
 
     TFile file("sim_plots.root", "RECREATE");

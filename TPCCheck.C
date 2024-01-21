@@ -17,6 +17,9 @@ void TPCCheck() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
     TLorentzVector lv1, lv2, lv, lvn;
 
+    TFile * simulation_plots_file = new TFile("/Users/Nick/STAR/breit-wheeler/Code/nick-gg-ee/simulation_plots.root");
+    //now import simulation hists here from simulation to compare with data
+
     TH2D * STARpairPhiVsEta = new TH2D("Pair #phi", "Pair #phi; #eta; #phi", 50, -1, 1, 50, -pi, pi);
     TH2D * STARposPhiVsEta = new TH2D("Positron #phi", "Positron #phi; #eta; #phi", 50, -1, 1, 50, -pi, pi);
     TH2D * STARelPhiVsEta = new TH2D("Electron #phi", "Electron #phi; #eta; #phi", 50, -1, 1, 50, -pi, pi);

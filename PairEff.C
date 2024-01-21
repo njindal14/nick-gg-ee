@@ -12,6 +12,10 @@ void PairEff(){
     TTreeReaderArray<float> MCPhiVals(myReader, "McTracks.mPhi");
 
     TTreeReaderArray<short> MCIdx(myReader, "Tracks.mMcIndex");
+    TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit");
+    TTreeReaderArray<short> NHitsDedx(myReader, "Tracks.mNHitsDedx");
+
+
 
     TTreeReaderArray<unsigned short> PIDs(myReader, "McTracks.mGeantPID");
     TTreeReaderArray<short> ParentIndex(myReader, "McTracks.mParentIndex");
@@ -25,6 +29,27 @@ void PairEff(){
 
     auto McRapidityPair = new TH1F("McRapidityPair", "McRapidityPair", 50, -1, 1);
     auto RcRapidityPair = new TH1F("RcRapidityPair", "RcRapidityPair", 50, -1, 1);
+
+    //for track and pair acceptance checks for tpc, nhitsfit, and nhitsdedx comparisons with data
+    //These histograms are used in TPCCheck.C
+
+    //checking tpc acceptance in simulation
+    auto McPairEtaVsPhi = new TH2D("McPairEtaVsPhi", "McPairEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+    auto McPosEtaVsPhi = new TH2D("McPosEtaVsPhi", "McPosEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+    auto McNegEtaVsPhi = new TH2D("MCNegEtaVsPhi", "MCNegEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+
+    auto RcPairEtaVsPhi = new TH2D("RcPairEtaVsPhi", "RcPairEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+    auto RcPosEtaVsPhi = new TH2D("RcPosEtaVsPhi", "RcPosEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+    auto RcNegEtaVsPhi = new TH2D("RcNegEtaVsPhi", "RcNegEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+
+    //checking nhitsfit and dedx in simulation
+    auto RCPosnhitsfitvpT = new TH2D("RCPosnhitsfitvpT", "RCPosnhitsfitvpT", 50, 0, 50, 80, 0.2, 1);
+    auto RCNegnhitsfitvpT = new TH2D("RCNegnhitsfitvpT", "RCNegnhitsfitvpT", 50, 0, 50, 80, 0.2, 1);
+
+    auto RCPosnhitsdedxvpT = new TH2D("RCPosnhitsdedxvpT", "RCPosnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
+    auto RCNegnhitsdedxvpT = new TH2D("RCNegnhitsdedxvpT", "RCNegnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
+
+
 
 
 
@@ -62,6 +87,12 @@ void PairEff(){
         McMassPair->Fill(mcpair.M());
         McRapidityPair->Fill(mcpair.Rapidity());
 
+        McPairEtaVsPhi->Fill(mcpair.Eta(), mcpair.Phi());
+        McPosEtaVsPhi->Fill(mcpos.Eta(), mcpos.Phi());
+        McNegEtaVsPhi->Fill(mcneg.Eta(), mcneg.Phi());
+
+
+
         short idxPos = -1, idxNeg = -1;
         for ( size_t i = 0; i < MCIdx.GetSize(); i++  ){
             short idx = MCIdx[i];
@@ -83,6 +114,15 @@ void PairEff(){
         RcPtPair->Fill(rcpair.Pt());
         RcMassPair->Fill(rcpair.M());
         RcRapidityPair->Fill(rcpair.Rapidity());
+
+        RcPairEtaVsPhi->Fill(rcpair.Eta(), rcpair.Phi());
+        RcPosEtaVsPhi->Fill(rcpos.Eta(), rcpos.Phi());
+        RcNegEtaVsPhi->Fill(rcneg.Eta(), rcneg.Phi());
+
+        RCPosnhitsfitvpT->Fill(abs(NHitsFit[0]), rcpos.Pt());
+        RCNegnhitsfitvpT->Fill(abs(NHitsFit[1]), rcneg.Pt());
+        RCPosnhitsdedxvpT->Fill(NHitsDedx[0], rcpos.Pt());
+        RCNegnhitsdedxvpT->Fill(NHitsDedx[1], rcneg.Pt());
         
     }
 
@@ -109,7 +149,7 @@ void PairEff(){
     RcMassPair->Draw("same");
 
     TCanvas * c5 = new TCanvas("c5");
-    TH1* YEff = (TH1*)RcRapidityPair->Clone("etaEff");
+    TH1* YEff = (TH1*)RcRapidityPair->Clone("YEff");
     YEff->Divide(McRapidityPair);
     YEff->SetTitle("Pair Rapidity Efficiency");
     YEff->Draw();
@@ -130,6 +170,19 @@ void PairEff(){
     hEff->Write();
     mEff->Write();
     YEff->Write();
+
+    McPairEtaVsPhi->Write();
+    McPosEtaVsPhi->Write();
+    McNegEtaVsPhi->Write();
+    RcPairEtaVsPhi->Write();
+    RcPosEtaVsPhi->Write();
+    RcNegEtaVsPhi->Write();
+
+    RCPosnhitsfitvpT->Write();
+    RCNegnhitsfitvpT->Write();
+    RCPosnhitsdedxvpT->Write();
+    RCNegnhitsdedxvpT->Write();
+
 
 
  
