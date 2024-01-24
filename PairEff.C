@@ -50,9 +50,6 @@ void PairEff(){
     auto RCNegnhitsdedxvpT = new TH2D("RCNegnhitsdedxvpT", "RCNegnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
 
 
-
-
-
     while(myReader.Next()) {
         
         TLorentzVector mcneg, mcpos, mcpair;
@@ -72,6 +69,7 @@ void PairEff(){
         }
 
         if ( MCPtVals[0] < 0.2 || MCPtVals[1] < 0.2 ) continue;
+
         if ( fabs(MCEtaVals[0]) > 0.9 || fabs(MCPtVals[1]) > 0.9 ) continue;
 
         if ( PIDs[0] == 2 && PIDs[1] == 3 ){
@@ -110,19 +108,26 @@ void PairEff(){
 
         rcneg.SetPtEtaPhiM( MCPtVals[idxNeg], MCEtaVals[idxNeg], MCPhiVals[idxNeg], 0.00051099895000 );
         rcpos.SetPtEtaPhiM( MCPtVals[idxPos], MCEtaVals[idxPos], MCPhiVals[idxPos], 0.00051099895000 );
+
         rcpair = rcneg + rcpos;
-        RcPtPair->Fill(rcpair.Pt());
-        RcMassPair->Fill(rcpair.M());
-        RcRapidityPair->Fill(rcpair.Rapidity());
+        
+        if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20){
 
-        RcPairEtaVsPhi->Fill(rcpair.Eta(), rcpair.Phi());
-        RcPosEtaVsPhi->Fill(rcpos.Eta(), rcpos.Phi());
-        RcNegEtaVsPhi->Fill(rcneg.Eta(), rcneg.Phi());
+            RcPtPair->Fill(rcpair.Pt());
+            RcMassPair->Fill(rcpair.M());
+            RcRapidityPair->Fill(rcpair.Rapidity());
+        
 
-        RCPosnhitsfitvpT->Fill(abs(NHitsFit[0]), rcpos.Pt());
-        RCNegnhitsfitvpT->Fill(abs(NHitsFit[1]), rcneg.Pt());
-        RCPosnhitsdedxvpT->Fill(NHitsDedx[0], rcpos.Pt());
-        RCNegnhitsdedxvpT->Fill(NHitsDedx[1], rcneg.Pt());
+            RcPairEtaVsPhi->Fill(rcpair.Eta(), rcpair.Phi());
+            RcPosEtaVsPhi->Fill(rcpos.Eta(), rcpos.Phi());
+            RcNegEtaVsPhi->Fill(rcneg.Eta(), rcneg.Phi());
+
+            RCPosnhitsfitvpT->Fill(abs(NHitsFit[0]), rcpos.Pt());
+            RCNegnhitsfitvpT->Fill(abs(NHitsFit[1]), rcneg.Pt());
+            RCPosnhitsdedxvpT->Fill(NHitsDedx[0], rcpos.Pt());
+            RCNegnhitsdedxvpT->Fill(NHitsDedx[1], rcneg.Pt());
+
+        }
         
     }
 
@@ -132,16 +137,14 @@ void PairEff(){
     RcPtPair->Draw("same");
 
     TCanvas *c2 = new TCanvas("c2");
-    TH1* hEff = (TH1*)RcPtPair->Clone( "Eff" );
-    hEff->Divide( McPtPair );
+    TEfficiency * hEff = new TEfficiency(* RcPtPair, * McPtPair);
     hEff->SetTitle("pT Pair Efficiency");
-    hEff->Draw();
+    hEff->Draw("PE");
 
     TCanvas * c3 = new TCanvas("c3");
-    TH1* mEff = (TH1*)RcMassPair->Clone("mEff");
-    mEff->Divide(McMassPair);
+    TEfficiency * mEff = new TEfficiency(* RcMassPair, * McMassPair);
     mEff->SetTitle("Pair Invariant Mass Efficiency");
-    mEff->Draw();
+    mEff->Draw("PE");
 
     TCanvas * c4 = new TCanvas("c4");
     McMassPair->Draw();
@@ -149,10 +152,9 @@ void PairEff(){
     RcMassPair->Draw("same");
 
     TCanvas * c5 = new TCanvas("c5");
-    TH1* YEff = (TH1*)RcRapidityPair->Clone("YEff");
-    YEff->Divide(McRapidityPair);
+    TEfficiency * YEff = new TEfficiency(* RcRapidityPair, * McRapidityPair);
     YEff->SetTitle("Pair Rapidity Efficiency");
-    YEff->Draw();
+    YEff->Draw("PE");
 
     TCanvas * c6 = new TCanvas("c6");
     McRapidityPair->Draw();

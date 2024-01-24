@@ -17,7 +17,12 @@ void TPCCheck() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
     TLorentzVector lv1, lv2, lv, lvn;
 
-    TFile * simulation_plots_file = new TFile("/Users/Nick/STAR/breit-wheeler/Code/nick-gg-ee/simulation_plots.root");
+    TFile * simulation_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/simulation_plots.root");
+    TH2D * RcPairEtaVsPhi = (TH2D*)simulation_plots->Get("RcPairEtaVsPhi");
+    TH2D * RcPosEtaVsPhi = (TH2D*)simulation_plots->Get("RcPosEtaVsPhi");
+    TH2D * RcNegEtaVsPhi = (TH2D*)simulation_plots->Get("RcNegEtaVsPhi");
+
+
     //now import simulation hists here from simulation to compare with data
 
     TH2D * STARpairPhiVsEta = new TH2D("Pair #phi", "Pair #phi; #eta; #phi", 50, -1, 1, 50, -pi, pi);
@@ -63,8 +68,8 @@ void TPCCheck() {
 
     }
 
-    TH1D *pairNegEta = STARpairPhiVsEta->ProjectionY("Pair #phi, #eta < 0", 0, STARpairPhiVsEta->GetXaxis()->FindBin(0.));
-    TH1D *pairPosEta = STARpairPhiVsEta->ProjectionY("Pair #phi, #eta > 0", STARpairPhiVsEta->GetXaxis()->FindBin(0.), -1);
+    TH1D *pairNegEta = STARpairPhiVsEta->ProjectionY("Pair #phi, #eta < 0", STARpairPhiVsEta->GetXaxis()->FindBin(-1.01), STARpairPhiVsEta->GetYaxis()->FindBin(0.));
+    TH1D *pairPosEta = STARpairPhiVsEta->ProjectionY("Pair #phi, #eta > 0", STARpairPhiVsEta->GetXaxis()->FindBin(0.), STARpairPhiVsEta->GetXaxis()->FindBin(1.));
     TH1D *pairAllEta = STARpairPhiVsEta->ProjectionY("Pair #phi, all #eta", 0, -1);
 
 
@@ -76,6 +81,23 @@ void TPCCheck() {
     TH1D *elNegEta = STARelPhiVsEta->ProjectionY("Electron #phi, #eta < 0", 0, STARelPhiVsEta->GetXaxis()->FindBin(0.) );
     TH1D *elPosEta = STARelPhiVsEta->ProjectionY("Electron #phi, #eta > 0", STARelPhiVsEta->GetXaxis()->FindBin(0.), -1 );
     TH1D *elAllEta = STARelPhiVsEta->ProjectionY("Electron #phi, all #eta", 0, -1 );
+
+    //reconstructed projections from simulation, for comparison with data
+    TH1D *RcpairNegEta = RcPairEtaVsPhi->ProjectionY("Rc Pair #phi, #eta < 0", RcPairEtaVsPhi->GetXaxis()->FindBin(-1.01), RcPairEtaVsPhi->GetYaxis()->FindBin(0.));
+    TH1D *RcpairPosEta = RcPairEtaVsPhi->ProjectionY("Rc Pair #phi, #eta > 0", RcPairEtaVsPhi->GetXaxis()->FindBin(0.), RcPairEtaVsPhi->GetXaxis()->FindBin(1.));
+    TH1D *RcpairAllEta = RcPairEtaVsPhi->ProjectionY("Rc Pair #phi, all #eta", 0, -1);
+
+
+    TH1D *RcposNegEta = RcPosEtaVsPhi->ProjectionY("Rc Positron #phi, #eta < 0", 0, RcPosEtaVsPhi->GetXaxis()->FindBin(0.) );
+    TH1D *RcposPosEta = RcPosEtaVsPhi->ProjectionY("Rc Positron #phi, #eta > 0", RcPosEtaVsPhi->GetXaxis()->FindBin(0.), -1 );
+    TH1D *RcposAllEta = RcPosEtaVsPhi->ProjectionY("Rc Positron #phi, all #eta", 0, -1);
+
+    
+    TH1D *RcelNegEta = RcNegEtaVsPhi->ProjectionY("Rc Electron #phi, #eta < 0", 0, RcNegEtaVsPhi->GetXaxis()->FindBin(0.) );
+    TH1D *RcelPosEta = RcNegEtaVsPhi->ProjectionY("Rc Electron #phi, #eta > 0", RcNegEtaVsPhi->GetXaxis()->FindBin(0.), -1 );
+    TH1D *RcelAllEta = RcNegEtaVsPhi->ProjectionY("Rc Electron #phi, all #eta", 0, -1 );
+
+
 
 
 
@@ -105,6 +127,7 @@ void TPCCheck() {
     posLegend->AddEntry(posPosEta,"Positron #eta > 0","l");
     posLegend->AddEntry(posNegEta,"Positron #eta < 0","l");
     posLegend->Draw("same");
+    
 
     makeCanvas();
     elAllEta->SetLineColor(kBlack);
@@ -139,6 +162,62 @@ void TPCCheck() {
     pairLegend->AddEntry(pairPosEta,"Pair #eta > 0","l");
     pairLegend->AddEntry(pairNegEta,"Pair #eta < 0","l");
     pairLegend->Draw("same");
+
+    
+    
+    //reco track and pair phi's
+    makeCanvas();
+    RcpairAllEta->SetLineColor(kBlack);
+    RcpairNegEta->SetLineColor(kRed);
+    RcpairPosEta->SetLineColor(kBlue);
+    RcpairAllEta->GetXaxis()->SetTitle("RC #phi");
+    RcpairAllEta->GetYaxis()->SetTitle("Counts"); 
+    RcpairAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcpairAllEta->Draw("PE");
+    RcpairNegEta->Draw("same;PE");
+    RcpairPosEta->Draw("same;PE");
+    auto * RcpairLegend = new TLegend(0.77,0.5,.97,0.65);
+    RcpairLegend->SetHeader("Legend");
+    RcpairLegend->AddEntry(RcpairAllEta,"Rc Pair all rapidity","l");
+    RcpairLegend->AddEntry(RcpairPosEta,"Rc Pair #eta > 0","l");
+    RcpairLegend->AddEntry(RcpairNegEta,"Rc Pair #eta < 0","l");
+    RcpairLegend->Draw("same");
+
+    makeCanvas();
+    RcposAllEta->SetLineColor(kBlack);
+    RcposNegEta->SetLineColor(kRed);
+    RcposPosEta->SetLineColor(kBlue);
+    RcposAllEta->GetXaxis()->SetTitle("RC #phi");
+    RcposAllEta->GetYaxis()->SetTitle("Counts"); 
+    RcposAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcposAllEta->Draw("PE");
+    RcposNegEta->Draw("same;PE");
+    RcposPosEta->Draw("same;PE");
+    auto * RcposLegend = new TLegend(0.77,0.5,.97,0.65);
+    RcposLegend->SetHeader("Legend");
+    RcposLegend->AddEntry(RcposAllEta,"Rc e+ all rapidity","l");
+    RcposLegend->AddEntry(RcposPosEta,"Rc e+ #eta > 0","l");
+    RcposLegend->AddEntry(RcposNegEta,"Rc e+ #eta < 0","l");
+    RcposLegend->Draw("same");
+
+    makeCanvas();
+    RcelAllEta->SetLineColor(kBlack);
+    RcelNegEta->SetLineColor(kRed);
+    RcelPosEta->SetLineColor(kBlue);
+    RcelAllEta->GetXaxis()->SetTitle("RC #phi");
+    RcelAllEta->GetYaxis()->SetTitle("Counts"); 
+    RcelAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcelAllEta->Draw("PE");
+    RcelNegEta->Draw("same;PE");
+    RcelPosEta->Draw("same;PE");
+    auto * RcelLegend = new TLegend(0.77,0.5,.97,0.65);
+    RcelLegend->SetHeader("Legend");
+    RcelLegend->AddEntry(RcelAllEta,"Rc e- all rapidity","l");
+    RcelLegend->AddEntry(RcelPosEta,"Rc e- #eta > 0","l");
+    RcelLegend->AddEntry(RcelNegEta,"Rc e- #eta < 0","l");
+    RcelLegend->Draw("same");
+
+   
 
     TFile file("tpc_check_plots.root", "RECREATE");
     STARpairPhiVsEta->Write();
