@@ -6,8 +6,8 @@ double me2 = pow(0.00051,2);
 int ican = 0;
 void makeCanvas() {
     TCanvas * can = new TCanvas( TString::Format( "can%d", ican++ ), "", 900, 600 );
-    can->SetTopMargin(0.04);
-    can->SetRightMargin(0.3);
+    can->SetTopMargin(0.1);
+    can->SetRightMargin(0.1);
 }
 
 double chiFit(double *x, double *par){
@@ -55,19 +55,30 @@ void eePIDandPurity() {
     auto * mdTof = new TH1F("#DeltaTOF Hist", "#DeltaTOF", 1000, -15, 15);
     auto * mdTofexp = new TH1F("#DeltaTOFExp Hist", "#DeltaTOFexp", 1000, -15, 15);
     auto * mddTof = new TH1F("#Delta#DeltaTOF Hist", "#Delta#DeltaTOF", 1000, -6, 6);
-    auto * Xee = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution", 100, 0, 30);
-    auto * Xee25 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
-    auto * background25 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
-    auto * Xee20 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
-    auto * background20 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
-    auto * Xee15 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
-    auto * background15 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
-    auto * Xee10 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
-    auto * background10 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
-    auto * Xee5 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
-    auto * background5 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
-    auto * Xee1 = new TH1F("#chi_{ee}^{2} Distribution", "#chi_{ee}^{2} Distribution, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
-    auto * background1 = new TH1F("Background", "#chi_{ee}^{2} Distribution background, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
+    auto * Xee = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2} Distribution", 100, 0, 30);
+    auto * Xee25 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
+    auto * background25 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
+    auto * Xee20 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
+    auto * background20 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
+    auto * Xee15 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
+    auto * background15 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
+    auto * Xee10 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
+    auto * background10 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
+    auto * Xee5 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
+    auto * background5 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
+    auto * Xee1 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
+    auto * background1 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
+    
+    auto * chi2D = new TH2F("chi2D", "#chi^{2} Before", 200, 0, 200, 200, 0, 160);
+    auto * chi2DCut = new TH2F("chi2DCut", "#chi^{2} After", 200, 0, 200, 200, 0, 160);
+
+
+    auto * nSigmaRigidity1 = new TH2F("Rigidity", "Rigidity", 1000, -2, 2, 1000, -10, 10);
+    auto * nSigmaRigidity2 = new TH2F("Rigidity2", "Rigidity", 1000, -2, 2, 1000, -10, 10);
+
+    auto * nSigmaRigidityCut1 = new TH2F("Rigidity with #Delta#Delta TOF Cut", "Rigidity with #Delta#Delta TOF Cut", 1000, -2, 2, 1000, -10, 10);
+    auto * nSigmaRigidityCut2 = new TH2F("Rigidity2 with #Delta#Delta TOF Cut", "Rigidity with #Delta#Delta TOF Cut", 1000, -2, 2, 1000, -10, 10);
+
     auto * ddTofFit = new TF1("fit", ddToffit, -2, 2, 7);
     ddTofFit->SetParameters(100000.0, 0, 0.2, 50000.0, 0, 0.5, 10);
     ddTofFit->SetParNames("A1", "#lambda1", "#sigma1", "A2","#lambda2", "sigma2", "p0");
@@ -105,62 +116,74 @@ void eePIDandPurity() {
         Float_t ddTofVal = dTofVal - dTofexpVal;
 
         if( fabs(mVertexZVal) < 100 &&  mGRefMultVal <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
-        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal < 0.4)) {
-            
-            if(ddTofVal == 0) continue;
+        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 ) {
 
-            if(chipipi > 30) Xee->Fill(chiee);
+            chi2D->Fill(chipipi, chiee);
+            nSigmaRigidity1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
+            nSigmaRigidity2->Fill(-lv2.P(), pair->d2_mNSigmaElectron);
 
-            else{
-                if (chipipi > 25) {
-                    if (3 * chiee < chipipi) {
-                        Xee25->Fill(chiee);
-                    } else {
-                        background25->Fill(chiee);
+            if(fabs(ddTofVal < 0.4)){   
+
+                if(ddTofVal == 0) continue;
+
+                chi2DCut->Fill(chipipi, chiee);
+                nSigmaRigidityCut1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
+                nSigmaRigidityCut2->Fill(lv2.P(), pair->d2_mNSigmaElectron);
+
+                if(chipipi > 30) Xee->Fill(chiee);
+
+                else{
+                    if (chipipi > 25) {
+                        if (3 * chiee < chipipi) {
+                            Xee25->Fill(chiee);
+                        } else {
+                            background25->Fill(chiee);
+                        }
                     }
-                }
 
-                if (chipipi > 20) {
-                    if (3 * chiee < chipipi) {
-                        Xee20->Fill(chiee);
-                    } else {
-                        background20->Fill(chiee);
+                    if (chipipi > 20) {
+                        if (3 * chiee < chipipi) {
+                            Xee20->Fill(chiee);
+                        } else {
+                            background20->Fill(chiee);
+                        }
                     }
-                }
 
-                if (chipipi > 15) {
-                    if (3 * chiee < chipipi) {
-                        Xee15->Fill(chiee);
-                    } else {
-                        background15->Fill(chiee);
+                    if (chipipi > 15) {
+                        if (3 * chiee < chipipi) {
+                            Xee15->Fill(chiee);
+                        } else {
+                            background15->Fill(chiee);
+                        }
                     }
-                }
 
-                if (chipipi > 10) {
-                    if (3 * chiee < chipipi) {
-                        Xee10->Fill(chiee);
-                    } else {
-                        background10->Fill(chiee);
+                    if (chipipi > 10) {
+                        if (3 * chiee < chipipi) {
+                            Xee10->Fill(chiee);
+                        } else {
+                            background10->Fill(chiee);
+                        }
                     }
-                }
 
-                if (chipipi > 5) {
-                    if (3 * chiee < chipipi) {
-                        Xee5->Fill(chiee);
-                    } else {
-                        background5->Fill(chiee);
+                    if (chipipi > 5) {
+                        if (3 * chiee < chipipi) {
+                            Xee5->Fill(chiee);
+                        } else {
+                            background5->Fill(chiee);
+                        }
                     }
-                }
 
-                if (chipipi > 1) {
-                    if (3 * chiee < chipipi) {
-                        Xee1->Fill(chiee);
-                    } else {
-                        background1->Fill(chiee);
+                    if (chipipi > 1) {
+                        if (3 * chiee < chipipi) {
+                            Xee1->Fill(chiee);
+                        } else {
+                            background1->Fill(chiee);
+                        }
                     }
                 }
             }
         }
+        //for all pairs (no selection)
         if(dTofVal != 0 && dTofexpVal !=0 && ddTofVal !=0){
             mdTof->Fill( dTofVal );
             mdTofexp->Fill( dTofexpVal );
@@ -173,13 +196,14 @@ void eePIDandPurity() {
     gPad->SetLogy();
     mdTof->GetXaxis()->SetTitle("#Delta TOF Distrubition (ns)");
     mdTof->GetYaxis()->SetTitle("Counts");
+    mdTof->SetStats(false);
     mdTof->Draw();
     
     mdTofexp->SetLineColor(kRed);
     gPad->SetLogy();
     mdTofexp->Draw("same");
 
-    auto * legend = new TLegend(0.77,0.6,.97,0.75);
+    auto * legend = new TLegend(0.8,0.75,1.,.9);
     legend->SetHeader("Legend");
     legend->AddEntry(mdTof,"#DeltaTOF","l");
     legend->AddEntry(mdTofexp,"#DeltaTOFexp","l");
@@ -191,6 +215,7 @@ void eePIDandPurity() {
     gPad->SetLogy();
     mddTof->GetXaxis()->SetTitle("#Delta #Delta TOF Distrubition (ns)");
     mddTof->GetYaxis()->SetTitle("Counts");
+    mddTof->SetStats(false);
     mddTof->Draw();
 
     mddTof->Fit("fit", "", "", -2,2);
@@ -209,6 +234,7 @@ void eePIDandPurity() {
     Xee->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
     Xee->SetMarkerStyle(20);
+    Xee->SetStats(false);
     Xee->Draw("PE");
     chieeFit->SetLineWidth(4);
     chieeFit->SetLineColor(kBlue);
@@ -234,15 +260,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee25->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee25->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee25->SetStats(false);
+
     Xee25->Draw();
     background25->SetLineColor(kRed);
     background25->Draw("same");
-    auto * legend25 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend25 = new TLegend(0.75,0.75,.9,.9);
     legend25->SetHeader("Legend");
     legend25->AddEntry(Xee25,"Signal","l");
     legend25->AddEntry(background25,"Background","l");
     legend25->Draw("same");
-    TLine * l = new TLine(8.33,0,8.33,60);
+    TLine * l = new TLine(8.33,0,8.33,120);
     l->SetLineColor(kGreen);
     l->Draw("same");
     int xbins25 = Xee25->GetNbinsX();
@@ -271,15 +299,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee20->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee20->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee20->SetStats(false);
+
     Xee20->Draw();
     background20->SetLineColor(kRed);
     background20->Draw("same");
-    auto * legend20 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend20 = new TLegend(0.75,0.75,.9,.9);
     legend20->SetHeader("Legend");
     legend20->AddEntry(Xee20,"Signal","l");
     legend20->AddEntry(background20,"Background","l");
     legend20->Draw("same");
-    TLine * l2 = new TLine(6.66,0,6.66,60);
+    TLine * l2 = new TLine(6.66,0,6.66,120);
     l2->SetLineColor(kGreen);
     l2->Draw("same");
     
@@ -309,15 +339,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee15->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee15->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee15->SetStats(false);
+
     Xee15->Draw();
     background15->SetLineColor(kRed);
     background15->Draw("same");
-    auto * legend15 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend15 = new TLegend(0.75,0.75,.9,.9);
     legend15->SetHeader("Legend");
     legend15->AddEntry(Xee15,"Signal","l");
     legend15->AddEntry(background15,"Background","l");
     legend15->Draw("same");
-    TLine * l3 = new TLine(5,0,5,60);
+    TLine * l3 = new TLine(5,0,5,120);
     l3->SetLineColor(kGreen);
     l3->Draw("same");
     int xbins15 = Xee15->GetNbinsX();
@@ -346,15 +378,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee10->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee10->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee10->SetStats(false);
+
     Xee10->Draw();
     background10->SetLineColor(kRed);
     background10->Draw("same");
-    auto * legend10 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend10 = new TLegend(0.75,0.75,.9,.9);
     legend10->SetHeader("Legend");
     legend10->AddEntry(Xee10,"Signal","l");
     legend10->AddEntry(background10,"Background","l");
     legend10->Draw("same");
-    TLine * l4 = new TLine(3.33,0,3.33,60);
+    TLine * l4 = new TLine(3.33,0,3.33,120);
     l4->SetLineColor(kGreen);
     l4->Draw("same");
     int xbins10 = Xee10->GetNbinsX();
@@ -384,15 +418,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee5->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee5->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee5->SetStats(false);
+
     Xee5->Draw();
     background5->SetLineColor(kRed);
     background5->Draw("same");
-    auto * legend5 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend5 = new TLegend(0.75,0.75,.9,.9);
     legend5->SetHeader("Legend");
     legend5->AddEntry(Xee5,"Signal","l");
     legend5->AddEntry(background5,"Background","l");
     legend5->Draw("same");
-    TLine * l5 = new TLine(1.66,0,1.66,60);
+    TLine * l5 = new TLine(1.66,0,1.66,120);
     l5->SetLineColor(kGreen);
     l5->Draw("same");
     int xbins5 = Xee5->GetNbinsX();
@@ -421,15 +457,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     Xee1->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee1->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
+    Xee1->SetStats(false);
+
     Xee1->Draw();
     background1->SetLineColor(kRed);
     background1->Draw("same");
-    auto * legend1 = new TLegend(0.77,0.5,.97,0.65);
+    auto * legend1 = new TLegend(0.75,0.75,.9,.9);
     legend1->SetHeader("Legend");
     legend1->AddEntry(Xee1,"Signal","l");
     legend1->AddEntry(background1,"Background","l");
     legend1->Draw("same");
-    TLine * l6 = new TLine(.33,0,.33,60);
+    TLine * l6 = new TLine(.33,0,.33,120);
     l6->SetLineColor(kGreen);
     l6->Draw("same");
     int xbins1 = Xee1->GetNbinsX();
@@ -480,6 +518,12 @@ void eePIDandPurity() {
     background5->Write();
     Xee1->Write(); 
     background1->Write();
+    chi2D->Write();
+    chi2DCut->Write();
+    nSigmaRigidity1->Write();
+    nSigmaRigidity2->Write();
+    nSigmaRigidityCut1->Write();
+    nSigmaRigidityCut2->Write();
     
     
     

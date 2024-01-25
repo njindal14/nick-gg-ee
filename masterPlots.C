@@ -146,7 +146,7 @@ void masterPlots() {
 
 
     auto * mPt = new TH1F("mPt, PID, M_{ee} + TOF Cuts", "Parent Transverse Momentum (GeV/c)", 50, 0, .4);
-    auto * mMass = new TH1F("Parent Mass PID + TOF cuts, P_{T} < 0.15 GeV/c", "Parent Mass (GeV/c^{2})", 50, 0, 3);
+    auto * mMass = new TH1F("Parent Mass PID + TOF cuts, P_{T} < 0.2 GeV/c", "Parent Mass (GeV/c^{2})", 50, 0, 3);
     auto * mEta = new TH1F("mEta", "Parent #eta", 100, -1, 1);
 
     auto * cos4phivPt = new TH2F("Cos4#phivPt", "cos4#phi distribution vs P_{T}, 0.5 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
