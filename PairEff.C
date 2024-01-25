@@ -14,6 +14,7 @@ void PairEff(){
     TTreeReaderArray<short> MCIdx(myReader, "Tracks.mMcIndex");
     TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit");
     TTreeReaderArray<short> NHitsDedx(myReader, "Tracks.mNHitsDedx");
+    TTreeReaderArray<float> DCA(myReader, "Tracks.mDCA");
 
 
 
@@ -111,7 +112,7 @@ void PairEff(){
 
         rcpair = rcneg + rcpos;
         
-        if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20){
+        if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20 && DCA[0] < 1 && DCA[1] < 1){
 
             RcPtPair->Fill(rcpair.Pt());
             RcMassPair->Fill(rcpair.M());
