@@ -219,7 +219,7 @@ void TPCCheck() {
 
    
 
-    TFile file("tpc_check_plots.root", "RECREATE");
+    TFile file("output_root_files/tpc_check_plots.root", "RECREATE");
     STARpairPhiVsEta->Write();
     STARposPhiVsEta->Write();
     STARelPhiVsEta->Write();

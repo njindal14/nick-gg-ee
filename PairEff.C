@@ -12,7 +12,7 @@ void PairEff(){
     TTreeReaderArray<float> MCPhiVals(myReader, "McTracks.mPhi");
 
     TTreeReaderArray<short> MCIdx(myReader, "Tracks.mMcIndex");
-    TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit");
+    TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit"); 
     TTreeReaderArray<short> NHitsDedx(myReader, "Tracks.mNHitsDedx");
     TTreeReaderArray<float> DCA(myReader, "Tracks.mDCA");
 

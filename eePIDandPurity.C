@@ -501,7 +501,7 @@ void eePIDandPurity() {
     cout << "AVERAGE SLICE PURITY INTEGRAL METHOD: " << overallPurity*100 << "%\n";
 
     
-    TFile file("PurityAndTOFInfo.root", "RECREATE");
+    TFile file("output_root_files/PurityAndTOFInfo.root", "RECREATE");
     mdTof->Write();
     mdTofexp->Write(); 
     mddTof->Write(); 

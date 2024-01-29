@@ -6,8 +6,8 @@ double me2 = pow(0.00051,2);
 int ican = 0;
 void makeCanvas() {
     TCanvas * can = new TCanvas( TString::Format( "can%d", ican++ ), "", 900, 600 );
-    can->SetTopMargin(0.04);
-    can->SetRightMargin(0.3);
+    can->SetTopMargin(0.08);
+    can->SetRightMargin(0.1);
 }
 
 double ZDCfitfunc(double *x, double *par){
@@ -161,6 +161,8 @@ fitIntegral = g1->Integral(0,2000) + g2->Integral(0,2000) + g3->Integral(0, cuto
 //fitIntegral = ZDCfunc->Integral(0,10000);
 std::cout << "fit integral: " << fitIntegral;
 
+gPad->Print("note_plots/ZDCs_plots/plot_ZDCEast.png");
+
 
 
 
@@ -233,14 +235,19 @@ g5w->SetLineColor(kGray);
 g5w->SetLineWidth(4);
 g5w->Draw("same");
 
+gPad->Print("note_plots/ZDCs_plots/plot_ZDCWest.png");
+
+
 makeCanvas();
 ZDC2D->GetXaxis()->SetTitle("ADC ZDC East");
 ZDC2D->GetYaxis()->SetTitle("ADC ZDC West");
+ZDC2D->SetStats(false);
 ZDC2D->Draw("colz");
+gPad->Print("note_plots/ZDCs_plots/plot_ZDC2D.png");
 
 
 
-TFile file("ZDCFits.root", "RECREATE");
+TFile file("output_root_files/ZDCFits.root", "RECREATE");
 mZDCEast->Write();
 mZDCWest->Write();   
 ZDC2D->Write();
