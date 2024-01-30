@@ -1,4 +1,28 @@
-
+#include <iostream>
+int ican2 = 0;
+void makeCanvas()  {
+    TCanvas * can = new TCanvas( TString::Format( "can%d", ican2++ ), "", 900, 600);
+    can->SetTopMargin(0.08);
+    can->SetRightMargin(0.15);
+}
+double calc_Phi( TLorentzVector lv1, TLorentzVector lv2) {
+    TLorentzVector lvPlus = lv1 + lv2;
+    lv1.Boost(-lvPlus.BoostVector());
+    lv2.Boost(-lvPlus.BoostVector());
+    TLorentzVector lvMinus = lv1 - lv2;
+    double Px = lvPlus.Px();
+    double Py = lvPlus.Py();
+    double Qx = lvMinus.Px();
+    double Qy = lvMinus.Py();
+    double PcrossQ = (Px*Qy) - (Py*Qx);
+    double cosphi = (Px*Qx + Py*Qy) / (lvPlus.Pt()*lvMinus.Pt());
+    double PairPhi = acos(cosphi);
+    if ( PcrossQ > 0 ){
+        return PairPhi - 3.141592;
+    } else {
+        return 3.141592 - PairPhi;
+    }
+}
 
 
 void PairEff(){
@@ -50,6 +74,13 @@ void PairEff(){
     auto RCPosnhitsdedxvpT = new TH2D("RCPosnhitsdedxvpT", "RCPosnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
     auto RCNegnhitsdedxvpT = new TH2D("RCNegnhitsdedxvpT", "RCNegnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
 
+    auto cos2phivPtMC = new TH2F("Cos2#phivPtMC", "cos2#phi Moments vs P_{T} MC Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 15, 0, 0.2);
+    auto cos4phivPtMC = new TH2F("Cos4#phivPtMC", "cos4#phi Moments vs P_{T} MC Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 15, 0, 0.2);
+
+    auto cos2phivPtReco = new TH2F("Cos2#phivPtReco", "cos2#phi Moments vs P_{T} Reco Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 15, 0, 0.2);
+    auto cos4phivPtReco = new TH2F("Cos4#phivPtReco", "cos4#phi Moments vs P_{T} Reco Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 15, 0, 0.2);
+
+
 
     while(myReader.Next()) {
         
@@ -90,6 +121,10 @@ void PairEff(){
         McPosEtaVsPhi->Fill(mcpos.Eta(), mcpos.Phi());
         McNegEtaVsPhi->Fill(mcneg.Eta(), mcneg.Phi());
 
+        double phival = calc_Phi(mcpos, mcneg);
+        cos2phivPtMC->Fill(2*cos(2*phival), mcpair.Pt());
+        cos4phivPtMC->Fill(2*cos(4*phival), mcpair.Pt());
+
 
 
         short idxPos = -1, idxNeg = -1;
@@ -128,6 +163,9 @@ void PairEff(){
             RCPosnhitsdedxvpT->Fill(NHitsDedx[0], rcpos.Pt());
             RCNegnhitsdedxvpT->Fill(NHitsDedx[1], rcneg.Pt());
 
+            cos2phivPtReco->Fill(2*cos(2*phival), rcpair.Pt());
+            cos4phivPtReco->Fill(2*cos(4*phival), rcpair.Pt()); 
+
         }
         
     }
@@ -162,8 +200,36 @@ void PairEff(){
     RcRapidityPair->SetLineColor(kRed);
     RcRapidityPair->Draw("same");
 
+    makeCanvas();
+    auto m2Ptcos2phimomentsMC = cos2phivPtMC->ProfileY("m2Ptcos2phimomentsMC",1, -1);
+    m2Ptcos2phimomentsMC->SetLineColor(kBlack);
+    m2Ptcos2phimomentsMC->GetYaxis()->SetTitle("2<cos(2#phi)>");
+    m2Ptcos2phimomentsMC->Draw("PE");
+    //gPad->Print("slightEff/plot_Starsimcos2phimomentsMC.png");
 
-    TFile file("simulation_plots.root", "RECREATE");
+    makeCanvas();
+    auto m2Ptcos4phimomentsMC = cos4phivPtMC->ProfileY("m2Ptcos4phimomentsMC",1, -1);
+    m2Ptcos4phimomentsMC->SetLineColor(kBlack);
+    m2Ptcos4phimomentsMC->GetYaxis()->SetTitle("2<cos(4#phi)>");
+    m2Ptcos4phimomentsMC->Draw("PE");
+    //gPad->Print("slightEff/plot_Starsimcos4phimomentsMC.png");
+
+    makeCanvas();
+    auto m2Ptcos2phimomentsReco = cos2phivPtReco->ProfileY("m2Ptcos2phimomentsReco",1, -1);
+    m2Ptcos2phimomentsReco->SetLineColor(kBlack);
+    m2Ptcos2phimomentsReco->GetYaxis()->SetTitle("2<cos(2#phi)>");
+    m2Ptcos2phimomentsReco->Draw("PE");
+    //gPad->Print("slightEff/plot_Starsimcos2phimomentsReco.png");
+
+    makeCanvas();
+    auto m2Ptcos4phimomentsReco = cos4phivPtReco->ProfileY("m2Ptcos4phimomentsReco",1, -1);
+    m2Ptcos4phimomentsReco->SetLineColor(kBlack);
+    m2Ptcos4phimomentsReco->GetYaxis()->SetTitle("2<cos(4#phi)>");
+    m2Ptcos4phimomentsReco->Draw("PE");
+    //gPad->Print("slightEff/plot_Starsimcos4phimomentsReco.png");
+
+
+    TFile file("output_root_files/simulation_plots.root", "RECREATE");
     McPtPair->Write();
     RcPtPair->Write();   
     McMassPair->Write(); 
@@ -185,6 +251,11 @@ void PairEff(){
     RCNegnhitsfitvpT->Write();
     RCPosnhitsdedxvpT->Write();
     RCNegnhitsdedxvpT->Write();
+
+    m2Ptcos2phimomentsMC->Write();
+    m2Ptcos4phimomentsMC->Write();
+    m2Ptcos2phimomentsReco->Write();
+    m2Ptcos4phimomentsReco->Write();
 
 
 

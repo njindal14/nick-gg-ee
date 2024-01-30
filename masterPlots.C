@@ -172,15 +172,15 @@ void masterPlots() {
 
 
 
-    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/Code/sim_plots.root");
+    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
 
     TH1F * McPt = (TH1F*)sim_output->Get("McPtPair");
     TH1F * McMass = (TH1F*)sim_output->Get("McMassPair");
-    TH1F * McEta = (TH1F*)sim_output->Get("McEtaPair");
+    TH1F * McRapidity = (TH1F*)sim_output->Get("McRapidityPair");
 
-    TH1F * RecoPt = (TH1F*)sim_output->Get("mPtPairReco");
-    TH1F * RecoMass = (TH1F*)sim_output->Get("mMassPairReco");
-    TH1F * RecoEta = (TH1F*)sim_output->Get("mEtaPairReco");
+    TH1F * RcPt = (TH1F*)sim_output->Get("RcPtPair");
+    TH1F * RcMass = (TH1F*)sim_output->Get("RcMassPair");
+    TH1F * RcRapidity = (TH1F*)sim_output->Get("RcRapidityPair");
 
     TH1F * mc2phi = (TH1F*)sim_output->Get("m2Ptcos2phimomentsMC");
     TH1F * mc4phi = (TH1F*)sim_output->Get("m2Ptcos4phimomentsMC");
@@ -282,18 +282,18 @@ void masterPlots() {
     McPt->SetLineColor(kBlack);
     McPt->Scale(1/McPt->Integral(McPt->FindBin(0.04), McPt->FindBin(.1),"Width"));
     McPt->Draw("PE;same");
-    RecoPt->SetLineColor(kGreen);
-    RecoPt->Scale(1/RecoPt->Integral(RecoPt->FindBin(0.04), RecoPt->FindBin(.1),"Width"));
-    RecoPt->Draw("PE;same");
+    RcPt->SetLineColor(kGreen);
+    RcPt->Scale(1/RcPt->Integral(RcPt->FindBin(0.04), RcPt->FindBin(.1),"Width"));
+    RcPt->Draw("PE;same");
     auto ptLegend = new TLegend(0.7,0.6,1,0.9);
     ptLegend->SetHeader("Legend","C"); // option "C" allows to center the header
     ptLegend->AddEntry(mPt,"Data");
     ptLegend->AddEntry(slightPt, "slight.out pT");
     ptLegend->AddEntry(McPt, "MC pT");
-    ptLegend->AddEntry(RecoPt, "Reco pT (binned in MC)");
+    ptLegend->AddEntry(RcPt, "Reco pT (binned in MC)");
     ptLegend->SetTextSize(.03);
     ptLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pairpT.png");
+    //gPad->Print("masterPlots/plot_pairpT.png");
 
 
     makeCanvas2();
@@ -311,18 +311,18 @@ void masterPlots() {
     McMass->SetLineColor(kBlack);
     McMass->Scale(1/McMass->Integral(McMass->FindBin(0.5), McMass->FindBin(1),"Width"));
     McMass->Draw("PE;same");
-    RecoMass->SetLineColor(kGreen);
-    RecoMass->Scale(1/RecoMass->Integral(RecoMass->FindBin(0.5), RecoMass->FindBin(1),"Width"));
-    RecoMass->Draw("PE;same");
+    RcMass->SetLineColor(kGreen);
+    RcMass->Scale(1/RcMass->Integral(RcMass->FindBin(0.5), RcMass->FindBin(1),"Width"));
+    RcMass->Draw("PE;same");
     auto massLegend = new TLegend(0.7,0.6,1,0.9);
     massLegend->SetHeader("Legend","C"); // option "C" allows to center the header
     massLegend->AddEntry(mMass,"Data");
     massLegend->AddEntry(slightMass, "slight.out Mass (1M events)");
     massLegend->AddEntry(McMass, "MC Mass");
-    massLegend->AddEntry(RecoMass, "Reco Mass (binned in MC)");
+    massLegend->AddEntry(RcMass, "Reco Mass (binned in MC)");
     massLegend->SetTextSize(.03);
     massLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pairMass.png");
+    //gPad->Print("masterPlots/plot_pairMass.png");
 
 
 
@@ -338,21 +338,21 @@ void masterPlots() {
     slightEta->SetLineColor(kRed);
     slightEta->Scale(1/slightEta->Integral(slightEta->FindBin(-1), slightEta->FindBin(1),"Width"));
     slightEta->Draw("PE;same");
-    McEta->SetLineColor(kBlack);
-    McEta->Scale(1/McEta->Integral(McEta->FindBin(-1), McEta->FindBin(1),"Width"));
-    McEta->Draw("PE;same");
-    RecoEta->SetLineColor(kGreen);
-    RecoEta->Scale(1/RecoEta->Integral(RecoEta->FindBin(-1), RecoEta->FindBin(1),"Width"));
-    RecoEta->Draw("PE;same");
+    McRapidity->SetLineColor(kBlack);
+    McRapidity->Scale(1/McRapidity->Integral(McRapidity->FindBin(-1), McRapidity->FindBin(1),"Width"));
+    McRapidity->Draw("PE;same");
+    RcRapidity->SetLineColor(kGreen);
+    RcRapidity->Scale(1/RcRapidity->Integral(RcRapidity->FindBin(-1), RcRapidity->FindBin(1),"Width"));
+    RcRapidity->Draw("PE;same");
     auto etaLegend = new TLegend(0.7,0.6,1,0.9);
     etaLegend->SetHeader("Legend","C"); // option "C" allows to center the header
     etaLegend->AddEntry(mEta,"Data");
     etaLegend->AddEntry(slightEta, "slight.out Rapidity (1M events)");
-    etaLegend->AddEntry(McEta, "MC Rapidity");
-    etaLegend->AddEntry(RecoEta, "Reco Rapidity (binned in MC)");
+    etaLegend->AddEntry(McRapidity, "MC Rapidity");
+    etaLegend->AddEntry(RcRapidity, "Reco Rapidity (binned in MC)");
     etaLegend->SetTextSize(.03);
     etaLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pairRapidity.png");
+    //gPad->Print("masterPlots/plot_pairRapidity.png");
 
 
 
@@ -397,7 +397,7 @@ void masterPlots() {
     twophiLegend->AddEntry(QED2phi, "QED Theory Curve");
     twophiLegend->SetTextSize(.03);
     twophiLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pair2phimoments.png");
+    //gPad->Print("masterPlots/plot_pair2phimoments.png");
 
 
 
@@ -431,16 +431,7 @@ void masterPlots() {
     fourphiLegend->AddEntry(QED4phi, "QED Theory Curve");
     fourphiLegend->SetTextSize(.03);
     fourphiLegend->Draw("same");
-    gPad->Print("masterPlots/plot_pair4phimoments.png");
-
-    
-    makeCanvas2();
-    std::cout << "MADE CANVAS";
-    TH1F * pteffBetter = (TH1F*)McPt->Clone();
-    pteffBetter->Divide(RecoPt);
-    pteffBetter->SetTitle("pT Pair Efficiency; pT (GeV/c); Efficiency");
-    pteffBetter->Draw("PE");
-    gPad->Print("masterPlots/plot_pTEff.png");
+    //gPad->Print("masterPlots/plot_pair4phimoments.png");
 
 
 

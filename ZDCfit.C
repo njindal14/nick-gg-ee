@@ -30,7 +30,9 @@ void ZDCfit(){
 
     auto * mZDCEast = new TH1F("mZDCEast, ee Events (PID + TOF + Mass Cut)", "ZDCEast", 400, 0, 1200);
     auto * mZDCWest = new TH1F("mZDCWest, ee Events (PID + TOF + Mass Cut)", "ZDCWest", 400, 0, 1200);
-    auto * ZDC2D = new TH2F("ZDC Heat Map", "ZDC Heat Map", 100, 0, 1200, 100, 0, 1200);
+    auto * ZDC2Dee = new TH2F("ZDC Heat Map ee", "ZDC Heat Map ee", 100, 0, 1200, 100, 0, 1200);
+    auto * ZDC2DAll = new TH2F("ZDC Heat Map All", "ZDC Heat Map All", 100, 0, 1200, 100, 0, 1200);
+
     
     auto *ZDCfunc = new TF1("fit", ZDCfitfunc, 30, 1200.0, 11);
     ZDCfunc->SetParameters(100000.0, 50.0, 15.0, 40000.0, 110.0, 30.0, 15000.0, 200.0, 30.0, 0.1, 5000.0);
@@ -79,11 +81,12 @@ void ZDCfit(){
                     if(lv.M() < 0.8 && lv.M() > 0.5){
                         mZDCWest->Fill( pair->mZDCWest );
                         mZDCEast->Fill( pair->mZDCEast );
-                        ZDC2D->Fill(pair->mZDCEast, pair->mZDCWest);
+                        ZDC2Dee->Fill(pair->mZDCEast, pair->mZDCWest);
                     }
                 }
             }
-        }       
+        } 
+        ZDC2DAll->Fill(pair->mZDCEast, pair->mZDCWest);      
     }
 
  //plot and fit ZDC's
@@ -239,16 +242,27 @@ gPad->Print("note_plots/ZDCs_plots/plot_ZDCWest.png");
 
 
 makeCanvas();
-ZDC2D->GetXaxis()->SetTitle("ADC ZDC East");
-ZDC2D->GetYaxis()->SetTitle("ADC ZDC West");
-ZDC2D->SetStats(false);
-ZDC2D->Draw("colz");
-gPad->Print("note_plots/ZDCs_plots/plot_ZDC2D.png");
+ZDC2Dee->GetXaxis()->SetTitle("ADC ZDC East");
+ZDC2Dee->GetYaxis()->SetTitle("ADC ZDC West");
+ZDC2Dee->SetStats(false);
+ZDC2Dee->Draw("colz");
+gPad->SetLogz();
+gPad->Print("note_plots/ZDCs_plots/plot_ZDC2Dee.png");
+
+makeCanvas();
+ZDC2DAll->GetXaxis()->SetTitle("ADC ZDC East");
+ZDC2DAll->GetYaxis()->SetTitle("ADC ZDC West");
+ZDC2DAll->SetStats(false);
+ZDC2DAll->Draw("colz");
+gPad->SetLogz();
+gPad->Print("note_plots/ZDCs_plots/plot_ZDC2DAll.png");
+
 
 
 
 TFile file("output_root_files/ZDCFits.root", "RECREATE");
 mZDCEast->Write();
 mZDCWest->Write();   
-ZDC2D->Write();
+ZDC2Dee->Write();
+ZDC2DAll->Write();
 }
