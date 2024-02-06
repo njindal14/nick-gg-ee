@@ -80,6 +80,9 @@ void eventSelection() {
     hist_RefMult->Write();
     hist_gRefMult->Write();
 
+    double lumi_fraction = hist_vz->Integral(hist_vz->FindBin(-100), hist_vz->FindBin(100))/hist_vz->Integral();
+    std::cout << "lumi fraction: " << lumi_fraction << "\n";
+
 }
 
 

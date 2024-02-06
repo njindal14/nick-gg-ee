@@ -57,6 +57,7 @@ void crossSectionsUU() {
         Float_t ddTofVal = dTofVal - dTofexpVal;
 
         if(lv1.Pt() < 0.2 || lv2.Pt() < 0.2) continue;
+        
         if( fabs(lv1.Eta()) > 1 || fabs(lv2.Eta()) > 1 || fabs(lv.Rapidity()) > 1) continue;
 
         if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
@@ -134,7 +135,7 @@ void crossSectionsUU() {
     
     //global correction factors (not bin-by-bin)
     double luminosity = 274170;
-    double lumi_fraction = .696; //subject to change
+    double lumi_fraction = .793; //confirmed for my analysis
     double bbc_eff = 0.683; //taken from JDB analysis
     double purity_corrections = 0.975*0.996; //subject to change
     double tpc_eff = 1*1; //100% for each track -- no missing sectors -- this may change after looking at simulation
@@ -143,6 +144,7 @@ void crossSectionsUU() {
 
     double total_eff = luminosity*lumi_fraction*bbc_eff*purity_corrections*vertex_eff*XnXn_correction;
 
+    //scale and draw cross sections
     mMass->Scale(1/(total_eff*mMass->GetBinWidth(1)));
     mPt->Scale(1/(total_eff*mPt->GetBinWidth(1)));
     mPt2->Scale(1/(total_eff*mPt2->GetBinWidth(1)));
@@ -153,25 +155,36 @@ void crossSectionsUU() {
     mMass->GetXaxis()->SetTitle("M_{ee} (GeV/c^{2})");
     mMass->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dM} (b)");
     mMass->Draw("PE");
+    gPad->Print("note_plots/results_plots/UU_MassXSec.png");
 
     makeCanvas();
     mPt->GetXaxis()->SetTitle("pT_{ee} (GeV/c)");
     mPt->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (b)");
     mPt->Draw("PE");
+    gPad->Print("note_plots/results_plots/UU_PtXSec.png");
 
     makeCanvas();
     gPad->SetLogy();
     mPt2->GetXaxis()->SetTitle("pT_{ee}^{2} (GeV/c)^{2}");
     mPt2->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (b)");
     mPt2->Draw("PE");
+    gPad->Print("note_plots/results_plots/UU_Pt2XSec.png");
+
 
     makeCanvas();
     mY->GetXaxis()->SetTitle("y_{ee}");
     mY->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dy} (b)");
     gPad->SetLogy();
     mY->Draw("PE");
+    gPad->Print("note_plots/results_plots/UU_YXSec.png");
 
-    makeCanvas();
-    mass_eff->Draw("PE");
+
+    //write to root file
+    TFile file("output_root_files/crossSectionsUU.root", "RECREATE");
+    mMass->Write();
+    mPt->Write();
+    mPt2->Write();
+    mY->Write();
+
 
 }
