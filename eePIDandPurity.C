@@ -55,29 +55,30 @@ void eePIDandPurity() {
     auto * mdTof = new TH1F("#DeltaTOF Hist", "#DeltaTOF", 1000, -15, 15);
     auto * mdTofexp = new TH1F("#DeltaTOFExp Hist", "#DeltaTOFexp", 1000, -15, 15);
     auto * mddTof = new TH1F("#Delta#DeltaTOF Hist", "#Delta#DeltaTOF", 1000, -6, 6);
-    auto * Xee = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2} Distribution", 100, 0, 30);
-    auto * Xee25 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
-    auto * background25 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
-    auto * Xee20 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
-    auto * background20 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
-    auto * Xee15 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
-    auto * background15 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
-    auto * Xee10 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
-    auto * background10 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
-    auto * Xee5 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
-    auto * background5 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
-    auto * Xee1 = new TH1F("#chi_{ee}^{2}", "#chi_{ee}^{2}, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
-    auto * background1 = new TH1F("Background", "#chi_{ee}^{2} background, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
+    auto * Xee = new TH1F("#chi_{ee}^{2}", "", 100, 0, 30);
+    auto * Xee25 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 25", 200, 0, 15);
+    auto * background25 = new TH1F("Background", "#chi_{ee}^{2} background 25, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
+    auto * Xee20 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 20", 200, 0, 15);
+    auto * background20 = new TH1F("Background", "#chi_{ee}^{2} background 20, #chi_{#pi#pi}^{2} > 20", 200, 0, 15);
+    auto * Xee15 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 15", 200, 0, 15);
+    auto * background15 = new TH1F("Background", "#chi_{ee}^{2} background 15, #chi_{#pi#pi}^{2} > 15", 200, 0, 15);
+    auto * Xee10 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 10", 200, 0, 15);
+    auto * background10 = new TH1F("Background", "#chi_{ee}^{2} background 10, #chi_{#pi#pi}^{2} > 10", 200, 0, 15);
+    auto * Xee5 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 5", 200, 0, 15);
+    auto * background5 = new TH1F("Background", "#chi_{ee}^{2} background 5, #chi_{#pi#pi}^{2} > 5", 200, 0, 15);
+    auto * Xee1 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 1", 200, 0, 15);
+    auto * background1 = new TH1F("Background", "#chi_{ee}^{2} background 1, #chi_{#pi#pi}^{2} > 1", 200, 0, 15);
     
-    auto * chi2D = new TH2F("chi2D", "#chi^{2} Before", 200, 0, 200, 200, 0, 160);
-    auto * chi2DCut = new TH2F("chi2DCut", "#chi^{2} After", 200, 0, 200, 200, 0, 160);
+    auto * chi2D = new TH2F("chi2D", "", 200, 0, 200, 200, 0, 160);
+    auto * chi2DCut = new TH2F("chi2DCut", "", 200, 0, 200, 200, 0, 160);
 
+    auto * nSigmaRigidity1 = new TH2F("Rigidity", "", 1000, -2, 2, 1000, -10, 10);
+    auto * nSigmaRigidity2 = new TH2F("Rigidity2", "", 1000, -2, 2, 1000, -10, 10);
 
-    auto * nSigmaRigidity1 = new TH2F("Rigidity", "Rigidity", 1000, -2, 2, 1000, -10, 10);
-    auto * nSigmaRigidity2 = new TH2F("Rigidity2", "Rigidity", 1000, -2, 2, 1000, -10, 10);
+    auto * nSigmaRigidityCut1 = new TH2F("Rigidity with #Delta#Delta TOF Cut", "", 1000, -2, 2, 1000, -10, 10);
+    auto * nSigmaRigidityCut2 = new TH2F("Rigidity2 with #Delta#Delta TOF Cut", "", 1000, -2, 2, 1000, -10, 10);
 
-    auto * nSigmaRigidityCut1 = new TH2F("Rigidity with #Delta#Delta TOF Cut", "Rigidity with #Delta#Delta TOF Cut", 1000, -2, 2, 1000, -10, 10);
-    auto * nSigmaRigidityCut2 = new TH2F("Rigidity2 with #Delta#Delta TOF Cut", "Rigidity with #Delta#Delta TOF Cut", 1000, -2, 2, 1000, -10, 10);
+    auto * massvpt = new TH2F("massvpt", "", 100, 0, 3.5, 300, 0, 1.5);
 
     auto * ddTofFit = new TF1("fit", ddToffit, -2, 2, 7);
     ddTofFit->SetParameters(100000.0, 0, 0.2, 50000.0, 0, 0.5, 10);
@@ -115,20 +116,22 @@ void eePIDandPurity() {
         Float_t dTofexpVal = pair->d1_mLength/c * sqrt(1 + me2/p1_2) - pair->d2_mLength/c * sqrt(1 + me2/p2_2);
         Float_t ddTofVal = dTofVal - dTofexpVal;
 
+        chi2D->Fill(chipipi, chiee);
+        nSigmaRigidity1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
+        nSigmaRigidity2->Fill(-lv2.P(), pair->d2_mNSigmaElectron);
+
+
         if( fabs(mVertexZVal) < 100 &&  mGRefMultVal <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
         pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 ) {
-
-            chi2D->Fill(chipipi, chiee);
-            nSigmaRigidity1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
-            nSigmaRigidity2->Fill(-lv2.P(), pair->d2_mNSigmaElectron);
 
             if(fabs(ddTofVal < 0.4)){   
 
                 if(ddTofVal == 0) continue;
+                if(chiee < 10) massvpt->Fill(lv.M(), lv.Pt());
 
                 chi2DCut->Fill(chipipi, chiee);
                 nSigmaRigidityCut1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
-                nSigmaRigidityCut2->Fill(lv2.P(), pair->d2_mNSigmaElectron);
+                nSigmaRigidityCut2->Fill(-lv2.P(), pair->d2_mNSigmaElectron);
 
                 if(chipipi > 30) Xee->Fill(chiee);
 
@@ -206,8 +209,9 @@ void eePIDandPurity() {
     auto * legend = new TLegend(0.8,0.75,1.,.9);
     legend->SetHeader("Legend");
     legend->AddEntry(mdTof,"#DeltaTOF","l");
-    legend->AddEntry(mdTofexp,"#DeltaTOFexp","l");
+    legend->AddEntry(mdTofexp,"#DeltaTOF_{exp}","l");
     legend->Draw("same");
+    gPad->Print("note_plots/purity_plots/Run12dtof.png");
 
     
     makeCanvas();
@@ -225,6 +229,8 @@ void eePIDandPurity() {
     double ddtofIntegral = mddTof->IntegralAndError(-34,34,errorddtof,"");
     std::cout << "Integral of ddtof inside cut: " << ddtofIntegral;
     std::cout << "Error of integral: " << errorddtof;   
+    gPad->Print("note_plots/purity_plots/Run12ddtofWithFit.png");
+
 
 
     
@@ -252,7 +258,7 @@ void eePIDandPurity() {
     }
     double purity = totsignal/ (totsignal+totbackground);
     cout << "Purity for chipipi > 30: " << purity*100 << "%\n";
-    //gPad->Print("plots/chi2eePlot.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_fit_30.png");
 
     
     makeCanvas();
@@ -290,7 +296,7 @@ void eePIDandPurity() {
     double bkg25 = background25->Integral(background25->FindFixBin(0), background25->FindFixBin(8.33), "");
     double purityIntegral25 = sigint25/(sigint25+bkg25);
     cout << "Purity 25 Integral Method: " << purityIntegral25;
-    //gPad->Print("plots/plot_chi25.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_25.png");
 
 
     
@@ -330,7 +336,7 @@ void eePIDandPurity() {
     double bkg20 = background20->Integral(background20->FindFixBin(0), background20->FindFixBin(6.66), "");
     double purityIntegral20 = sigint20/(sigint20+bkg20);
     cout << "Purity 20 Integral Method: " << purityIntegral20;
-    //gPad->Print("plots/plot_chi20.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_20.png");
 
 
     
@@ -369,7 +375,7 @@ void eePIDandPurity() {
     double bkg15 = background15->Integral(background15->FindFixBin(0), background15->FindFixBin(5), "");
     double purityIntegral15 = sigint15/(sigint15+bkg15);
     cout << "Purity 15 Integral Method: " << purityIntegral15;
-    //gPad->Print("plots/plot_chi15.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_15.png");
 
 
     
@@ -408,7 +414,7 @@ void eePIDandPurity() {
     double bkg10 = background10->Integral(background10->FindFixBin(0), background10->FindFixBin(3.33), "");
     double purityIntegral10 = sigint10/(sigint10+bkg10);
     cout << "Purity 10 Integral Method: " << purityIntegral10;
-    //gPad->Print("plots/plot_chi10.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_10.png");
 
 
 
@@ -448,7 +454,7 @@ void eePIDandPurity() {
     double bkg5 = background5->Integral(background5->FindFixBin(0), background5->FindFixBin(1.66), "");
     double purityIntegral5 = sigint5/(sigint5+bkg5);
     cout << "Purity 5 Integral Method: " << purityIntegral5;
-    //gPad->Print("plots/plot_chi5.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_5.png");
 
 
     
@@ -487,8 +493,7 @@ void eePIDandPurity() {
     double bkg1 = background1->Integral(background1->FindFixBin(0), background1->FindFixBin(.33), "");
     double purityIntegral1 = sigint1/(sigint1+bkg1);
     cout << "Purity 1 Integral Method: " << purityIntegral1;
-
-    //gPad->Print("plots/plot_chi1.png");
+    gPad->Print("note_plots/purity_plots/Run12_dedx_slice_1.png");
 
     double overallPurity = 0;
     overallPurity += purity1 + purity10 + purity15 + purity5 + purity20 + purity25;
@@ -500,7 +505,70 @@ void eePIDandPurity() {
     overallPurityIntegral/=6;
     cout << "AVERAGE SLICE PURITY INTEGRAL METHOD: " << overallPurity*100 << "%\n";
 
-    
+
+    makeCanvas();
+    gPad->SetLogz();
+    chi2D->SetContour(100);
+    chi2D->GetXaxis()->SetTitle("#chi_{#pi#pi}^{2}");
+    chi2D->GetYaxis()->SetTitle("#chi_{ee}^{2}");
+    chi2D->Draw("colz");
+    chi2D->SetStats(false);
+    gPad->Print("note_plots/purity_plots/Run12dedx_before_tof.png");
+
+    makeCanvas();
+    gPad->SetLogz();
+    chi2DCut->SetContour(100);
+    chi2DCut->GetXaxis()->SetTitle("#chi_{#pi#pi}^{2}");
+    chi2DCut->GetYaxis()->SetTitle("#chi_{ee}^{2}");
+    chi2DCut->Draw("colz");
+    chi2DCut->SetStats(false);
+    TLine * diag = new TLine(0, 0, 30, 10);
+    TLine * flat = new TLine(30, 10, 200, 10);
+    diag->SetLineColor(kRed);
+    flat->SetLineColor(kRed);
+    diag->Draw("same");
+    flat->Draw("same");
+    gPad->Print("note_plots/purity_plots/Run12dedx_after_tofWithLine.png");
+
+
+    makeCanvas();
+    gPad->SetLogz();
+    nSigmaRigidity1->SetContour(100);
+    nSigmaRigidity1->GetXaxis()->SetTitle("q*p");
+    nSigmaRigidity1->GetYaxis()->SetTitle("n#sigma_{e}1");
+    nSigmaRigidity1->Draw("colz");
+    nSigmaRigidity2->Draw("colz; same");
+    nSigmaRigidity1->SetStats(false);
+    gPad->Print("note_plots/purity_plots/Run12rigidity_before_tof.png");
+
+
+    makeCanvas();
+    gPad->SetLogz();
+    nSigmaRigidityCut1->SetContour(100);
+    nSigmaRigidityCut1->GetXaxis()->SetTitle("q*p");
+    nSigmaRigidityCut1->GetYaxis()->SetTitle("n#sigma_{e}1");
+    nSigmaRigidityCut1->Draw("colz");
+    nSigmaRigidityCut2->Draw("colz; same");
+    nSigmaRigidityCut1->SetStats(false);
+    gPad->Print("note_plots/purity_plots/Run12rigidity_after_tof.png");
+
+    makeCanvas();
+    gPad->SetLogz();
+    massvpt->SetContour(100);
+    massvpt->GetXaxis()->SetTitle("Invariant Mass (GeV/c^{2})");
+    massvpt->GetYaxis()->SetTitle("Pair pT (GeV/c)");
+    massvpt->Draw("colz");
+    massvpt->SetStats(false);
+    gPad->Print("note_plots/purity_plots/Run12_massvpt.png");
+
+    /*TH1F * chieeProj = (TH1F*)chi2DCut->ProjectionY("#chi_{ee}^{2} projection", chi2DCut->GetXaxis()->FindBin(30), -1);
+    chieeProj->SetLineColor(kGreen);
+    chieeProj->Draw("PE");
+    chieeProj->GetXaxis()->SetRangeUser(0,30);
+    gPad->SetLogy();*/
+
+
+  
     TFile file("output_root_files/PurityAndTOFInfo.root", "RECREATE");
     mdTof->Write();
     mdTofexp->Write(); 
@@ -524,6 +592,7 @@ void eePIDandPurity() {
     nSigmaRigidity2->Write();
     nSigmaRigidityCut1->Write();
     nSigmaRigidityCut2->Write();
+    massvpt->Write();
     
     
     

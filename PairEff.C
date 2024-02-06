@@ -49,6 +49,10 @@ void PairEff(){
     auto McPtPair = new TH1F("McPtPair", "McPtPair", 50, 0, 0.4);
     auto RcPtPair = new TH1F("RcPtPair", "RcPtPair", 50, 0, 0.4);
 
+    auto McPt2Pair = new TH1F("McPt2Pair", "McPt2Pair", 50, 0, 0.02);
+    auto RcPt2Pair = new TH1F("RcPt2Pair", "RcPt2Pair", 50, 0, 0.02);
+
+
     auto McMassPair = new TH1F("McMassPair", "McMassPair", 50, 0, 2);
     auto RcMassPair = new TH1F("RcMassPair", "RcMassPair", 50, 0, 2);
 
@@ -114,6 +118,7 @@ void PairEff(){
 
         mcpair = mcpos + mcneg;
         McPtPair->Fill( mcpair.Pt() );
+        McPt2Pair->Fill(mcpair.Pt()*mcpair.Pt());
         McMassPair->Fill(mcpair.M());
         McRapidityPair->Fill(mcpair.Rapidity());
 
@@ -150,6 +155,7 @@ void PairEff(){
         if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20 && DCA[0] < 1 && DCA[1] < 1){
 
             RcPtPair->Fill(rcpair.Pt());
+            RcPt2Pair->Fill(rcpair.Pt()*rcpair.Pt());
             RcMassPair->Fill(rcpair.M());
             RcRapidityPair->Fill(rcpair.Rapidity());
         
@@ -171,34 +177,46 @@ void PairEff(){
     }
 
 
+   
+    makeCanvas();    
     McPtPair->Draw();
     RcPtPair->SetLineColor(kRed);
     RcPtPair->Draw("same");
 
-    TCanvas *c2 = new TCanvas("c2");
+    makeCanvas();    
     TEfficiency * hEff = new TEfficiency(* RcPtPair, * McPtPair);
     hEff->SetTitle("pT Pair Efficiency");
     hEff->Draw("PE");
 
-    TCanvas * c3 = new TCanvas("c3");
+    makeCanvas();    
     TEfficiency * mEff = new TEfficiency(* RcMassPair, * McMassPair);
     mEff->SetTitle("Pair Invariant Mass Efficiency");
     mEff->Draw("PE");
 
-    TCanvas * c4 = new TCanvas("c4");
+    makeCanvas();    
     McMassPair->Draw();
     RcMassPair->SetLineColor(kRed);
     RcMassPair->Draw("same");
 
-    TCanvas * c5 = new TCanvas("c5");
+    makeCanvas();    
     TEfficiency * YEff = new TEfficiency(* RcRapidityPair, * McRapidityPair);
     YEff->SetTitle("Pair Rapidity Efficiency");
     YEff->Draw("PE");
 
-    TCanvas * c6 = new TCanvas("c6");
+    makeCanvas();    
     McRapidityPair->Draw();
     RcRapidityPair->SetLineColor(kRed);
     RcRapidityPair->Draw("same");
+
+    makeCanvas();    
+    TEfficiency * h2Eff = new TEfficiency(* RcPt2Pair, * McPt2Pair);
+    h2Eff->SetTitle("Pair pT^{2} Efficiency");
+    h2Eff->Draw("PE");
+
+    makeCanvas();    
+    McPt2Pair->Draw();
+    RcPt2Pair->SetLineColor(kRed);
+    RcPt2Pair->Draw("same");
 
     makeCanvas();
     auto m2Ptcos2phimomentsMC = cos2phivPtMC->ProfileY("m2Ptcos2phimomentsMC",1, -1);
@@ -236,9 +254,10 @@ void PairEff(){
     RcMassPair->Write(); 
     McRapidityPair->Write(); 
     RcRapidityPair->Write(); 
-    hEff->Write();
-    mEff->Write();
-    YEff->Write();
+    hEff->Write("hEff");
+    h2Eff->Write("h2Eff");    
+    mEff->Write("mEff");
+    YEff->Write("YEff");
 
     McPairEtaVsPhi->Write();
     McPosEtaVsPhi->Write();

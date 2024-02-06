@@ -75,10 +75,10 @@ void ZDCfit(){
         if( abs(mVertexZVal) < 100 &&  mGRefMultVal <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
         pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0) {
 
-            if(chiee < 10 && 3*chiee < chipipi && ddTofVal < 0.5 && ddTofVal > -0.5){
+            if(chiee < 10 && 3*chiee < chipipi && ddTofVal < 0.4 && ddTofVal > -0.4){
                     
                 if(pair->mZDCEast > 30 && pair->mZDCWest > 30 ){
-                    if(lv.M() < 0.8 && lv.M() > 0.5){
+                    if(lv.M() < 0.8 && lv.M() > 0.4){
                         mZDCWest->Fill( pair->mZDCWest );
                         mZDCEast->Fill( pair->mZDCEast );
                         ZDC2Dee->Fill(pair->mZDCEast, pair->mZDCWest);

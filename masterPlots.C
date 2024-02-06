@@ -149,10 +149,10 @@ void masterPlots() {
     auto * mMass = new TH1F("Parent Mass PID + TOF cuts, P_{T} < 0.2 GeV/c", "Parent Mass (GeV/c^{2})", 50, 0, 3);
     auto * mEta = new TH1F("mEta", "Parent #eta", 100, -1, 1);
 
-    auto * cos4phivPt = new TH2F("Cos4#phivPt", "cos4#phi distribution vs P_{T}, 0.5 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    auto * cos3phivPt = new TH2F("Cos3#phivPt", "cos3#phi distribution vs P_{T}, 0.5 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    auto * cos2phivPt = new TH2F("Cos2#phivPt", "cos2#phi distribution vs P_{T}, 0.5 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    auto * cosphivPt = new TH2F("Cos#phivPt", "cos#phi distribution vs P_{T}, 0.5 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
+    auto * cos4phivPt = new TH2F("Cos4#phivPt", "cos4#phi distribution vs P_{T}, 0.4 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
+    auto * cos3phivPt = new TH2F("Cos3#phivPt", "cos3#phi distribution vs P_{T}, 0.4 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
+    auto * cos2phivPt = new TH2F("Cos2#phivPt", "cos2#phi distribution vs P_{T}, 0.4 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
+    auto * cosphivPt = new TH2F("Cos#phivPt", "cos#phi distribution vs P_{T}, 0.4 < M_{ee} < 0.8 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
 
 
 
@@ -241,7 +241,7 @@ void masterPlots() {
                 mMass->Fill(lv.M());
             }
                 
-            if(lv.M() < 0.8 && lv.M() > .5) {
+            if(lv.M() < 0.8 && lv.M() > .4) {
                 double phival;
                 TRandom3 rng(123);
                 double uniform_double = rng.Uniform(0., 1.);

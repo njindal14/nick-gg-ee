@@ -31,6 +31,7 @@ void TPCCheck() {
 
    
     while (myReader.Next()) {
+        
         double chiee = pow( pair->d1_mNSigmaElectron, 2 ) + pow( pair->d2_mNSigmaElectron, 2 );
         double chipipi = pow( pair -> d1_mNSigmaPion, 2) + pow( pair -> d2_mNSigmaPion, 2);
         int chargesumval = pair->mChargeSum;
