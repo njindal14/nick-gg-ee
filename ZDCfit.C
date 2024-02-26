@@ -28,10 +28,10 @@ double ZDCfitfunc(double *x, double *par){
 
 void ZDCfit(){
 
-    auto * mZDCEast = new TH1F("mZDCEast, ee Events (PID + TOF + Mass Cut)", "ZDCEast", 400, 0, 1200);
-    auto * mZDCWest = new TH1F("mZDCWest, ee Events (PID + TOF + Mass Cut)", "ZDCWest", 400, 0, 1200);
-    auto * ZDC2Dee = new TH2F("ZDC Heat Map ee", "ZDC Heat Map ee", 100, 0, 1200, 100, 0, 1200);
-    auto * ZDC2DAll = new TH2F("ZDC Heat Map All", "ZDC Heat Map All", 100, 0, 1200, 100, 0, 1200);
+    auto * mZDCEast = new TH1F("mZDCEast, ee Events (PID + TOF + Mass Cut)", "ZDCEast", 400, 0, 1300);
+    auto * mZDCWest = new TH1F("mZDCWest, ee Events (PID + TOF + Mass Cut)", "ZDCWest", 400, 0, 1300);
+    auto * ZDC2Dee = new TH2F("ZDC Heat Map ee", "ZDC Heat Map ee", 100, 0, 1300, 100, 0, 1300);
+    auto * ZDC2DAll = new TH2F("ZDC Heat Map All", "ZDC Heat Map All", 100, 0, 1300, 100, 0, 1300);
 
     
     auto *ZDCfunc = new TF1("fit", ZDCfitfunc, 30, 1200.0, 11);
@@ -96,7 +96,7 @@ mZDCEast->SetLineColor(kBlack);
 mZDCEast->GetXaxis()->SetTitle("ZDC East");
 mZDCEast->GetYaxis()->SetTitle("Counts");
 mZDCEast->Draw();
-mZDCEast->Fit("fit", "", "", 30,1200);
+mZDCEast->Fit("fit", "", "", 30,1300);
 std::cout << "Integral of ZDC east: " << mZDCEast->Integral();
 //std::cout << "fit integral: " << fitIntegral;
 gStyle->SetOptFit(1111);
@@ -137,12 +137,12 @@ auto *g3 = new TF1("g3", "[6]* exp(-0.5 * ((x-[7])/[8]) * ((x-[7])/[8]) )", 0, c
 g3->SetParameter(6, A3/(s3*sqrt(2*M_PI)));
 g3->SetParameter(7, l3);
 g3->SetParameter(8, s3);
-auto *g4 = new TF1("g4", "[9]* exp([11]*[11]/2 - [11]*((x-[10])/[12]))", cutoff-3, 1200);
+auto *g4 = new TF1("g4", "[9]* exp([11]*[11]/2 - [11]*((x-[10])/[12]))", cutoff-3, 1300);
 g4->SetParameter(9, A3/(s3*sqrt(2*M_PI)));
 g4->SetParameter(10, l3);
 g4->SetParameter(11, k3);
 g4->SetParameter(12, s3);
-auto *g5 = new TF1("g5", "[13]", 0, 1200);
+auto *g5 = new TF1("g5", "[13]", 0, 1300);
 g5->SetParameter(13, p0);
 g1->SetLineColor(kBlue);
 g1->SetLineWidth(4);
@@ -160,7 +160,8 @@ g5->SetLineColor(kGray);
 g5->SetLineWidth(4);
 g5->Draw("same");
 double fitIntegral;
-fitIntegral = g1->Integral(0,2000) + g2->Integral(0,2000) + g3->Integral(0, cutoff +3) + g4->Integral(cutoff-3,2000);
+fitIntegral = g1->Integral(0,1300) + g2->Integral(0,1300) + g3->Integral(0, cutoff -1) + g4->Integral(cutoff+1,1300);
+ 
 //fitIntegral = ZDCfunc->Integral(0,10000);
 std::cout << "fit integral: " << fitIntegral;
 
@@ -176,7 +177,7 @@ mZDCWest->SetLineColor(kBlack);
 mZDCWest->GetXaxis()->SetTitle("ZDC West");
 mZDCWest->GetYaxis()->SetTitle("Counts");
 mZDCWest->Draw();
-mZDCWest->Fit("fit", "", "", 30,1200);
+mZDCWest->Fit("fit", "", "", 30,1300);
 gStyle->SetOptFit(1111);
 //get parameters to later plot each one individually for ZDCWest
 double A1w = ZDCfunc->GetParameter(0);
@@ -215,12 +216,12 @@ auto *g3w = new TF1("g3w", "[6]* exp(-0.5 * ((x-[7])/[8]) * ((x-[7])/[8]) )", 0,
 g3w->SetParameter(6, A3w/(s3w*sqrt(2*M_PI)));
 g3w->SetParameter(7, l3w);
 g3w->SetParameter(8, s3w);
-auto *g4w = new TF1("g4w", "[9]* exp([11]*[11]/2 - [11]*((x-[10])/[12]))", cutoffw-3, 1200);
+auto *g4w = new TF1("g4w", "[9]* exp([11]*[11]/2 - [11]*((x-[10])/[12]))", cutoffw-3, 1300);
 g4w->SetParameter(9, A3w/(s3w*sqrt(2*M_PI)));
 g4w->SetParameter(10, l3w);
 g4w->SetParameter(11, k3w);
 g4w->SetParameter(12, s3w);
-auto *g5w = new TF1("g5w", "[13]", 0, 1200);
+auto *g5w = new TF1("g5w", "[13]", 0, 1300);
 g5w->SetParameter(13, p0w);
 g1w->SetLineColor(kBlue);
 g1w->SetLineWidth(4);

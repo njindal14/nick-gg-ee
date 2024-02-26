@@ -17,7 +17,7 @@ void TPCCheck() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
     TLorentzVector lv1, lv2, lv, lvn;
 
-    TFile * simulation_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/simulation_plots.root");
+    TFile * simulation_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
     TH2D * RcPairEtaVsPhi = (TH2D*)simulation_plots->Get("RcPairEtaVsPhi");
     TH2D * RcPosEtaVsPhi = (TH2D*)simulation_plots->Get("RcPosEtaVsPhi");
     TH2D * RcNegEtaVsPhi = (TH2D*)simulation_plots->Get("RcNegEtaVsPhi");
