@@ -38,33 +38,35 @@ void phiReweighting(){
     //routine to reweight mcphi and see what happens for reco phi
    
     makeCanvas();
-    TH1F * slightPhi = (TH1F*)slightPhiPt->ProjectionX(0, 1);
+    //project mcphi and recophi into first pt bin
     TH1F * mcphi = (TH1F*)mcphipt->ProjectionX(0,1);
     TH1F * recophi = (TH1F*)recophipt->ProjectionX(0,1);
-    slightPhi->Rebin(2);
-    slightPhi->Scale(1/slightPhi->Integral());
+    //normalize
     mcphi->Scale(1/mcphi->Integral());
     recophi->Scale(1/recophi->Integral());
     int nbins = mcphi->GetNbinsX();
     TH1F * flattened = new TH1F("flattened", "flattened", nbins, -3.1415927, 3.1415927);
-    mcphi->GetXaxis()->SetTitle("MC #Delta #phi");
-    mcphi->GetYaxis()->SetTitle("Counts");
     mcphi->Fit("phifit", "", "", -3.15,3.15);
-    //gStyle->SetOptFit(1111); 
+    gStyle->SetOptFit(1111); 
     double A0 = phifit->GetParameter(0);
     double A1 = phifit->GetParameter(1);
     double A2 = phifit->GetParameter(2);
     double A3 = phifit->GetParameter(3);
     double A4 = phifit->GetParameter(4);
 
-    for(int i = 1; i < nbins+1; ++i){
+
+    //calculate weight to flatten, reweight mcphi and reco according to those weights
+    for(int i = 1; i <= nbins; ++i){
         double weight = 1/(1 + A1*cos(mcphi->GetBinCenter(i)) + A2*cos(2*mcphi->GetBinCenter(i)) + A3*cos(3*mcphi->GetBinCenter(i)) + A4*cos(4*mcphi->GetBinCenter(i)));
         cout << "weight: " << weight << "\n";
         double newBinContent = weight*mcphi->GetBinContent(i);
+        double newBinError = weight*mcphi->GetBinError(i);
         double newBinContentReco = weight*recophi->GetBinContent(i);
+        double newBinErrorReco = weight*recophi->GetBinError(i);
         flattened->SetBinContent(i, newBinContent);
-        //flattened->SetBinError(i, 0.001);
+        flattened->SetBinError(i, newBinError);
         recophi->SetBinContent(i, newBinContentReco);
+        recophi->SetBinError(i, newBinErrorReco);
         cout << "Set new bin content: " << "Phi = " << mcphi->GetBinCenter(i) << ", content = " << newBinContent << "\n";
     }
 
@@ -73,12 +75,12 @@ void phiReweighting(){
     flattened->SetLineColor(kBlue);
     flattened->Draw("PE;same");
 
+    //clone flattened to embed a cos2phi signal into it and into reco
     TH1F * embeddedSignal = (TH1F*)flattened->Clone();
     double twophistrength = -.2;
 
-    for(int i = 1; i < nbins +1; ++i){
+    for(int i = 1; i <= nbins; ++i){
         embeddedSignal->SetBinContent(i, embeddedSignal->GetBinContent(i)*(1+twophistrength*cos(2*embeddedSignal->GetBinCenter(i))));
-        //embeddedSignal->SetBinError(i, 0.001);
         recophi->SetBinContent(i, recophi->GetBinContent(i)*(1+twophistrength*cos(2*recophi->GetBinCenter(i))));
     }
     embeddedSignal->SetLineColor(kRed);
@@ -86,9 +88,11 @@ void phiReweighting(){
 
     //recophi->Fit("phifit", "", "", -3.15,3.15);
     gStyle->SetOptFit(1111); 
+    mcphi->GetXaxis()->SetTitle("#Delta #phi");
+    mcphi->GetYaxis()->SetTitle("Counts");
     recophi->SetLineColor(kBlack);
     recophi->Draw("PE;same");
-    mcphi->GetYaxis()->SetRangeUser(0.03,.055);
+    //mcphi->GetYaxis()->SetRangeUser(0.03,.055);
     TLegend * legend = new TLegend(0.7,0.1,1,0.3);
     legend->AddEntry(mcphi,"MC Phi, pT bin 0");
     legend->AddEntry(flattened, "flattened");
