@@ -76,6 +76,9 @@ void crossSectionsAuAu() {
 
         if( fabs(lv1.Eta()) > 1 || fabs(lv2.Eta()) > 1 || fabs(lv.Rapidity()) > 1) continue;
 
+        if(pair->d1_mNHitsFit < 10 || pair->d2_mNHitsFit < 10) continue;
+        if(pair->d1_mNHitsDedx < 15 || pair->d2_mNHitsDedx < 15) continue;
+
         if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && pair->mChargeSum == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
         pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.4 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi) {
             

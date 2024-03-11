@@ -26,6 +26,14 @@ void crossSectionComparisons(){
     TH1F * au_pt2 = (TH1F*)aux->Get("mPt2AuAu");
     TH1F * au_y = (TH1F*)aux->Get("mYAuAu");
 
+    TFile * QEDU = new TFile("/Users/Nick/STAR/QEDCode/QED_MB_pt50100_0.40_0.76Uranium.root");
+    TH1F * QEDUpt = (TH1F*)QEDU->Get("ht");
+
+    TFile * QEDAu = new TFile("/Users/Nick/STAR/QEDCode/QED_MB_pt50100_0.40_0.76Gold.root");
+    TH1F * QEDAupt = (TH1F*)QEDAu->Get("ht");
+
+
+
     
     makeCanvas();
     uu_mass->Scale(1/uu_mass->Integral());
@@ -102,7 +110,7 @@ void crossSectionComparisons(){
     pt2_ratio->Divide(au_pt2);
     pt2_ratio->Draw("PE");
     pt2_ratio->SetTitle("pT^{2} Differential Cross Section Ratio, UU(12)/AuAu(10+11)");
-    pt2_ratio->Fit("pol1", "", "", .001, .005);
+    pt2_ratio->Fit("pol1", "", "", .0001, .005);
     gStyle->SetOptFit(1111);
     TLine *pt2line = new TLine(0,1,.01,1);
     pt2line->SetLineColor(kRed);
@@ -135,6 +143,13 @@ void crossSectionComparisons(){
     yline->SetLineStyle(4);
     yline->Draw("same");
     gPad->Print("note_plots/results_plots/y_xsec_ratio.png");
+
+    makeCanvas();
+    //QEDUpt->Scale(1/QEDUpt->Integral());
+    //QEDAupt->Scale(1/QEDAupt->Integral());
+    QEDUpt->Draw();
+    QEDAupt->SetLineColor(kRed);
+    QEDAupt->Draw("same");
 
 
 

@@ -66,6 +66,10 @@ void crossSectionsUU() {
 
         if( fabs(lv1.Eta()) > 1 || fabs(lv2.Eta()) > 1 || fabs(lv.Rapidity()) > 1) continue;
 
+        if(pair->d1_mNHitsFit < 10 || pair->d2_mNHitsFit < 10) continue;
+        if(pair->d1_mNHitsDedx < 15 || pair->d2_mNHitsDedx < 15) continue;
+
+
         if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && pair->mChargeSum == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
         pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.4 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi) {
             
@@ -146,7 +150,7 @@ void crossSectionsUU() {
         double recoEffBin = y_eff->FindFixBin(binCenter);
         double reco_eff = y_eff->GetEfficiency(recoEffBin);
         if(tof_eff == 0) tof_eff = tofMatch_eff_y->GetBinContent(5);
-        if(reco_eff == 0) reco_eff = pt_eff->GetEfficiency(20);
+        if(reco_eff == 0) reco_eff = y_eff->GetEfficiency(20);
         mY->SetBinContent(ix, binContent/(tof_eff*reco_eff));
         mY->SetBinError(ix, binError/(tof_eff*reco_eff));
         
