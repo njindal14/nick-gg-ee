@@ -29,8 +29,14 @@ void phiReweighting(){
     TH2F * mcphipt = (TH2F*)sim_out->Get("mcphipt");
     TH2F * recophipt = (TH2F*)sim_out->Get("recophipt");
 
+    TFile * theory_curves = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/theory_modulations.root");
+    TH1F * qed2phi = (TH1F*)theory_curves->Get("QED2phi");
+    TH1F * qed4phi = (TH1F*)theory_curves->Get("QED4phi");
+
 
     
+    //routine to reweight mcphi and see what happens for reco phi
+   
     makeCanvas();
     TH1F * slightPhi = (TH1F*)slightPhiPt->ProjectionX(0, 1);
     TH1F * mcphi = (TH1F*)mcphipt->ProjectionX(0,1);
@@ -43,7 +49,7 @@ void phiReweighting(){
     TH1F * flattened = new TH1F("flattened", "flattened", nbins, -3.1415927, 3.1415927);
     mcphi->GetXaxis()->SetTitle("MC #Delta #phi");
     mcphi->GetYaxis()->SetTitle("Counts");
-    //mcphi->Fit("phifit", "", "", -3.15,3.15);
+    mcphi->Fit("phifit", "", "", -3.15,3.15);
     //gStyle->SetOptFit(1111); 
     double A0 = phifit->GetParameter(0);
     double A1 = phifit->GetParameter(1);
@@ -57,7 +63,7 @@ void phiReweighting(){
         double newBinContent = weight*mcphi->GetBinContent(i);
         double newBinContentReco = weight*recophi->GetBinContent(i);
         flattened->SetBinContent(i, newBinContent);
-        flattened->SetBinError(i, 0.001);
+        //flattened->SetBinError(i, 0.001);
         recophi->SetBinContent(i, newBinContentReco);
         cout << "Set new bin content: " << "Phi = " << mcphi->GetBinCenter(i) << ", content = " << newBinContent << "\n";
     }
@@ -66,14 +72,14 @@ void phiReweighting(){
     mcphi->Draw("PE");
     flattened->SetLineColor(kBlue);
     flattened->Draw("PE;same");
-    TH1F * embeddedSignal = new TH1F("embeddedSignal", "embeddedSignal", nbins, -3.1415927, 3.1415927);
+
+    TH1F * embeddedSignal = (TH1F*)flattened->Clone();
     double twophistrength = -.2;
+
     for(int i = 1; i < nbins +1; ++i){
-        embeddedSignal->SetBinContent(i, flattened->GetBinContent(i)*(1+twophistrength*cos(2*flattened->GetBinCenter(i))));
-        embeddedSignal->SetBinError(i, 0.001);
+        embeddedSignal->SetBinContent(i, embeddedSignal->GetBinContent(i)*(1+twophistrength*cos(2*embeddedSignal->GetBinCenter(i))));
+        //embeddedSignal->SetBinError(i, 0.001);
         recophi->SetBinContent(i, recophi->GetBinContent(i)*(1+twophistrength*cos(2*recophi->GetBinCenter(i))));
-
-
     }
     embeddedSignal->SetLineColor(kRed);
     embeddedSignal->Draw("PE;same");
@@ -100,5 +106,9 @@ void phiReweighting(){
     legend2->AddEntry(mcphi,"MC Phi, pT bin 0");
     legend2->AddEntry(recophi, "Weighted reco");
     legend2->Draw("same");
+
+    makeCanvas();
+    qed2phi->Draw("PE");
+    qed4phi->Draw("PE;same");
 
 }

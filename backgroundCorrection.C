@@ -26,8 +26,8 @@ void backgroundCorrection() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
     TLorentzVector lv1, lv2, lv, lvn;
 
-    auto * mPtUnlike = new TH1F("mPtUnlike", "Pair pTUnlike", 50, 0, 0.3);
-    auto * mPtLike = new TH1D("mPtLike", "mPtLike", 50, 0, 0.3);
+    auto * mPtUnlike = new TH1F("mPtUnlike", "Pair pTUnlike", 50, 0, 1);
+    auto * mPtLike = new TH1D("mPtLike", "mPtLike", 50, 0, 1);
     auto * cos2phivPtLike = new TH2F("Cos2#phivPtLike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 4, 0, 0.3);
     auto * cos4phivPtLike = new TH2F("Cos4#phivPtLike", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 4, 0, 0.3);
     auto * cos2phivPtUnlike = new TH2F("Cos2#phivPtUnlike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
@@ -92,10 +92,10 @@ void backgroundCorrection() {
     //created resampled histograms
     TH2F * cos2phivPtResample= new TH2F("cos2phivPtResample", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
     TH2F * cos4phivPtResample = new TH2F("cos4phivPtResample", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    TH1F * resamplePt = new TH1F("resamplePt", "", 50, 0, 0.3);
+    TH1F * resamplePt = new TH1F("resamplePt", "", 50, 0, 1);
 
     //now sample from the starlight dists
-    for ( int i = 0; i<100000000; i++) {
+    for ( int i = 0; i<10000000; i++) {
         TLorentzVector pos, neg, pair;
         pos.SetPtEtaPhiM( pospt->GetRandom(),  poseta->GetRandom(), posphi->GetRandom(), 0.00051);
         neg.SetPtEtaPhiM( negpt->GetRandom(),  negeta->GetRandom(), negphi->GetRandom(), 0.00051);
@@ -109,28 +109,9 @@ void backgroundCorrection() {
         }
     }
 
-    makeCanvas();
-    mPtUnlike->Scale(1/mPtUnlike->Integral());
-    mPtUnlike->Draw("PE");
-    //mPtLike->SetLineColor(kRed);
-    //gPad->SetLogy();
-    mPtLike->Scale(1/mPtLike->Integral());
-    //mPtLike->Draw("PE;same");
-    mPtUnlike->SetTitle("pT signal and background, 0.4 < M < 0.76 Gev");
-    mPtUnlike->GetXaxis()->SetTitle("pT (GeV/c)");
-    mPtUnlike->GetYaxis()->SetTitle("Counts");
-    resamplePt->SetLineColor(kBlue);
-    resamplePt->Scale(1/resamplePt->Integral());
+    //normalizing to data at a certain pt
     resamplePt->Scale(0.05);
-    resamplePt->Draw("PE;same");
-    TLegend * leg = new TLegend(.8, .7, 1, .9);
-    leg->SetHeader("Legend","C"); // option "C" allows to center the header
-    leg->AddEntry(mPtUnlike,"Unlike sign");
-    //leg->AddEntry(mPtLike, "Like sign");
-    leg->AddEntry(resamplePt, "Resampled pair pT");
-    leg->Draw("same");
 
-    
     //look at signal/background and signal/sqrt(signal+background)
     makeCanvas();
     TH1F * SBR = (TH1F*)mPtUnlike->Clone();
@@ -150,6 +131,28 @@ void backgroundCorrection() {
     SNR->SetTitle("Signal/sqrt(signal+background)");
     SNR->GetXaxis()->SetTitle("pT (GeV/c)");
     SNR->Draw("PE");
+
+    
+    
+    makeCanvas();
+    mPtUnlike->Scale(1/mPtUnlike->Integral());
+    mPtUnlike->Draw("PE");
+    //mPtLike->SetLineColor(kRed);
+    //gPad->SetLogy();
+    mPtLike->Scale(1/mPtLike->Integral());
+    //mPtLike->Draw("PE;same");
+    mPtUnlike->SetTitle("pT signal and background, 0.4 < M < 0.76 Gev");
+    mPtUnlike->GetXaxis()->SetTitle("pT (GeV/c)");
+    mPtUnlike->GetYaxis()->SetTitle("Counts");
+    resamplePt->SetLineColor(kBlue);
+    resamplePt->Scale(1/resamplePt->Integral());
+    resamplePt->Draw("PE;same");
+    TLegend * leg = new TLegend(.8, .7, 1, .9);
+    leg->SetHeader("Legend","C"); // option "C" allows to center the header
+    leg->AddEntry(mPtUnlike,"Unlike sign");
+    //leg->AddEntry(mPtLike, "Like sign");
+    leg->AddEntry(resamplePt, "Resampled pair pT");
+    leg->Draw("same");
     
 
 

@@ -552,4 +552,8 @@ void masterPlots() {
     fourphihist->GetXaxis()->SetTitle("#Delta #phi");
     fourphihist->GetYaxis()->SetTitle("A_{4#phi}");
     fourphihist->Draw("P");
+
+    TFile file("output_root_files/theory_modulations.root", "RECREATE");
+    twophihist->Write();
+    fourphihist->Write();
 }
