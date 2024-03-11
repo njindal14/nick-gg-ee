@@ -100,16 +100,24 @@ void phiReweighting(){
     legend->AddEntry(recophi, "Weighted reco");
     legend->Draw("same");
 
+    
     makeCanvas();
     mcphi->SetLineColor(kBlack);
+    mcphi->SetTitle("MC phi with Fit");
     mcphi->Draw("PE");
+
+    makeCanvas();
     recophi->SetLineColor(kGreen);
-    mcphi->SetTitle("Reco vs MC Phi Same weighting");
+    recophi->Fit("phifit", "", "", -3.15,3.15);
+    gStyle->SetOptFit(1111);
+    recophi->SetTitle("Reco phi with Fit");
+    recophi->GetXaxis()->SetTitle("#Delta #phi");
     recophi->Draw("PE;same");
-    TLegend * legend2 = new TLegend(0.7,0.1,1,0.3);
+    
+    /*TLegend * legend2 = new TLegend(0.7,0.1,1,0.3);
     legend2->AddEntry(mcphi,"MC Phi, pT bin 0");
     legend2->AddEntry(recophi, "Weighted reco");
-    legend2->Draw("same");
+    legend2->Draw("same");*/
 
     makeCanvas();
     qed2phi->Draw("PE");
