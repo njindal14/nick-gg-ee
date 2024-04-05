@@ -113,6 +113,11 @@ void phiReweighting(){
     recophi->SetTitle("Reco phi with Fit");
     recophi->GetXaxis()->SetTitle("#Delta #phi");
     recophi->Draw("PE;same");
+
+    makeCanvas();
+    flattened->Fit("phifit", "", "", -3.15,3.15);
+    gStyle->SetOptFit(1111);
+    flattened->Draw("PE;same");
     
     /*TLegend * legend2 = new TLegend(0.7,0.1,1,0.3);
     legend2->AddEntry(mcphi,"MC Phi, pT bin 0");

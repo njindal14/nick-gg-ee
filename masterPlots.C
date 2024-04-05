@@ -196,8 +196,14 @@ void masterPlots() {
     TH1F * reco4phiRc = (TH1F*)sim_output->Get("m2Ptcos4phimomentsRecoRc");
 
     auto * phifit = new TF1("phifit", phiFit, -3.15,3.15,5);
-    auto * mPhi1n1n = new TH1F("mPhi1n1n", "#Delta#phi, 1n1n, pT < 0.15 ", 25, -3.14159, 3.14159);
+    auto * mPhi1n1n = new TH1F("mPhi", "#Delta#phi, 1n1n, pT < 0.15 ", 25, -3.14159, 3.14159);
     auto * mPhi2nPlus = new TH1F("mPhi2nPlus", "#Delta#phi, 2n+, pT < 0.15", 25, -3.14159, 3.14159);
+
+
+    TFile * embedded_signal = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/signal_embedded_results.root");
+    TH1F * embeddedreco2phi = (TH1F*)embedded_signal->Get("reco2phiReweighted");
+    TH1F * embeddedreco4phi = (TH1F*)embedded_signal->Get("reco4phiReweighted");
+
 
 
     TLorentzVector lv1, lv2, lv, lvn;
@@ -256,7 +262,7 @@ void masterPlots() {
                     phival = calc_Phi(lv2,lv1);
                 }
                 if(lv.Pt() < 0.15){    
-                    if(mZDCEastVal < 220 && mZDCWestVal < 220) {mPhi1n1n->Fill(phival);}
+                    if(mZDCEastVal < 1300 && mZDCWestVal < 1300) {mPhi1n1n->Fill(phival);}
                     else if (mZDCEastVal > 220 && mZDCWestVal > 220) {mPhi2nPlus->Fill(phival);}
                 }
 
@@ -397,12 +403,12 @@ void masterPlots() {
 
 
     makeCanvas2();
-    m2Ptcos2phimoments->SetLineColor(kBlue);
+    m2Ptcos2phimoments->SetLineColor(kRed);
     m2Ptcos2phimoments->Draw("PE");
     m2Ptcos2phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
     m2Ptcos2phimoments->SetStats(false);
-    m2Ptcos2phimoments->SetMarkerSize(0.7);
-    m2Ptcos2phimoments->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos2phimoments->SetMarkerSize(0.7);
+    //m2Ptcos2phimoments->SetMarkerStyle(kFullDotLarge);
 
     m2Ptcos2phimoments1n1n->SetLineColor(kMagenta);
     //m2Ptcos2phimoments1n1n->Draw("PE;same");
@@ -421,15 +427,17 @@ void masterPlots() {
     mc2phi->SetLineColor(kBlack);
     //mc2phi->Draw("PE;same");
     reco2phi->SetLineColor(kRed);
-    reco2phi->Draw("PE;same");
-    reco2phiRc->SetLineColor(kYellow);
-    reco2phiRc->Draw("PE;same");
+    //reco2phi->Draw("PE;same");
+    reco2phiRc->SetLineColor(kRed);
+    //reco2phiRc->Draw("PE;same");
     reco2phi->SetStats(false);
     reco2phiRc->SetStats(false);
     mc2phi->SetStats(false);
     QED2phi->SetLineColor(kBlue);
     QED2phi->SetLineWidth(6);
     QED2phi->Draw("same");
+    embeddedreco2phi->SetLineColor(kBlack);
+    embeddedreco2phi->Draw("PE;same");
     m2Ptcos2phimoments->GetXaxis()->SetTitle("Pair pT (GeV/c)");
     m2Ptcos2phimoments->GetYaxis()->SetTitle("A_{2#phi}");
     auto twophiLegend = new TLegend(0.75,0.6,1,0.85);
@@ -439,9 +447,10 @@ void masterPlots() {
     //twophiLegend->AddEntry(m2Ptcos2phimoments2nPlus,"Raw Data Run 12 2n+");
     twophiLegend->AddEntry(slight_2phiMoments, "slight.out A_{2#phi}");
     //twophiLegend->AddEntry(mc2phi, "MC A_{2#phi}");
-    twophiLegend->AddEntry(reco2phi, "Reco A_{2#phi} (MC bins)");
-    twophiLegend->AddEntry(reco4phiRc, "Reco A_{2#phi} (RC bins)");
+    //twophiLegend->AddEntry(reco2phi, "Reco A_{2#phi} (MC bins)");
+    //twophiLegend->AddEntry(reco4phiRc, "Reco A_{2#phi} (Reco bins)");
     twophiLegend->AddEntry(QED2phi, "QED Theory Curve");
+    twophiLegend->AddEntry(embeddedreco2phi, "Reco after Embedded Signal");
     twophiLegend->SetTextSize(.03);
     twophiLegend->Draw("same");
     //gPad->Print("masterPlots/plot_pair2phimomentsRun10to12.png");
@@ -450,12 +459,12 @@ void masterPlots() {
 
 
     makeCanvas2();
-    m2Ptcos4phimoments->SetLineColor(kBlue);
+    m2Ptcos4phimoments->SetLineColor(kRed);
     m2Ptcos4phimoments->Draw("PE");
     m2Ptcos4phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
     m2Ptcos4phimoments->SetStats(false);
-    m2Ptcos4phimoments->SetMarkerSize(0.7);
-    m2Ptcos4phimoments->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos4phimoments->SetMarkerSize(0.7);
+    //m2Ptcos4phimoments->SetMarkerStyle(kFullDotLarge);
 
     m2Ptcos4phimoments1n1n->SetLineColor(kMagenta);
     //m2Ptcos4phimoments1n1n->Draw("PE;same");
@@ -474,12 +483,14 @@ void masterPlots() {
     mc4phi->SetLineColor(kBlack);
     //mc4phi->Draw("PE;same");
     reco4phi->SetLineColor(kRed);
-    reco4phi->Draw("PE;same");
-    reco4phiRc->SetLineColor(kYellow);
+    //reco4phi->Draw("PE;same");
+    reco4phiRc->SetLineColor(kBlue);
     reco4phiRc->Draw("PE;same");
     QED4phi->SetLineColor(kBlue);
     QED4phi->SetLineWidth(6);
     QED4phi->Draw("same");
+    embeddedreco4phi->SetLineColor(kBlack);
+    embeddedreco4phi->Draw("PE;same");
     m2Ptcos4phimoments->GetXaxis()->SetTitle("Pair pT (GeV/c)");
     m2Ptcos4phimoments->GetYaxis()->SetTitle("A_{4#phi}");
     reco4phi->SetStats(false);
@@ -492,16 +503,17 @@ void masterPlots() {
     //fourphiLegend->AddEntry(m2Ptcos4phimoments2nPlus,"Raw Data Run 12 2n+");
     fourphiLegend->AddEntry(slight_4phiMoments, "slight.out A_{4#phi}");
     //fourphiLegend->AddEntry(mc4phi, "MC A_{4#phi}");
-    fourphiLegend->AddEntry(reco4phi, "Reco A_{4#phi} (MC bins)");
-    fourphiLegend->AddEntry(reco4phiRc, "Reco A_{4#phi} (RC bins)");
+    //fourphiLegend->AddEntry(reco4phi, "Reco A_{4#phi} (MC bins)");
+    fourphiLegend->AddEntry(reco4phiRc, "Reco A_{4#phi} (Reco bins)");
     fourphiLegend->AddEntry(QED4phi, "QED Theory Curve");
+    fourphiLegend->AddEntry(embeddedreco4phi, "Reco after Embedded Signal");
     fourphiLegend->SetTextSize(.03);
     fourphiLegend->Draw("same");
     //gPad->Print("masterPlots/plot_pair4phimomentsRun10to12.png");
 
     makeCanvas2();
     mPhi1n1n->GetXaxis()->SetTitle("#Delta #phi");
-    mPhi1n1n->SetTitle("Modulation for ZDC 1-3n");
+    mPhi1n1n->SetTitle("#Delta#phi, Pair pT < 0.15 GeV, 0.4 < M_{ee} < 0.76 GeV");
     mPhi1n1n->GetYaxis()->SetTitle("Counts");
     mPhi1n1n->Fit("phifit", "", "", -3.15,3.15);
     gStyle->SetOptFit(1111);
@@ -527,8 +539,8 @@ void masterPlots() {
     slight_2phiMoments->Draw("PE");
 
 
-    TH1F * twophihist = new TH1F("QED2phi", "QED2phi", QED2phi->GetN(), 0, .3); // the histogram (you should set the number of bins, the title etc)
-    TH1F * fourphihist = new TH1F("QED4phi", "QED4phi", QED4phi->GetN(), 0, .3); // the histogram (you should set the number of bins, the title etc)
+    TH1F * twophihist = new TH1F("QED2phi", "QED2phi", QED2phi->GetN(), 0, .3); 
+    TH1F * fourphihist = new TH1F("QED4phi", "QED4phi", QED4phi->GetN(), 0, .3); 
 
     for(int i=0; i < QED2phi->GetN(); ++i) {
         double x,y;

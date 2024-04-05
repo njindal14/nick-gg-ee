@@ -26,12 +26,12 @@ void backgroundCorrection() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
     TLorentzVector lv1, lv2, lv, lvn;
 
-    auto * mPtUnlike = new TH1F("mPtUnlike", "Pair pTUnlike", 50, 0, 1);
-    auto * mPtLike = new TH1D("mPtLike", "mPtLike", 50, 0, 1);
+    auto * mPtUnlike = new TH1F("mPtUnlike", "Pair pTUnlike", 20, 0, 1);
+    auto * mPtLike = new TH1D("mPtLike", "mPtLike", 20, 0, 1);
     auto * cos2phivPtLike = new TH2F("Cos2#phivPtLike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 4, 0, 0.3);
     auto * cos4phivPtLike = new TH2F("Cos4#phivPtLike", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 4, 0, 0.3);
-    auto * cos2phivPtUnlike = new TH2F("Cos2#phivPtUnlike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    auto * cos4phivPtUnlike = new TH2F("Cos4#phivPtUnlike", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
+    auto * cos2phivPtUnlike = new TH2F("Cos2#phivPtUnlike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
+    auto * cos4phivPtUnlike = new TH2F("Cos4#phivPtUnlike", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
 
     TFile * starlight_out = new TFile("/Users/Nick/STAR/starlight/utils/SL_plotsBetter.root");
     TH1F * negpt = (TH1F*)starlight_out->Get("mNegPt");
@@ -90,27 +90,46 @@ void backgroundCorrection() {
     }
 
     //created resampled histograms
-    TH2F * cos2phivPtResample= new TH2F("cos2phivPtResample", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    TH2F * cos4phivPtResample = new TH2F("cos4phivPtResample", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 15, 0, 0.3);
-    TH1F * resamplePt = new TH1F("resamplePt", "", 50, 0, 1);
+    TH2F * cos2phivPtResample= new TH2F("cos2phivPtResample", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
+    TH2F * cos4phivPtResample = new TH2F("cos4phivPtResample", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
+    TH1F * resamplePt = new TH1F("resamplePt", "", 20, 0, 1);
+
+    TH2F * cos2phivPtResampleUniform= new TH2F("cos2phivPtResampleUniform", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} Uni sampling", 400, -2, 2, 30, 0, 0.6);
+    TH2F * cos4phivPtResampleUniform = new TH2F("cos4phivPtResampleUniform", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} Uni sampling", 400, -2, 2, 30, 0, 0.6);
+    TH1F * resamplePtUniform = new TH1F("resamplePtUniform", "", 20, 0, 1);
+
+
+    pospt->GetXaxis()->SetRangeUser(.2, 1);
+    negpt->GetXaxis()->SetRangeUser(.2, 1);
 
     //now sample from the starlight dists
-    for ( int i = 0; i<10000000; i++) {
+    for ( int i = 0; i<100000000; i++) {
         TLorentzVector pos, neg, pair;
+        TLorentzVector posUniform, negUniform, pairUniform;
         pos.SetPtEtaPhiM( pospt->GetRandom(),  poseta->GetRandom(), posphi->GetRandom(), 0.00051);
         neg.SetPtEtaPhiM( negpt->GetRandom(),  negeta->GetRandom(), negphi->GetRandom(), 0.00051);
+        posUniform.SetPtEtaPhiM(gRandom->Uniform(0, 1), poseta->GetRandom() /*gRandom->Uniform(-1,1)*/, gRandom->Uniform(-3.14,3.14), .00051);
+        negUniform.SetPtEtaPhiM(gRandom->Uniform(0, 1), negeta->GetRandom() /*gRandom->Uniform(-1,1)*/, gRandom->Uniform(-3.14,3.14), .00051);
         pair = pos+neg;
+        pairUniform = posUniform + negUniform;
         if(i%1000000 == 0) std::cout << "Sampled event number: " << i << "\n";
         double phi = calc_Phi(pos, neg);
+        double uniformPhi = calc_Phi(posUniform, negUniform);
         if(pair.M() > 0.4 && pair.M() < 0.76){
             cos2phivPtResample->Fill( 2*cos(2*phi), pair.Pt() );
             cos4phivPtResample->Fill( 2*cos(4*phi), pair.Pt() );
             resamplePt->Fill(pair.Pt());
         }
+        if(pairUniform.M() > 0.4 && pairUniform.M() < 0.76){
+            cos2phivPtResampleUniform->Fill( 2*cos(2*uniformPhi), pairUniform.Pt() );
+            cos4phivPtResampleUniform->Fill( 2*cos(4*uniformPhi), pairUniform.Pt() );
+            resamplePtUniform->Fill(pairUniform.Pt());
+        }
+
     }
 
     //normalizing to data at a certain pt
-    resamplePt->Scale(0.05);
+    resamplePt->Scale(0.001);
 
     //look at signal/background and signal/sqrt(signal+background)
     makeCanvas();
@@ -128,29 +147,23 @@ void backgroundCorrection() {
         tot->SetBinContent(i, sqrt(tot->GetBinContent(i)));
     }
     SNR->Divide(tot);
-    SNR->SetTitle("Signal/sqrt(signal+background)");
+    SNR->SetTitle("Signal/sqrt(signal+background) (significance)");
     SNR->GetXaxis()->SetTitle("pT (GeV/c)");
     SNR->Draw("PE");
 
     
     
     makeCanvas();
-    mPtUnlike->Scale(1/mPtUnlike->Integral());
     mPtUnlike->Draw("PE");
-    //mPtLike->SetLineColor(kRed);
-    //gPad->SetLogy();
-    mPtLike->Scale(1/mPtLike->Integral());
-    //mPtLike->Draw("PE;same");
     mPtUnlike->SetTitle("pT signal and background, 0.4 < M < 0.76 Gev");
     mPtUnlike->GetXaxis()->SetTitle("pT (GeV/c)");
     mPtUnlike->GetYaxis()->SetTitle("Counts");
-    resamplePt->SetLineColor(kBlue);
-    resamplePt->Scale(1/resamplePt->Integral());
+    resamplePt->SetLineColor(kRed);
+    //resamplePt->Scale(1/resamplePt->Integral());
     resamplePt->Draw("PE;same");
     TLegend * leg = new TLegend(.8, .7, 1, .9);
     leg->SetHeader("Legend","C"); // option "C" allows to center the header
     leg->AddEntry(mPtUnlike,"Unlike sign");
-    //leg->AddEntry(mPtLike, "Like sign");
     leg->AddEntry(resamplePt, "Resampled pair pT");
     leg->Draw("same");
     
@@ -165,39 +178,58 @@ void backgroundCorrection() {
     auto * m2phiMomentsResample = cos2phivPtResample->ProfileY("m2phiMomentsResample", 1, -1);
     auto * m4phiMomentsResample = cos4phivPtResample->ProfileY("m4phiMomentsResample", 1, -1);
 
+    auto * m2phiMomentsResampleUniform = cos2phivPtResampleUniform->ProfileY("m2phiMomentsResampleUniform", 1, -1);
+    auto * m4phiMomentsResampleUniform = cos4phivPtResampleUniform->ProfileY("m4phiMomentsResampleUniform", 1, -1);
+
+
 
 
     makeCanvas();
-    m2Ptcos2phimomentsLikesign->SetLineColor(kBlack);
-    //m2Ptcos2phimomentsLikesign->Draw("PE");
     m2Ptcos2phimomentsLikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos2phimomentsLikesign->GetYaxis()->SetTitle("A_{2#phi}");
     m2Ptcos2phimomentsUnlikesign->SetLineColor(kGreen);
     m2Ptcos2phimomentsUnlikesign->Draw("PE;same");
     m2phiMomentsResample->SetLineColor(kRed);
     m2phiMomentsResample->Draw("PE;same");
+    m2phiMomentsResampleUniform->SetLineColor(kBlue);
+    m2phiMomentsResampleUniform->Draw("PE;same");
     TLegend * leg2 = new TLegend(.8, .7, 1, .9);
     leg2->SetHeader("Legend","C"); // option "C" allows to center the header
-    //leg2->AddEntry(m2Ptcos2phimomentsLikesign,"Like sign, mass, ddtof, dE/dx");
     leg2->AddEntry(m2Ptcos2phimomentsUnlikesign, "Unlike sign, all cuts");
     leg2->AddEntry(m2phiMomentsResample, "slight random sampled");
+    leg2->AddEntry(m2phiMomentsResampleUniform, "slight random sampled uniform");
     leg2->Draw("same");
 
     makeCanvas();
-    m2Ptcos4phimomentsLikesign->SetLineColor(kBlack);
-    //m2Ptcos4phimomentsLikesign->Draw("PE");
     m2Ptcos4phimomentsLikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos4phimomentsLikesign->GetYaxis()->SetTitle("A_{4#phi}");
     m2Ptcos4phimomentsUnlikesign->SetLineColor(kGreen);
     m2Ptcos4phimomentsUnlikesign->Draw("PE;same");
     m4phiMomentsResample->SetLineColor(kRed);
     m4phiMomentsResample->Draw("PE;same");
+    m4phiMomentsResampleUniform->SetLineColor(kBlue);
+    m4phiMomentsResampleUniform->Draw("PE;same");
     TLegend * leg4 = new TLegend(.8, .7, 1, .9);
     leg4->SetHeader("Legend","C"); // option "C" allows to center the header
-    //leg4->AddEntry(m2Ptcos4phimomentsLikesign,"Like sign, mass, ddtof, dE/dx");
     leg4->AddEntry(m2Ptcos4phimomentsUnlikesign, "Unlike sign, all cuts");
     leg4->AddEntry(m4phiMomentsResample, "slight random sampled");
+    leg4->AddEntry(m4phiMomentsResampleUniform, "slight random sampled uniform");
     leg4->Draw("same");
+
+    makeCanvas();
+    pospt->Draw("PE");
+    negpt->SetLineColor(kRed);
+    negpt->Draw("PE'same");
+
+    makeCanvas();
+    poseta->Draw("PE");
+    negeta->SetLineColor(kRed);
+    negeta->Draw("PE;same");
+
+    makeCanvas();
+    posphi->Draw("PE");
+    negphi->SetLineColor(kRed);
+    negphi->Draw("PE;same");
 
 
 
