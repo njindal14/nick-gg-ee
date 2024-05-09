@@ -205,6 +205,13 @@ void masterPlots() {
     TH1F * embeddedreco4phi = (TH1F*)embedded_signal->Get("reco4phiReweighted");
 
 
+    TFile * mixed_purity = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/background_plots.root");
+    TH1F * resampled_purity = (TH1F*)mixed_purity->Get("mPtUnlike");
+    TH1F * twophiMomentsResampled = (TH1F*)mixed_purity->Get("m2phiMomentsResample");
+    TH1F * fourphiMomentsResampled = (TH1F*)mixed_purity->Get("m4phiMomentsResample");
+
+
+
 
     TLorentzVector lv1, lv2, lv, lvn;
 
@@ -273,7 +280,7 @@ void masterPlots() {
                 cos2phivPt->Fill( 2*cos(2*phival), mPtVal);
                 cosphivPt->Fill( 2*cos(phival), mPtVal);
 
-                if(mZDCEastVal < 85 && mZDCWestVal < 85){
+                /*if(mZDCEastVal < 85 && mZDCWestVal < 85){
                     cos4phivPt1n1n->Fill( 2*cos(4*phival), mPtVal);
                     cos3phivPt1n1n->Fill( 2*cos(3*phival), mPtVal);
                     cos2phivPt1n1n->Fill( 2*cos(2*phival), mPtVal);
@@ -284,7 +291,7 @@ void masterPlots() {
                     cos3phivPt2nPlus->Fill( 2*cos(3*phival), mPtVal);
                     cos2phivPt2nPlus->Fill( 2*cos(2*phival), mPtVal);
                     cosphivPt2nPlus->Fill( 2*cos(phival), mPtVal);
-                }
+                }*/
             } 
                  
         }
@@ -402,28 +409,118 @@ void masterPlots() {
     TGraph * QED2phi = new TGraph(sizeof(twophix)/sizeof(twophix[0]), twophix,twophiy);
 
 
+    //correct cosine moments using purity
+    auto * twophiCorrected = new TH1F("twophiCorrected", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 20, 0, .3);
+    auto * fourphiCorrected = new TH1F("fourphiCorrected", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 20, 0, .3);
+
+
+
+    int nBinsMoments2 = twophiCorrected->GetNbinsX();
+
+    for (int i=1; i<=nBinsMoments2; i++){
+        double gamma = m2Ptcos2phimoments->GetBinContent( m2Ptcos2phimoments->FindBin( twophiCorrected->GetBinCenter(i) ) );
+        double omega = twophiMomentsResampled->GetBinContent( twophiMomentsResampled->FindBin( twophiCorrected->GetBinCenter(i) ) );
+        double p = resampled_purity->GetBinContent( resampled_purity->FindBin( twophiCorrected->GetBinCenter(i) ) );
+
+        double alpha = (gamma - omega + p*omega)/p;
+
+        double sig_gamma = m2Ptcos2phimoments->GetBinError( m2Ptcos2phimoments->FindBin( twophiCorrected->GetBinCenter(i) ) );
+        double sig_omega = twophiMomentsResampled->GetBinError( twophiMomentsResampled->FindBin( twophiCorrected->GetBinCenter(i) ) );
+        double sig_p = resampled_purity->GetBinError( resampled_purity->FindBin( twophiCorrected->GetBinCenter(i) ) );
+
+        double Aterm = (1/p)*(1/p)*sig_gamma*sig_gamma;
+        double Bterm = ( (p-1)*(p-1) / (p*p) )*sig_omega*sig_omega;
+        double Cterm = ( (omega-gamma)*(omega-gamma) / (p*p*p*p) )*sig_p*sig_p;
+
+        double sig_alpha = sqrt( Aterm+Bterm+Cterm );
+
+        twophiCorrected->SetBinContent(i, alpha);
+        twophiCorrected->SetBinError(i, sig_alpha);
+    }
+
+    int nBinsMoments4 = fourphiCorrected->GetNbinsX();
+
+    for (int i=1; i<=nBinsMoments4; i++){
+        double gamma = m2Ptcos4phimoments->GetBinContent( m2Ptcos4phimoments->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+        double omega = fourphiMomentsResampled->GetBinContent( fourphiMomentsResampled->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+        double p = resampled_purity->GetBinContent( resampled_purity->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+
+        double alpha = (gamma - omega + p*omega)/p;
+
+        double sig_gamma = m2Ptcos4phimoments->GetBinError( m2Ptcos4phimoments->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+        double sig_omega = fourphiMomentsResampled->GetBinError( fourphiMomentsResampled->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+        double sig_p = resampled_purity->GetBinError( resampled_purity->FindBin( fourphiCorrected->GetBinCenter(i) ) );
+
+        double Aterm = (1/p)*(1/p)*sig_gamma*sig_gamma;
+        double Bterm = ( (p-1)*(p-1) / (p*p) )*sig_omega*sig_omega;
+        double Cterm = ( (omega-gamma)*(omega-gamma) / (p*p*p*p) )*sig_p*sig_p;
+
+        double sig_alpha = sqrt( Aterm+Bterm+Cterm );
+
+        fourphiCorrected->SetBinContent(i, alpha);
+        fourphiCorrected->SetBinError(i, sig_alpha);
+    }
+
+    /*for(int i =1 ; i <= nBinsMoments; ++i){
+
+        double twophicontent = m2Ptcos2phimoments->GetBinContent(i);
+        double fourphicontent = m2Ptcos4phimoments->GetBinContent(i);
+
+        double twophimixed = twophiMomentsResampled->GetBinContent(i);        
+        double fourphimixed = fourphiMomentsResampled->GetBinContent(i);
+        double purity = resampled_purity->GetBinContent(i);
+
+        double twophierror = m2Ptcos2phimoments->GetBinError(i);
+        double fourphierror = m2Ptcos4phimoments->GetBinError(i);
+
+        double twophimixederror = twophimixed->GetBinError(i);
+        double fourphimixederror = fourphimixed->GetBinError(i);
+
+        double purityerror = resampled_purity->GetBinError(i);
+
+        std::cout << "Purity: " << purity << "\n";
+        std::cout << "2phi content: " << twophicontent << "\n";
+        std::cout << "two phi mixed: " << twophimixed << "\n";
+
+        double twophinew = (twophicontent + purity*twophimixed - twophimixed)/purity;
+        double fourphinew = (fourphicontent + purity*fourphimixed - fourphimixed)/purity;
+
+        std::cout << "two phi new content: " << twophinew << "\n";
+
+
+
+        twophiCorrected->SetBinContent(i, twophinew);
+        fourphiCorrected->SetBinContent(i, fourphinew);
+        std::cout << "NEW TWOPHI: " << m2Ptcos2phimoments->GetBinContent(i) << "\n";
+
+    }*/
+
+
     makeCanvas2();
+    twophiCorrected->SetLineColor(kGreen);
+    twophiCorrected->Draw("PE");
+    twophiCorrected->GetYaxis()->SetRangeUser(-1, 2.2);
+    twophiCorrected->SetStats(false);
+
     m2Ptcos2phimoments->SetLineColor(kRed);
-    m2Ptcos2phimoments->Draw("PE");
-    m2Ptcos2phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
-    m2Ptcos2phimoments->SetStats(false);
-    //m2Ptcos2phimoments->SetMarkerSize(0.7);
-    //m2Ptcos2phimoments->SetMarkerStyle(kFullDotLarge);
+    m2Ptcos2phimoments->Draw("PE;same");
+    //twophiCorrected->SetMarkerSize(0.7);
+    //twophiCorrected->SetMarkerStyle(kFullDotLarge);
 
-    m2Ptcos2phimoments1n1n->SetLineColor(kMagenta);
+    //m2Ptcos2phimoments1n1n->SetLineColor(kMagenta);
     //m2Ptcos2phimoments1n1n->Draw("PE;same");
-    m2Ptcos2phimoments1n1n->SetStats(false);
-    m2Ptcos2phimoments1n1n->SetMarkerSize(0.7);
-    m2Ptcos2phimoments1n1n->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos2phimoments1n1n->SetStats(false);
+    //m2Ptcos2phimoments1n1n->SetMarkerSize(0.7);
+    //m2Ptcos2phimoments1n1n->SetMarkerStyle(kFullDotLarge);
 
-    m2Ptcos2phimoments2nPlus->SetLineColor(kOrange+10);
+    //m2Ptcos2phimoments2nPlus->SetLineColor(kOrange+10);
     //m2Ptcos2phimoments2nPlus->Draw("PE;same");
-    m2Ptcos2phimoments2nPlus->SetStats(false);
-    m2Ptcos2phimoments2nPlus->SetMarkerSize(0.7);
-    m2Ptcos2phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos2phimoments2nPlus->SetStats(false);
+    //m2Ptcos2phimoments2nPlus->SetMarkerSize(0.7);
+    //m2Ptcos2phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
     
     slight_2phiMoments->SetLineColor(kGreen);
-    slight_2phiMoments->Draw("PE;same");
+    //slight_2phiMoments->Draw("PE;same");
     mc2phi->SetLineColor(kBlack);
     //mc2phi->Draw("PE;same");
     reco2phi->SetLineColor(kRed);
@@ -437,20 +534,21 @@ void masterPlots() {
     QED2phi->SetLineWidth(6);
     QED2phi->Draw("same");
     embeddedreco2phi->SetLineColor(kBlack);
-    embeddedreco2phi->Draw("PE;same");
-    m2Ptcos2phimoments->GetXaxis()->SetTitle("Pair pT (GeV/c)");
-    m2Ptcos2phimoments->GetYaxis()->SetTitle("A_{2#phi}");
+    //embeddedreco2phi->Draw("PE;same");
+    twophiCorrected->GetXaxis()->SetTitle("Pair pT (GeV/c)");
+    twophiCorrected->GetYaxis()->SetTitle("A_{2#phi}");
     auto twophiLegend = new TLegend(0.75,0.6,1,0.85);
     twophiLegend->SetHeader("Legend","C"); // option "C" allows to center the header
-    twophiLegend->AddEntry(m2Ptcos2phimoments,"Raw Data Run 12");
+    twophiLegend->AddEntry(twophiCorrected,"Corrected Run 12");
     //twophiLegend->AddEntry(m2Ptcos2phimoments1n1n,"Raw Data Run 12 1n1n");
     //twophiLegend->AddEntry(m2Ptcos2phimoments2nPlus,"Raw Data Run 12 2n+");
-    twophiLegend->AddEntry(slight_2phiMoments, "slight.out A_{2#phi}");
+    //twophiLegend->AddEntry(slight_2phiMoments, "slight.out A_{2#phi}");
     //twophiLegend->AddEntry(mc2phi, "MC A_{2#phi}");
     //twophiLegend->AddEntry(reco2phi, "Reco A_{2#phi} (MC bins)");
     //twophiLegend->AddEntry(reco4phiRc, "Reco A_{2#phi} (Reco bins)");
     twophiLegend->AddEntry(QED2phi, "QED Theory Curve");
-    twophiLegend->AddEntry(embeddedreco2phi, "Reco after Embedded Signal");
+    //twophiLegend->AddEntry(embeddedreco2phi, "Reco after Embedded Signal");
+    twophiLegend->AddEntry(m2Ptcos2phimoments, "Uncorrected Run 12");
     twophiLegend->SetTextSize(.03);
     twophiLegend->Draw("same");
     //gPad->Print("masterPlots/plot_pair2phimomentsRun10to12.png");
@@ -459,54 +557,58 @@ void masterPlots() {
 
 
     makeCanvas2();
+    fourphiCorrected->SetLineColor(kGreen);
+    fourphiCorrected->Draw("PE");
+    fourphiCorrected->GetYaxis()->SetRangeUser(-1, 2.2);
+    fourphiCorrected->SetStats(false);
+
     m2Ptcos4phimoments->SetLineColor(kRed);
-    m2Ptcos4phimoments->Draw("PE");
-    m2Ptcos4phimoments->GetYaxis()->SetRangeUser(-1, 2.2);
-    m2Ptcos4phimoments->SetStats(false);
-    //m2Ptcos4phimoments->SetMarkerSize(0.7);
-    //m2Ptcos4phimoments->SetMarkerStyle(kFullDotLarge);
+    m2Ptcos4phimoments->Draw("PE;same");
+    //fourphiCorrected->SetMarkerSize(0.7);
+    //fourphiCorrected->SetMarkerStyle(kFullDotLarge);
 
-    m2Ptcos4phimoments1n1n->SetLineColor(kMagenta);
+    //m2Ptcos4phimoments1n1n->SetLineColor(kMagenta);
     //m2Ptcos4phimoments1n1n->Draw("PE;same");
-    m2Ptcos4phimoments1n1n->SetStats(false);
-    m2Ptcos4phimoments1n1n->SetMarkerSize(0.7);
-    m2Ptcos4phimoments1n1n->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos4phimoments1n1n->SetStats(false);
+    //m2Ptcos4phimoments1n1n->SetMarkerSize(0.7);
+    //m2Ptcos4phimoments1n1n->SetMarkerStyle(kFullDotLarge);
 
-    m2Ptcos4phimoments2nPlus->SetLineColor(kOrange+10);
+    //m2Ptcos4phimoments2nPlus->SetLineColor(kOrange+10);
     //m2Ptcos4phimoments2nPlus->Draw("PE;same");
-    m2Ptcos4phimoments2nPlus->SetStats(false);
-    m2Ptcos4phimoments2nPlus->SetMarkerSize(0.7);
-    m2Ptcos4phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos4phimoments2nPlus->SetStats(false);
+    //m2Ptcos4phimoments2nPlus->SetMarkerSize(0.7);
+    //m2Ptcos4phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
     
     slight_4phiMoments->SetLineColor(kGreen);
-    slight_4phiMoments->Draw("PE;same");
+    //slight_4phiMoments->Draw("PE;same");
     mc4phi->SetLineColor(kBlack);
     //mc4phi->Draw("PE;same");
     reco4phi->SetLineColor(kRed);
     //reco4phi->Draw("PE;same");
     reco4phiRc->SetLineColor(kBlue);
-    reco4phiRc->Draw("PE;same");
+    //reco4phiRc->Draw("PE;same");
     QED4phi->SetLineColor(kBlue);
     QED4phi->SetLineWidth(6);
     QED4phi->Draw("same");
     embeddedreco4phi->SetLineColor(kBlack);
-    embeddedreco4phi->Draw("PE;same");
-    m2Ptcos4phimoments->GetXaxis()->SetTitle("Pair pT (GeV/c)");
-    m2Ptcos4phimoments->GetYaxis()->SetTitle("A_{4#phi}");
+    //embeddedreco4phi->Draw("PE;same");
+    fourphiCorrected->GetXaxis()->SetTitle("Pair pT (GeV/c)");
+    fourphiCorrected->GetYaxis()->SetTitle("A_{4#phi}");
     reco4phi->SetStats(false);
     reco4phiRc->SetStats(false);
     mc4phi->SetStats(false);
     auto fourphiLegend = new TLegend(0.75,0.6,1,0.85);
     fourphiLegend->SetHeader("Legend","C"); // option "C" allows to center the header
-    fourphiLegend->AddEntry(m2Ptcos4phimoments,"Raw Data Run 12");
+    fourphiLegend->AddEntry(fourphiCorrected,"Corrected Run 12");
     //fourphiLegend->AddEntry(m2Ptcos4phimoments1n1n,"Raw Data Run 12 1n1n");
     //fourphiLegend->AddEntry(m2Ptcos4phimoments2nPlus,"Raw Data Run 12 2n+");
-    fourphiLegend->AddEntry(slight_4phiMoments, "slight.out A_{4#phi}");
+    //fourphiLegend->AddEntry(slight_4phiMoments, "slight.out A_{4#phi}");
     //fourphiLegend->AddEntry(mc4phi, "MC A_{4#phi}");
     //fourphiLegend->AddEntry(reco4phi, "Reco A_{4#phi} (MC bins)");
-    fourphiLegend->AddEntry(reco4phiRc, "Reco A_{4#phi} (Reco bins)");
+    //fourphiLegend->AddEntry(reco4phiRc, "Reco A_{4#phi} (Reco bins)");
     fourphiLegend->AddEntry(QED4phi, "QED Theory Curve");
-    fourphiLegend->AddEntry(embeddedreco4phi, "Reco after Embedded Signal");
+    //fourphiLegend->AddEntry(embeddedreco4phi, "Reco after Embedded Signal");
+    fourphiLegend->AddEntry(m2Ptcos4phimoments, "Uncorrected Run 12");
     fourphiLegend->SetTextSize(.03);
     fourphiLegend->Draw("same");
     //gPad->Print("masterPlots/plot_pair4phimomentsRun10to12.png");
@@ -568,4 +670,15 @@ void masterPlots() {
     TFile file("output_root_files/theory_modulations.root", "RECREATE");
     twophihist->Write();
     fourphihist->Write();
+
+
+    makeCanvas2();
+    resampled_purity->SetTitle("Purity from Mixed event");
+    resampled_purity->Draw("PE");
+
+    makeCanvas2();
+    twophiMomentsResampled->Draw("PE");
+
+    makeCanvas2();
+    fourphiMomentsResampled->Draw("PE");
 }
