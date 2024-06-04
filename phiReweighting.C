@@ -33,14 +33,16 @@ void phiReweighting(){
     TH1F * qed2phi = (TH1F*)theory_curves->Get("QED2phi");
     TH1F * qed4phi = (TH1F*)theory_curves->Get("QED4phi");
 
+    TH2F * reweightedmcrcphi = new TH2F("reweightedmcrcphi", "reweightedmcrcphi", 50, -3.14159, 3.14159, 50, 3.14159, 3.14159);
+
 
     
     //routine to reweight mcphi and see what happens for reco phi
    
     makeCanvas();
     //project mcphi and recophi into first pt bin
-    TH1F * mcphi = (TH1F*)mcphipt->ProjectionX(0,1);
-    TH1F * recophi = (TH1F*)recophipt->ProjectionX(0,1);
+    TH1D * mcphi = (TH1D*)mcphipt->ProjectionX("p34", 3,4);
+    TH1D * recophi = (TH1D*)recophipt->ProjectionX("p34", 3,4);
     //normalize
     mcphi->Scale(1/mcphi->Integral());
     recophi->Scale(1/recophi->Integral());
@@ -127,5 +129,8 @@ void phiReweighting(){
     makeCanvas();
     qed2phi->Draw("PE");
     qed4phi->Draw("PE;same");
+
+    makeCanvas();
+    embeddedSignal->Draw("PE");
 
 }

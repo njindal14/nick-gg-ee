@@ -258,7 +258,8 @@ ZDC2DAll->Draw("colz");
 gPad->SetLogz();
 gPad->Print("note_plots/ZDCs_plots/plot_ZDC2DAll.png");
 
-
+std::cout << "Integral < 500: " << ZDC2DAll->Integral(0, 38, 0, 38);//ZDC2DAll->GetXaxis()->FindBin(0), ZDC2DAll->GetXaxis()->FindBin(500), ZDC2DAll->GetYaxis()->FindBin(0), ZDC2DAll->GetYaxis()->FindBin(500)) << "\n";
+std::cout << "Integral total: " << ZDC2DAll->Integral();
 
 
 TFile file("output_root_files/ZDCFits.root", "RECREATE");

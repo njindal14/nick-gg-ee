@@ -36,17 +36,20 @@ void crossSectionComparisons(){
 
     
     makeCanvas();
-    uu_mass->Scale(1/uu_mass->Integral());
-    au_mass->Scale(1/au_mass->Integral());
+    //uu_mass->Scale(1/uu_mass->Integral());
+    //au_mass->Scale(1/au_mass->Integral());
     uu_mass->SetLineColor(kBlack);
     au_mass->SetLineColor(kRed);
-    au_mass->Draw("PE");
-    uu_mass->Draw("PE'same");
+    uu_mass->SetStats(false);
+    au_mass->SetStats(false);
+    uu_mass->Draw("PE");
+    au_mass->Draw("PE;same");
     TLegend * mass_leg = new TLegend(0.77,0.3,.97,0.45);
     mass_leg->SetHeader("Legend");
     mass_leg->AddEntry(uu_mass,"U+U Run 12","l");
     mass_leg->AddEntry(au_mass,"Au+Au Run10+11","l");
     mass_leg->Draw("same"); 
+    gPad->SetLogy();
     gPad->Print("note_plots/results_plots/massComp.png");
 
     makeCanvas();
@@ -62,12 +65,14 @@ void crossSectionComparisons(){
 
     
     makeCanvas();
-    uu_pt->Scale(1/uu_pt->Integral("width"));
-    au_pt->Scale(1/au_pt->Integral("width"));
+    //uu_pt->Scale(1/uu_pt->Integral("width"));
+    //au_pt->Scale(1/au_pt->Integral("width"));
     uu_pt->SetLineColor(kBlack);
     au_pt->SetLineColor(kRed);
-    au_pt->Draw("PE");
-    uu_pt->Draw("PE;same");
+    //uu_pt->SetStats(false);
+    //au_pt->SetStats(false);
+    uu_pt->Draw("PE");
+    au_pt->Draw("PE;same");
     TLegend * pt_leg = new TLegend(0.77,0.3,.97,0.45);
     pt_leg->SetHeader("Legend");
     pt_leg->AddEntry(uu_pt,"U+U Run 12","l");
@@ -92,17 +97,20 @@ void crossSectionComparisons(){
 
 
     makeCanvas();
-    uu_pt2->Scale(1/uu_pt2->Integral("width"));
-    au_pt2->Scale(1/au_pt2->Integral("width"));
+    //uu_pt2->Scale(1/uu_pt2->Integral("width"));
+    //au_pt2->Scale(1/au_pt2->Integral("width"));
     uu_pt2->SetLineColor(kBlack);
     au_pt2->SetLineColor(kRed);
-    au_pt2->Draw("PE");
-    uu_pt2->Draw("PE;same");
+    //uu_pt2->SetStats(false);
+    //au_pt2->SetStats(false);
+    uu_pt2->Draw("PE");
+    au_pt2->Draw("PE;same");
     TLegend * pt2_leg = new TLegend(0.77,0.3,.97,0.45);
     pt2_leg->SetHeader("Legend");
     pt2_leg->AddEntry(uu_pt2,"U+U Run 12","l");
     pt2_leg->AddEntry(au_pt2,"Au+Au Run10+11","l");
     pt2_leg->Draw("same");  
+    gPad->SetLogy();
     gPad->Print("note_plots/results_plots/pt2Comp.png");
 
     makeCanvas();
@@ -120,12 +128,14 @@ void crossSectionComparisons(){
 
 
     makeCanvas();
-    uu_y->Scale(1/uu_y->Integral("width"));
-    au_y->Scale(1/au_y->Integral("width"));
+    //uu_y->Scale(1/uu_y->Integral("width"));
+    //au_y->Scale(1/au_y->Integral("width"));
     uu_y->SetLineColor(kBlack);
     au_y->SetLineColor(kRed);
-    au_y->Draw("PE");
-    uu_y->Draw("PE;same");
+    uu_y->SetStats(false);
+    au_y->SetStats(false);
+    uu_y->Draw("PE");
+    au_y->Draw("PE;same");
     TLegend * y_leg = new TLegend(0.77,0.3,.97,0.45);
     y_leg->SetHeader("Legend");
     y_leg->AddEntry(uu_y,"U+U Run 12","l");

@@ -40,6 +40,9 @@ void backgroundCorrection() {
     auto * cos2phivPtUnlike = new TH2F("Cos2#phivPtUnlike", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
     auto * cos4phivPtUnlike = new TH2F("Cos4#phivPtUnlike", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
 
+    auto * cos2phivMassUnlike = new TH2F("Cos2#phivMassUnlike", "", 400, -2, 2, 50, 0, 2);
+    auto * cos4phivMassUnlike = new TH2F("Cos4#phivMassUnlike", "", 400, -2, 2, 50, 0, 2);
+
     auto * cos1phivPtUnlike = new TH2F("Cos1#phivPtUnlike", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
     auto * cos3phivPtUnlike = new TH2F("Cos3#phivPtUnlike", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
 
@@ -58,6 +61,13 @@ void backgroundCorrection() {
 
     TH1F * negphi = (TH1F*)starlight_out->Get("mNegPhi");
     TH1F * posphi = (TH1F*)starlight_out->Get("mPosPhi"); 
+
+
+    TFile * mixedeventmoments = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventMoments.root");
+    TH1F * cos1phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos1phivsPTvsMass_p0");
+    TH1F * cos2phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos2phivsPTvsMass_p1");
+    TH1F * cos3phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos3phivsPTvsMass_p2");
+    TH1F * cos4phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos4phivsPTvsMass_p3");
 
 
     while(myReader.Next()){
@@ -115,6 +125,8 @@ void backgroundCorrection() {
 
     TH2F * cos1phivPtResample= new TH2F("cos1phivPtResample", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
     TH2F * cos3phivPtResample = new TH2F("cos3phivPtResample", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
+
+    TH1F * acoResample = new TH1F("acoResample", "acoResample", 20, 0, .2);
 
     TH1F * resamplePt = new TH1F("resamplePt", "", 20, 0, 1);
 
@@ -182,6 +194,9 @@ void backgroundCorrection() {
         resampleMassUniform->Fill(pairUniform.M());
         resampleMass->Fill(pair.M());
 
+        cos2phivMassUnlike->Fill(2*cos(2*phi), pair.M());
+        cos4phivMassUnlike->Fill(2*cos(4*phi), pair.M());
+
         if(pair.M() > 0.4 && pair.M() < 0.76){
             cos2phivPtResample->Fill( 2*cos(2*phi), pair.Pt() );
             cos4phivPtResample->Fill( 2*cos(4*phi), pair.Pt() );
@@ -209,15 +224,19 @@ void backgroundCorrection() {
             cos3phivPtPosLS->Fill( 2*cos(3*posLSphi), pairPosLS.Pt());
         }
 
+        if(pair.M() > 0.4 && pair.M() < 1){
+            double acoval = 1 - abs(pos.Phi() - neg.Phi())/M_PI;
+            acoResample->Fill(acoval);
+        }
+
     }
 
     //normalizing to data at a certain pt
-    resamplePt->Scale( mPtUnlike->GetBinContent( mPtUnlike->FindBin(0.3) ) / resamplePt->GetBinContent( resamplePt->FindBin(.3) ) );
+    resamplePt->Scale( mPtUnlike->GetBinContent( mPtUnlike->FindBin(0.47) ) / resamplePt->GetBinContent( resamplePt->FindBin(.47) ) );
 
     //look at signal/background and signal/sqrt(signal+background)
     makeCanvas();
     TH1F * SBR = (TH1F*)mPtUnlike->Clone();
-    SBR->Divide(resamplePt);
     SBR->SetTitle("Signal/ Background Ratio");
     SBR->GetXaxis()->SetTitle("pT (GeV/c)");
     SBR->Draw("PE");
@@ -305,6 +324,8 @@ void backgroundCorrection() {
     m1phiMomentsResampleUniform->Draw("PE;same");
     m1phiMomentsPosLS->SetLineColor(kBlack);
     m1phiMomentsPosLS->Draw("PE;same");
+    cos1phimixed->SetLineColor(kPink);
+    cos1phimixed->Draw("PE;same");
     m2Ptcos1phimomentsUnlikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos1phimomentsUnlikesign->GetYaxis()->SetTitle("A_{1#phi}");
 
@@ -314,7 +335,7 @@ void backgroundCorrection() {
     leg1->AddEntry(m1phiMomentsResample, "slight random sampled");
     leg1->AddEntry(m1phiMomentsResampleUniform, "slight random sampled uniform");
     leg1->AddEntry(m1phiMomentsPosLS, "slight LS pos");
-
+    leg1->AddEntry(cos1phimixed, "Mixed Event");
     leg1->Draw("same");
     m2Ptcos1phimomentsUnlikesign->SetStats(false);
     gPad->Print("note_plots/mixed_event_plots/onephi_with_mixed.png");
@@ -331,6 +352,8 @@ void backgroundCorrection() {
     m2phiMomentsResampleUniform->Draw("PE;same");
     m2phiMomentsPosLS->SetLineColor(kBlack);
     m2phiMomentsPosLS->Draw("PE;same");
+    cos2phimixed->SetLineColor(kPink);
+    cos2phimixed->Draw("PE;same");
     m2Ptcos2phimomentsUnlikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos2phimomentsUnlikesign->GetYaxis()->SetTitle("A_{2#phi}");
 
@@ -340,6 +363,7 @@ void backgroundCorrection() {
     leg2->AddEntry(m2phiMomentsResample, "slight random sampled");
     leg2->AddEntry(m2phiMomentsResampleUniform, "slight random sampled uniform");
     leg2->AddEntry(m2phiMomentsPosLS, "slight LS pos");
+    leg2->AddEntry(cos2phimixed, "Mixed Event");
     leg2->Draw("same");
     m2Ptcos2phimomentsUnlikesign->SetStats(false);
     gPad->Print("note_plots/mixed_event_plots/twophi_with_mixed.png");
@@ -353,6 +377,8 @@ void backgroundCorrection() {
     m3phiMomentsResampleUniform->Draw("PE;same");
     m3phiMomentsPosLS->SetLineColor(kBlack);
     m3phiMomentsPosLS->Draw("PE;same");
+    cos3phimixed->SetLineColor(kPink);
+    cos3phimixed->Draw("PE;same");
     m2Ptcos3phimomentsUnlikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos3phimomentsUnlikesign->GetYaxis()->SetTitle("A_{3#phi}");
 
@@ -362,6 +388,7 @@ void backgroundCorrection() {
     leg3->AddEntry(m3phiMomentsResample, "slight random sampled");
     leg3->AddEntry(m3phiMomentsResampleUniform, "slight random sampled uniform");
     leg3->AddEntry(m3phiMomentsPosLS, "slight LS pos");
+    leg3->AddEntry(cos3phimixed, "Mixed Event");
     leg3->Draw("same");
     m2Ptcos3phimomentsUnlikesign->SetStats(false);
     gPad->Print("note_plots/mixed_event_plots/threephi_with_mixed.png");
@@ -375,6 +402,8 @@ void backgroundCorrection() {
     m4phiMomentsResampleUniform->Draw("PE;same");
     m4phiMomentsPosLS->SetLineColor(kBlack);
     m4phiMomentsPosLS->Draw("PE;same");
+    cos4phimixed->SetLineColor(kPink);
+    cos4phimixed->Draw("PE;same");
     m2Ptcos4phimomentsUnlikesign->GetXaxis()->SetTitle("pT (GeV/c)");
     m2Ptcos4phimomentsUnlikesign->GetYaxis()->SetTitle("A_{4#phi}");
     TLegend * leg4 = new TLegend(.8, .7, 1, .9);
@@ -383,11 +412,10 @@ void backgroundCorrection() {
     leg4->AddEntry(m4phiMomentsResample, "slight random sampled");
     leg4->AddEntry(m4phiMomentsResampleUniform, "slight random sampled uniform");
     leg4->AddEntry(m4phiMomentsPosLS, "slight LS pos");
+    leg4->AddEntry(cos4phimixed, "Mixed Event");
     leg4->Draw("same");
     m2Ptcos4phimomentsUnlikesign->SetStats(false);
     gPad->Print("note_plots/mixed_event_plots/fourphi_with_mixed.png");
-
-
 
     
     makeCanvas();
@@ -462,7 +490,7 @@ void backgroundCorrection() {
     gPad->Print("note_plots/mixed_event_plots/mass_dists.png");
 
     
-    makeCanvas();
+    /*makeCanvas();
     resamplePt->Scale(1/resamplePt->Integral());
     resamplePtUniform->Scale(1/resamplePtUniform->Integral());
     mPtUnlike->Scale(1/mPtUnlike->Integral());
@@ -486,9 +514,45 @@ void backgroundCorrection() {
     legpt->Draw("same");
     resamplePt->SetStats(false);
     gPad->SetLogy();
-    gPad->Print("note_plots/mixed_event_plots/pair_pts.png");
-    
-    
+    gPad->Print("note_plots/mixed_event_plots/pair_pts.png");*/
+
+    makeCanvas();
+    cos2phivMassUnlike->Draw("colz");
+    cos2phivMassUnlike->GetXaxis()->SetTitle("A_{2#phi}");
+    cos2phivMassUnlike->GetYaxis()->SetTitle("M_{ee}");
+    cos2phivMassUnlike->SetTitle("A_{2#phi} vs pair mass");
+
+    makeCanvas();
+    cos4phivMassUnlike->Draw("colz");
+    cos4phivMassUnlike->GetXaxis()->SetTitle("A_{4#phi}");
+    cos4phivMassUnlike->GetYaxis()->SetTitle("M_{ee}");
+    cos4phivMassUnlike->SetTitle("A_{4#phi} vs pair mass");
+
+    makeCanvas();
+    acoResample->SetLineColor(kBlack);
+    acoResample->SetTitle("#alpha, 0.4 < M < 1");
+    acoResample->Scale(1/acoResample->GetEntries());
+    for(int i = 0; i < acoResample->GetNbinsX(); ++i){
+        double binwidth = acoResample->GetBinWidth(i);
+        std::cout << "bin width " << binwidth; 
+        std::cout << "bin content: " << acoResample->GetBinContent(i);
+        double content = acoResample->GetBinContent(i)/binwidth;
+        acoResample->SetBinContent(i, content);
+    }
+    acoResample->GetXaxis()->SetTitle("#alpha");
+    acoResample->GetYaxis()->SetTitle("1/N * dN/d#alpha");
+    acoResample->Draw("PE");
+    /*MCaco->SetLineColor(kBlue);
+    rcaco->SetLineColor(kRed);
+    MCaco->Draw("PE;same");
+    rcaco->Draw("PE;same");
+    auto acolegend = new TLegend(0.75,0.6,1,0.85);
+    acolegend->SetHeader("Legend","C"); // option "C" allows to center the header
+    acolegend->AddEntry(aco,"Run 12");
+    acolegend->AddEntry(MCaco,"Simulation MC");
+    acolegend->AddEntry(rcaco,"Simulation Reco");*/
+
+
 
     TFile file("output_root_files/background_plots.root", "RECREATE");
     purity->Write();
@@ -497,6 +561,7 @@ void backgroundCorrection() {
 
     m2phiMomentsResample->Write();
     m4phiMomentsResample->Write();
+    acoResample->Write();
 
 
 

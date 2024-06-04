@@ -22,13 +22,13 @@ void crossSectionsUU() {
 
     auto * mMass = new TH1F("mMass", "Pair Mass", 20, 0.3, 2.7);
     auto * mPt = new TH1F("mPt", "Pair pT", 20, 0, 0.1);
-    auto * mPt2 = new TH1F("mPt2", "Pair pT^{2}", 20, 0, 0.01);
+    auto * mPt2 = new TH1F("mPt2", "Pair pT^{2}", 20, 0, 0.008);
     auto * mY = new TH1F("mY", "Pair Rapidity", 20, -1, 1);
 
     //for looking at uranium cross sections using gold corrections
     auto * mMassAu = new TH1F("", "Pair Mass Au Corrections", 20, 0.3, 2.7);
     auto * mPtAu = new TH1F("", "Pair pT Au Corrections", 20, 0, 0.1);
-    auto * mPt2Au = new TH1F("", "Pair pT^{2} Au Corrections", 20, 0, 0.01);
+    auto * mPt2Au = new TH1F("", "Pair pT^{2} Au Corrections", 20, 0, 0.008);
     auto * mYAu = new TH1F("", "Pair Rapidity Au Corrections", 20, -1, 1);
 
     //tofmatch efficiencies
@@ -71,7 +71,7 @@ void crossSectionsUU() {
 
 
         if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && pair->mChargeSum == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
-        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.4 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi) {
+        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.4 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi && pair->mZDCEast < 500 && pair->mZDCWest < 500) {
             
             if(lv.M() > 0.4 && lv.M() < 0.76){
                 mPt->Fill(lv.Pt());
@@ -83,7 +83,7 @@ void crossSectionsUU() {
                 mYAu->Fill(lv.Rapidity());    
 
             }   
-            if(lv.Pt() < 0.1  && abs(lv.Rapidity()) < 1){ 
+            if(lv.Pt() < 0.15  && abs(lv.Rapidity()) < 1){ 
                 mMass->Fill(lv.M()); mMassAu->Fill(lv.M());
             }
 
@@ -171,7 +171,7 @@ void crossSectionsUU() {
 
     double purity_corrections = 0.975*0.996; //subject to change
     double tpc_eff = 1*1; //100% for each track -- no missing sectors -- this may change after looking at simulation
-    double XnXn_correction = 1.; //still an estimate, need to recalculate
+    double XnXn_correction = 0.49; //still an estimate, need to recalculate
 
     double total_eff = luminosity*lumi_fraction*bbc_eff*purity_corrections*vertex_eff*XnXn_correction;
 
@@ -192,37 +192,37 @@ void crossSectionsUU() {
     makeCanvas();
     gPad->SetLogy();
     mMass->GetXaxis()->SetTitle("M_{ee} (GeV/c^{2})");
-    mMass->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dM} (b/(GeV/c^2))");
+    mMass->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dM} (mb/(GeV/c^{2}))");
     mMass->Draw("PE");
-    mMassAu->SetLineColor(kRed);
-    mMassAu->Draw("PE;same");
+    //mMassAu->SetLineColor(kRed);
+    //mMassAu->Draw("PE;same");
     //gPad->Print("note_plots/results_plots/UU_MassXSecBoth.png");
 
     makeCanvas();
     mPt->GetXaxis()->SetTitle("pT_{ee} (GeV/c)");
-    mPt->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (b/(GeV/c))");
+    mPt->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (mb/(GeV/c))");
     mPt->Draw("PE");
-    mPtAu->SetLineColor(kRed);
-    mPtAu->Draw("PE;same");
+    //mPtAu->SetLineColor(kRed);
+    //mPtAu->Draw("PE;same");
     //gPad->Print("note_plots/results_plots/UU_PtXSecBoth.png");
 
     makeCanvas();
     gPad->SetLogy();
     mPt2->GetXaxis()->SetTitle("pT_{ee}^{2} (GeV/c)^{2}");
-    mPt2->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (b/(GeV/c)^2)");
+    mPt2->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (mb/(GeV/c)^{2})");
     mPt2->Draw("PE");
-    mPt2Au->SetLineColor(kRed);
-    mPt2Au->Draw("PE;same");
+    //mPt2Au->SetLineColor(kRed);
+    //mPt2Au->Draw("PE;same");
     //gPad->Print("note_plots/results_plots/UU_Pt2XSecBoth.png");
 
 
     makeCanvas();
     mY->GetXaxis()->SetTitle("y_{ee}");
-    mY->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dy} (b)");
+    mY->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dy} (mb)");
     gPad->SetLogy();
     mY->Draw("PE");
-    mYAu->SetLineColor(kRed);
-    mYAu->Draw("PE;same");
+    //mYAu->SetLineColor(kRed);
+    //mYAu->Draw("PE;same");
     //gPad->Print("note_plots/results_plots/UU_YXSecBoth.png");
 
    

@@ -76,7 +76,7 @@ void PairEff(){
     //checking tpc acceptance in simulation
     auto McPairEtaVsPhi = new TH2D("McPairEtaVsPhi", "McPairEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
     auto McPosEtaVsPhi = new TH2D("McPosEtaVsPhi", "McPosEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
-    auto McNegEtaVsPhi = new TH2D("MCNegEtaVsPhi", "MCNegEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
+    auto McNegEtaVsPhi = new TH2D("McNegEtaVsPhi", "McNegEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
 
     auto RcPairEtaVsPhi = new TH2D("RcPairEtaVsPhi", "RcPairEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
     auto RcPosEtaVsPhi = new TH2D("RcPosEtaVsPhi", "RcPosEtaVsPhi", 50, -1, 1, 50, -3.14159, 3.14159);
@@ -89,17 +89,24 @@ void PairEff(){
     auto RCPosnhitsdedxvpT = new TH2D("RCPosnhitsdedxvpT", "RCPosnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
     auto RCNegnhitsdedxvpT = new TH2D("RCNegnhitsdedxvpT", "RCNegnhitsdedxvpT", 50, 0, 50, 80, 0.2, 1);
 
-    auto cos2phivPtMC = new TH2F("Cos2#phivPtMC", "cos2#phi Moments vs P_{T} MC Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
-    auto cos4phivPtMC = new TH2F("Cos4#phivPtMC", "cos4#phi Moments vs P_{T} MC Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
+    auto cos2phivPtMC = new TH2F("Cos2#phivPtMC", "cos2#phi Moments vs P_{T} MC Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 7, 0, 0.1);
+    auto cos4phivPtMC = new TH2F("Cos4#phivPtMC", "cos4#phi Moments vs P_{T} MC Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 7, 0, 0.1);
 
-    auto cos2phivPtReco = new TH2F("Cos2#phivPtReco", "cos2#phi Moments vs P_{T} Reco Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
-    auto cos4phivPtReco = new TH2F("Cos4#phivPtReco", "cos4#phi Moments vs P_{T} Reco Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
+    auto cos2phivPtReco = new TH2F("Cos2#phivPtReco", "cos2#phi Moments vs P_{T} Reco Pairs; 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 7, 0, 0.1);
+    auto cos4phivPtReco = new TH2F("Cos4#phivPtReco", "cos4#phi Moments vs P_{T} Reco Pairs; 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 7, 0, 0.1);
 
     auto cos2phivPtRecoRc = new TH2F("Cos2#phivPtRecoRc", "cos2#phi Moments vs P_{T} Reco Pairs (binned in RC); 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
     auto cos4phivPtRecoRc = new TH2F("Cos4#phivPtRecoRc", "cos4#phi Moments vs P_{T} Reco Pairs (binned in RC); 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 20, 0, 0.3);
     
-    auto mcphipt = new TH2F("mcphipt", "mcphipt (binned in MC); #phi>; pT (GeV/c)", 25, -3.1415927, 3.1415927, 20, 0, 0.3);
+    auto mcphipt = new TH2F("mcphipt", "mcphipt (binned in MC); #phi; pT (GeV/c)", 25, -3.1415927, 3.1415927, 20, 0, 0.3);
     auto recophipt = new TH2F("recophipt", "recophipt (binned in RC); #phi>; pT (GeV/c)", 25, -3.1415927, 3.1415927, 20, 0, 0.3);
+
+    auto mcrecophipt = new TH3F("mcrecophipt", "mcrecophipt", 30, -3.15, 3.15, 30, -3.15, 3.15, 30, 0, 0.6);
+
+    auto mcrecophi = new TH2F("mcrecophi", "mcrecophi", 30, -3.15, 3.15, 30, -3.15, 3.15);
+
+    auto MCaco = new TH1F("MCaco", "MCaco", 20, 0, .2);
+    auto rcaco = new TH1F("rcaco", "rcaco", 20, 0, .2);
 
 
 
@@ -152,6 +159,13 @@ void PairEff(){
         cos4phivPtMC->Fill(2*cos(4*phival), mcpair.Pt());
         mcphipt->Fill(phival, mcpair.Pt());
 
+        if(mcpair.M() > 0.4 && mcpair.M() < 1){
+            double aco = 1 - abs(mcpos.Phi() - mcneg.Phi())/M_PI;
+            MCaco->Fill(aco);
+        }
+
+        //std::cout << "filled mc" << "\n";
+
 
 
         short idxPos = -1, idxNeg = -1;
@@ -167,10 +181,15 @@ void PairEff(){
             }
         }
 
+
         if ( idxPos <= -1 || idxNeg <= -1 ) continue;
+
+        //code not getting here
+        //std::cout << "got past continue";
 
         rcneg.SetPtEtaPhiM( MCPtVals[idxNeg], MCEtaVals[idxNeg], MCPhiVals[idxNeg], 0.00051099895000 );
         rcpos.SetPtEtaPhiM( MCPtVals[idxPos], MCEtaVals[idxPos], MCPhiVals[idxPos], 0.00051099895000 );
+        //std::cout << "Set reco stuff" << "\n";
 
         rcnegreco.SetPtEtaPhiM( RCPtVals[idxNeg], RCEtaVals[idxNeg], RCPhiVals[idxNeg], 0.00051099895000 );
         rcposreco.SetPtEtaPhiM( RCPtVals[idxPos], RCEtaVals[idxPos], RCPhiVals[idxPos], 0.00051099895000 );
@@ -179,6 +198,9 @@ void PairEff(){
         double phivalreco = calc_Phi(rcnegreco, rcposreco);
         
         if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20 && DCA[0] < 1 && DCA[1] < 1){
+            
+            //std::cout << "Filled reco stuff" << "\n";
+
 
             RcPtPair->Fill(rcpair.Pt());
             RcPt2Pair->Fill(rcpair.Pt()*rcpair.Pt());
@@ -203,6 +225,15 @@ void PairEff(){
 
             recophipt->Fill(phivalreco, rcpair.Pt());
 
+            mcrecophipt->Fill(phival, phivalreco, mcpair.Pt());
+
+            //in one pt bin
+            if(mcpair.Pt() < 0.06 && mcpair.Pt() > 0.04){
+                mcrecophi->Fill(phival, phivalreco);
+            }
+            double rcacoval = 1- abs(rcposreco.Phi() - rcnegreco.Phi())/M_PI;
+            rcaco->Fill(rcacoval);
+
 
 
         }
@@ -215,6 +246,8 @@ void PairEff(){
     McPtPair->Draw();
     RcPtPair->SetLineColor(kRed);
     RcPtPair->Draw("same");
+    McPtPair->GetXaxis()->SetTitle("pT (GeV/c)");
+    McPtPair->GetYaxis()->SetTitle("Counts");
     gPad->Print("note_plots/sim_and_eff_plots/simpt.png");
 
 
@@ -229,6 +262,7 @@ void PairEff(){
     TEfficiency * mEff = new TEfficiency(* RcMassPair, * McMassPair);
     mEff->SetTitle("Pair Invariant Mass Efficiency");
     mEff->Draw("PE");
+    
     gPad->Print("note_plots/sim_and_eff_plots/masseff.png");
 
 
@@ -236,6 +270,8 @@ void PairEff(){
     McMassPair->Draw();
     RcMassPair->SetLineColor(kRed);
     RcMassPair->Draw("same");
+    McMassPair->GetXaxis()->SetTitle("M_{ee} (GeV/c^{2})");
+    McMassPair->GetYaxis()->SetTitle("Counts");
     gPad->Print("note_plots/sim_and_eff_plots/simmass.png");
 
 
@@ -250,6 +286,8 @@ void PairEff(){
     McRapidityPair->Draw();
     RcRapidityPair->SetLineColor(kRed);
     RcRapidityPair->Draw("same");
+    McRapidityPair->GetXaxis()->SetTitle("y_{ee}");
+    McRapidityPair->GetYaxis()->SetTitle("Counts");
     gPad->Print("note_plots/sim_and_eff_plots/simy.png");
 
 
@@ -264,6 +302,8 @@ void PairEff(){
     McPt2Pair->Draw();
     RcPt2Pair->SetLineColor(kRed);
     RcPt2Pair->Draw("same");
+    McPt2Pair->GetXaxis()->SetTitle("pT^{2} (GeV/c)^{2}");
+    McPt2Pair->GetYaxis()->SetTitle("Counts");
     gPad->Print("note_plots/sim_and_eff_plots/simpt2.png");
 
 
@@ -309,6 +349,23 @@ void PairEff(){
     m2Ptcos4phimomentsRecoRc->Draw("PE");
     gPad->Print("note_plots/sim_and_eff_plots/plot_Starsimcos4phimomentsRecoRc.png");
 
+    makeCanvas();
+    MCaco->Scale(1/MCaco->GetEntries());
+    rcaco->Scale(1/rcaco->GetEntries());
+    for(int i = 0; i < MCaco->GetNbinsX(); ++i){
+        double binwidth = MCaco->GetBinWidth(i);
+        std::cout << "bin width " << binwidth; 
+        std::cout << "bin content: " << MCaco->GetBinContent(i);
+        double content = MCaco->GetBinContent(i)/binwidth;
+        double rccontent = rcaco->GetBinContent(i)/binwidth;
+        MCaco->SetBinContent(i, content);
+        rcaco->SetBinContent(i, rccontent);
+    }
+    MCaco->GetXaxis()->SetTitle("#alpha");
+    MCaco->GetYaxis()->SetTitle("1/N * dN/d#alpha");
+    MCaco->Draw("PE");
+    rcaco->SetLineColor(kRed);
+    rcaco->Draw("PE;same");
 
     TFile file("output_root_files/simulation_plots.root", "RECREATE");
     McPtPair->Write();
@@ -325,6 +382,7 @@ void PairEff(){
     McPairEtaVsPhi->Write();
     McPosEtaVsPhi->Write();
     McNegEtaVsPhi->Write();
+
     RcPairEtaVsPhi->Write();
     RcPosEtaVsPhi->Write();
     RcNegEtaVsPhi->Write();
@@ -343,6 +401,11 @@ void PairEff(){
 
     recophipt->Write();
     mcphipt->Write();
+    mcrecophipt->Write();
+    mcrecophi->Write();
+
+    MCaco->Write();
+    rcaco->Write();
 
 
 

@@ -7,8 +7,8 @@ double me2 = pow(0.00051,2);
 int ican2 = 0;
 void makeCanvas()  {
     TCanvas * can = new TCanvas( TString::Format( "can%d", ican2++ ), "", 900, 600);
-    can->SetTopMargin(0.08);
-    can->SetRightMargin(0.15);
+    can->SetTopMargin(0.1);
+    can->SetRightMargin(0.1);
     can->SetBottomMargin(0.15);
 }
 
@@ -16,7 +16,7 @@ void crossSectionsAuAu() {
 
     auto * mMassAuAu = new TH1F("mMassAuAu", "Pair Mass", 20, 0.3, 2.7);
     auto * mPtAuAu = new TH1F("mPtAuAu", "Pair pT", 20, 0, 0.1);
-    auto * mPt2AuAu = new TH1F("mPt2AuAu", "Pair pT^{2}", 20, 0, 0.01);
+    auto * mPt2AuAu = new TH1F("mPt2AuAu", "Pair pT^{2}", 20, 0, 0.008);
     auto * mYAuAu = new TH1F("mYAuAu", "Pair Rapidity", 20, -1, 1);
 
     TChain * ch = new TChain("PairDst");
@@ -88,7 +88,7 @@ void crossSectionsAuAu() {
                 mYAuAu->Fill(lv.Rapidity());
 
             }   
-            if(lv.Pt() < 0.1 && fabs(lv.Rapidity()) < 1) mMassAuAu->Fill(lv.M());
+            if(lv.Pt() < 0.15 && fabs(lv.Rapidity()) < 1) mMassAuAu->Fill(lv.M());
         }
 
     }
@@ -162,10 +162,10 @@ void crossSectionsAuAu() {
     double bbc_eff = 0.683; //taken from jdb
     double vertex_eff = 0.68; //taken from JDB analysis, same as eEvent
     double purity_corrections = 0.975*0.996; //subject to change
-    //double tpc_eff = .8*.8; //100% for each track -- no missing sectors -- this may change after looking at simulation
+    double tpc_eff = .8*.8; //100% for each track -- no missing sectors -- this may change after looking at simulation
     double XnXn_correction = 1/2.43; //still an estimate, need to recalculate
 
-    double total_eff = luminosity*lumi_fraction*bbc_eff*purity_corrections*vertex_eff*XnXn_correction;
+    double total_eff = luminosity*lumi_fraction*bbc_eff*purity_corrections*vertex_eff*tpc_eff;
 
 
     //scale and draw cross sections
@@ -177,20 +177,20 @@ void crossSectionsAuAu() {
     makeCanvas();
     gPad->SetLogy();
     mMassAuAu->GetXaxis()->SetTitle("M_{ee} (GeV/c^{2})");
-    mMassAuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dM} (b/(GeV/c^2))");
+    mMassAuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dM} (mb/(GeV/c^{2}))");
     mMassAuAu->Draw("PE");
     gPad->Print("note_plots/results_plots/Au_MassXSec.png");
 
     makeCanvas();
     mPtAuAu->GetXaxis()->SetTitle("pT_{ee} (GeV/c)");
-    mPtAuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (b/(GeV/c))");
+    mPtAuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (mb/(GeV/c))");
     mPtAuAu->Draw("PE");
     gPad->Print("note_plots/results_plots/Au_PtXSec.png");
 
     makeCanvas();
     gPad->SetLogy();
     mPt2AuAu->GetXaxis()->SetTitle("pT_{ee}^{2} (GeV/c)^{2}");
-    mPt2AuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (b/(GeV/c)^2)");
+    mPt2AuAu->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (mb/(GeV/c)^{2})");
     mPt2AuAu->Draw("PE");
     gPad->Print("note_plots/results_plots/Au_Pt2XSec.png");
 
