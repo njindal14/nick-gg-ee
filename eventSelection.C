@@ -1,3 +1,6 @@
+//#include "./FemtoPairFormat.h"
+
+
 int ican = 0;
 void makeCanvas() {
     TCanvas * can = new TCanvas( TString::Format( "can%d", ican++ ), "", 900, 600 );
@@ -8,6 +11,11 @@ void makeCanvas() {
 void eventSelection() {
 
     TFile *Run12FemtoDst = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/FemtoDst_Run12UU_wZDC.root");
+
+    //TFile *file2 = new TFile("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root"); // Open the file
+   // Navigate to the PairDst folder
+    //TDirectory *pairDst = (TDirectory*)file2->Get("PairDst");
+    //TH1F *dca = (TH1F*)pairDst->Get("Pairs.d1_mDCA");
     
     TH1F * event_stats = (TH1F*)Run12FemtoDst->Get("event_stats");
     TH2D * n_verts_GRefMult = (TH2D*)Run12FemtoDst->Get("n_verts_GRefMult");
@@ -82,6 +90,20 @@ void eventSelection() {
 
     double lumi_fraction = hist_vz->Integral(hist_vz->FindBin(-100), hist_vz->FindBin(100))/hist_vz->Integral();
     std::cout << "lumi fraction: " << lumi_fraction << "\n";
+
+    double grefmult_eff =  hist_gRefMult->Integral(hist_gRefMult->FindBin(0), hist_gRefMult->FindBin(4))/hist_gRefMult->Integral();
+    std::cout << "grefmult_eff: " << grefmult_eff << "\n";
+
+    //get dca cut eff
+    //TFile *Run12PairDst = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
+    //TTree *tree = (TTree*)Run12PairDst->GetObject("PairDst");
+    //TBranch *branch = (TBranch*)tree->GetBranch("Pairs");
+
+    //TH1F * d1_dca = (TH1F*)Run12PairDst->Get("PairDst.Pairs.d1_mDCA");
+    
+    //double d1_dca_eff =  d1_dca->Integral(d1_dca->FindBin(0), d1_dca->FindBin(1))/d1_dca->Integral();
+    //std::cout << "d1_dca_eff: " << d1_dca_eff << "\n";
+
 
 }
 

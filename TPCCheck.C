@@ -15,9 +15,17 @@ void TPCCheck() {
     TFile *myFile = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
     TTreeReader myReader("PairDst", myFile);
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
+
+    //check for gold
+
+    /*TChain * ch = new TChain("PairDst");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run10AuAu.root");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run11AuAu.root");
+    TTreeReader myReader(ch);
+    TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");*/
     TLorentzVector lv1, lv2, lv, lvn;
 
-    TFile * simulation_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
+    TFile * simulation_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new.root");
     TH2D * RcPairEtaVsPhi = (TH2D*)simulation_plots->Get("RcPairEtaVsPhi");
     TH2D * RcPosEtaVsPhi = (TH2D*)simulation_plots->Get("RcPosEtaVsPhi");
     TH2D * RcNegEtaVsPhi = (TH2D*)simulation_plots->Get("RcNegEtaVsPhi");
@@ -61,7 +69,7 @@ void TPCCheck() {
         Float_t ddTofVal = dTofVal - dTofexpVal;
 
         if( fabs(mVertexZVal) < 100 &&  mGRefMultVal <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
-        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal < 0.4) && ddTofVal !=0) {
+        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal < 0.5) && ddTofVal !=0) {
             if(chiee < 10 && 3*chiee < chipipi){
                 
                 STARpairPhiVsEta->Fill(lv.Eta(), pairPhi);
@@ -193,7 +201,7 @@ void TPCCheck() {
     RcpairPosEta->SetLineColor(kBlue);
     RcpairAllEta->GetXaxis()->SetTitle("RC #phi");
     RcpairAllEta->GetYaxis()->SetTitle("Counts"); 
-    RcpairAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcpairAllEta->GetYaxis()->SetRangeUser(0,4500);
     RcpairAllEta->Draw("PE");
     RcpairNegEta->Draw("same;PE");
     RcpairPosEta->Draw("same;PE");
@@ -210,7 +218,7 @@ void TPCCheck() {
     RcposPosEta->SetLineColor(kBlue);
     RcposAllEta->GetXaxis()->SetTitle("RC #phi");
     RcposAllEta->GetYaxis()->SetTitle("Counts"); 
-    RcposAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcposAllEta->GetYaxis()->SetRangeUser(0,4500);
     RcposAllEta->Draw("PE");
     RcposNegEta->Draw("same;PE");
     RcposPosEta->Draw("same;PE");
@@ -227,7 +235,7 @@ void TPCCheck() {
     RcelPosEta->SetLineColor(kBlue);
     RcelAllEta->GetXaxis()->SetTitle("RC #phi");
     RcelAllEta->GetYaxis()->SetTitle("Counts"); 
-    RcelAllEta->GetYaxis()->SetRangeUser(0,450);
+    RcelAllEta->GetYaxis()->SetRangeUser(0,4500);
     RcelAllEta->Draw("PE");
     RcelNegEta->Draw("same;PE");
     RcelPosEta->Draw("same;PE");
@@ -247,7 +255,7 @@ void TPCCheck() {
     McpairPosEta->SetLineColor(kBlue);
     McpairAllEta->GetXaxis()->SetTitle("MC #phi");
     McpairAllEta->GetYaxis()->SetTitle("Counts"); 
-    McpairAllEta->GetYaxis()->SetRangeUser(0,450);
+    McpairAllEta->GetYaxis()->SetRangeUser(0,4500);
     McpairAllEta->Draw("PE");
     McpairNegEta->Draw("same;PE");
     McpairPosEta->Draw("same;PE");
@@ -264,7 +272,7 @@ void TPCCheck() {
     McposPosEta->SetLineColor(kBlue);
     McposAllEta->GetXaxis()->SetTitle("MC #phi");
     McposAllEta->GetYaxis()->SetTitle("Counts"); 
-    McposAllEta->GetYaxis()->SetRangeUser(0,450);
+    McposAllEta->GetYaxis()->SetRangeUser(0,4500);
     McposAllEta->Draw("PE");
     McposNegEta->Draw("same;PE");
     McposPosEta->Draw("same;PE");
@@ -281,7 +289,7 @@ void TPCCheck() {
     McelPosEta->SetLineColor(kBlue);
     McelAllEta->GetXaxis()->SetTitle("MC #phi");
     McelAllEta->GetYaxis()->SetTitle("Counts"); 
-    McelAllEta->GetYaxis()->SetRangeUser(0,450);
+    McelAllEta->GetYaxis()->SetRangeUser(0,4500);
     McelAllEta->Draw("PE");
     McelNegEta->Draw("same;PE");
     McelPosEta->Draw("same;PE");

@@ -129,9 +129,9 @@ double* histYbins( TH2F* hist) {
 void aco() {
 
 
-    auto * aco = new TH1F("aco", "aco", 20, 0, .2);
+    auto * aco = new TH1F("aco", "aco", 10, 0, .2);
 
-    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
+    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new.root");
     TH1F * MCaco = (TH1F*)sim_output->Get("MCaco");
     TH1F * rcaco = (TH1F*)sim_output->Get("rcaco");
 

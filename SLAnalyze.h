@@ -35,6 +35,7 @@ class Analyze
 
   TH2F* mcos2phivspt;
   TH2F* mcos4phivspt;
+  TH2F * SLphivPt;
 
 
   FILE *filelist;

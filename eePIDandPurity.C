@@ -49,12 +49,18 @@ double calc_Phi( TLorentzVector lv1, TLorentzVector lv2) {
 
 void eePIDandPurity() { 
 
-    auto * chieeFit = new TF1("chieefit", "[0]", 0, 30);
-    chieeFit->SetParameter(0,40);
+    auto * chieeFit = new TF1("chieefit", chiFit, 0, 12, 2);
+    chieeFit->SetParameters(2000.0, 5);
+    chieeFit->SetParNames("A", "B");
+    chieeFit->SetParLimits(1, -30, 0);
+
+    //chieeFit->SetNpx(10000);
+
+    //chieeFit->SetParameter(0,40);
 
     auto * mdTof = new TH1F("#DeltaTOF Hist", "#DeltaTOF", 1000, -15, 15);
     auto * mdTofexp = new TH1F("#DeltaTOFExp Hist", "#DeltaTOFexp", 1000, -15, 15);
-    auto * mddTof = new TH1F("#Delta#DeltaTOF Hist", "#Delta#DeltaTOF", 1000, -6, 6);
+    auto * mddTof = new TH1F("#Delta#DeltaTOF Hist", "#Delta#DeltaTOF", 1000, -2, 2);
     auto * Xee = new TH1F("#chi_{ee}^{2}", "", 100, 0, 30);
     auto * Xee25 = new TH1F("#chi_{ee}^{2}", "#chi_{#pi#pi}^{2} > 25", 200, 0, 15);
     auto * background25 = new TH1F("Background", "#chi_{ee}^{2} background 25, #chi_{#pi#pi}^{2} > 25", 200, 0, 15);
@@ -80,16 +86,16 @@ void eePIDandPurity() {
 
     auto * massvpt = new TH2F("massvpt", "", 100, 0, 3.5, 300, 0, 1.5);
 
-    auto * ddTofFit = new TF1("fit", ddToffit, -2, 2, 7);
-    ddTofFit->SetParameters(100000.0, 0, 0.2, 50000.0, 0, 0.5, 10);
+    auto * ddTofFit = new TF1("fit", ddToffit, -.2, .2, 7);
+    ddTofFit->SetParameters(10000.0, 0, 0.1 ,50000.0, 0, 0.5, 10);
     ddTofFit->SetParNames("A1", "#lambda1", "#sigma1", "A2","#lambda2", "sigma2", "p0");
     //set some parameter ranges
-    ddTofFit->SetParLimits(2,0.05, 0.3);
+    //ddTofFit->SetParLimits(2,0.05, 0.21);
     ddTofFit->SetParLimits(5,0.1,1);
 
     //smooth it out
     ddTofFit->SetNpx(1000);
-    ddTofFit->SetLineWidth(4);
+    ddTofFit->SetLineWidth(2);
     
     TFile *myFile = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
     TTreeReader myReader("PairDst", myFile);
@@ -124,7 +130,7 @@ void eePIDandPurity() {
         if( fabs(mVertexZVal) < 100 &&  mGRefMultVal <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
         pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 ) {
 
-            if(fabs(ddTofVal < 0.4)){   
+            if(fabs(ddTofVal < 0.5)){   
 
                 if(ddTofVal == 0) continue;
                 if(chiee < 10) massvpt->Fill(lv.M(), lv.Pt());
@@ -133,9 +139,10 @@ void eePIDandPurity() {
                 nSigmaRigidityCut1->Fill(lv1.P(), pair->d1_mNSigmaElectron);
                 nSigmaRigidityCut2->Fill(-lv2.P(), pair->d2_mNSigmaElectron);
 
-                if(chipipi > 30) Xee->Fill(chiee);
+                if(chipipi > 30 && lv.Pt() < 0.04) 
+                Xee->Fill(chiee);
 
-                else{
+                //else{
                     if (chipipi > 25) {
                         if (3 * chiee < chipipi) {
                             Xee25->Fill(chiee);
@@ -183,7 +190,7 @@ void eePIDandPurity() {
                             background1->Fill(chiee);
                         }
                     }
-                }
+                //}
             }
         }
         //for all pairs (no selection)
@@ -219,16 +226,17 @@ void eePIDandPurity() {
     gPad->SetLogy();
     mddTof->GetXaxis()->SetTitle("#Delta #Delta TOF Distrubition (ns)");
     mddTof->GetYaxis()->SetTitle("Counts");
-    mddTof->SetStats(false);
+    //mddTof->SetStats(false);
     mddTof->Draw();
 
     mddTof->Fit("fit", "", "", -2,2);
     gStyle->SetOptFit(1111);
     //gPad->Print( "plots/plot_ddTof.png"); 
     double errorddtof;
-    double ddtofIntegral = mddTof->IntegralAndError(-34,34,errorddtof,"");
-    std::cout << "Integral of ddtof inside cut: " << ddtofIntegral;
-    std::cout << "Error of integral: " << errorddtof;   
+    double ddtofIntegral = mddTof->Integral(-12,12,"width");
+    std::cout << "Integral of ddtof inside cut: " << ddtofIntegral << "\n";
+    //std::cout << "Error of integral: " << errorddtof << "\n";   
+    std::cout << "fit integral: " << ddTofFit->Integral(-.5, .5) << "\n";
     gPad->Print("note_plots/purity_plots/Run12ddtofWithFit.png");
 
 
@@ -240,25 +248,34 @@ void eePIDandPurity() {
     Xee->GetXaxis()->SetTitle("#chi_{ee}^{2}");
     Xee->GetYaxis()->SetTitle("dN/d(#chi_{ee}^{2})");
     Xee->SetMarkerStyle(20);
-    Xee->SetStats(false);
+    //Xee->SetStats(false);
     Xee->Draw("PE");
     chieeFit->SetLineWidth(4);
     chieeFit->SetLineColor(kBlue);
-    Xee->Fit("chieefit", "", "", 12, 30);
-    Xee->Fit("expo", "R+", "", 0., 12.);
+    Xee->Fit("chieefit", "", "", 0, 8);
+    Xee->Fit("pol0", "", "", 10, 30);
+    //Xee->Fit("expo", "R+", "", 0., 12.);
     gStyle->SetOptFit(1111);
     chieeFit->Draw("same");
     double background0 = chieeFit->GetParameter(0);
     double binsx0 = Xee->GetNbinsX();
     double totbackground = 0;
     double totsignal = 0;
-    for(int ix =1; ix <= Xee->FindFixBin(10); ix++){
-        totsignal += Xee->GetBinContent(ix);
-        totbackground += background0;
-    }
-    double purity = totsignal/ (totsignal+totbackground);
-    cout << "Purity for chipipi > 30: " << purity*100 << "%\n";
-    gPad->Print("note_plots/purity_plots/Run12_dedx_fit_30.png");
+    
+    double fitIntegral = chieeFit->Integral(0.01, 10.);
+    double fitIntegralAll = chieeFit->Integral(0.01, 11.);
+
+    std::cout << fitIntegral << " fit integral < 10" << "\n";
+    std::cout << fitIntegralAll << "fit integral all " << "\n";
+    double signalIntegral = Xee->Integral(0, 15, "width");
+    std::cout << signalIntegral << " sig integral 0 to 15" << "\n";
+
+    
+   
+    //double purity = totsignal/ (totsignal+totbackground);
+    //cout << "Purity for chipipi > 30: " << purity*100 << "%\n";
+    cout << "Efficiency of cut > 30: " << fitIntegral/ fitIntegralAll << "\n";
+    //gPad->Print("note_plots/purity_plots/Run12_dedx_fit_30.png");
 
     
     makeCanvas();
@@ -295,7 +312,8 @@ void eePIDandPurity() {
     double sigint25 = Xee25->Integral(Xee25->FindFixBin(0), Xee25->FindFixBin(8.33), "");
     double bkg25 = background25->Integral(background25->FindFixBin(0), background25->FindFixBin(8.33), "");
     double purityIntegral25 = sigint25/(sigint25+bkg25);
-    cout << "Purity 25 Integral Method: " << purityIntegral25;
+    cout << "Purity 25 Integral Method: " << purityIntegral25 << "\n";
+    cout << "Efficiency of cut 25: " << sigint25/Xee25->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_25.png");
 
 
@@ -335,7 +353,8 @@ void eePIDandPurity() {
     double sigint20 = Xee20->Integral(Xee20->FindFixBin(0), Xee20->FindFixBin(6.66), "");
     double bkg20 = background20->Integral(background20->FindFixBin(0), background20->FindFixBin(6.66), "");
     double purityIntegral20 = sigint20/(sigint20+bkg20);
-    cout << "Purity 20 Integral Method: " << purityIntegral20;
+    cout << "Purity 20 Integral Method: " << purityIntegral20 << "\n";
+    cout << "Efficiency of cut 20: " << sigint20/Xee20->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_20.png");
 
 
@@ -374,7 +393,8 @@ void eePIDandPurity() {
     double sigint15 = Xee15->Integral(Xee15->FindFixBin(0), Xee15->FindFixBin(5), "");
     double bkg15 = background15->Integral(background15->FindFixBin(0), background15->FindFixBin(5), "");
     double purityIntegral15 = sigint15/(sigint15+bkg15);
-    cout << "Purity 15 Integral Method: " << purityIntegral15;
+    cout << "Purity 15 Integral Method: " << purityIntegral15 << "\n";
+    cout << "Efficiency of cut 15: " << sigint15/Xee15->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_15.png");
 
 
@@ -413,7 +433,8 @@ void eePIDandPurity() {
     double sigint10 = Xee10->Integral(Xee10->FindFixBin(0), Xee10->FindFixBin(3.33), "");
     double bkg10 = background10->Integral(background10->FindFixBin(0), background10->FindFixBin(3.33), "");
     double purityIntegral10 = sigint10/(sigint10+bkg10);
-    cout << "Purity 10 Integral Method: " << purityIntegral10;
+    cout << "Purity 10 Integral Method: " << purityIntegral10 << "\n";
+    cout << "Efficiency of cut 10: " << sigint10/Xee10->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_10.png");
 
 
@@ -453,7 +474,8 @@ void eePIDandPurity() {
     double sigint5 = Xee5->Integral(Xee5->FindFixBin(0), Xee5->FindFixBin(1.66), "");
     double bkg5 = background5->Integral(background5->FindFixBin(0), background5->FindFixBin(1.66), "");
     double purityIntegral5 = sigint5/(sigint5+bkg5);
-    cout << "Purity 5 Integral Method: " << purityIntegral5;
+    cout << "Purity 5 Integral Method: " << purityIntegral5 << "\n";
+    cout << "Efficiency of cut 5: " << sigint5/Xee5->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_5.png");
 
 
@@ -492,7 +514,8 @@ void eePIDandPurity() {
     double sigint1 = Xee1->Integral(Xee1->FindFixBin(0), Xee1->FindFixBin(.33), "");
     double bkg1 = background1->Integral(background1->FindFixBin(0), background1->FindFixBin(.33), "");
     double purityIntegral1 = sigint1/(sigint1+bkg1);
-    cout << "Purity 1 Integral Method: " << purityIntegral1;
+    cout << "Purity 1 Integral Method: " << purityIntegral1 << "\n";
+    cout << "Efficiency of cut 1: " << sigint1/Xee1->Integral();
     gPad->Print("note_plots/purity_plots/Run12_dedx_slice_1.png");
 
     double overallPurity = 0;

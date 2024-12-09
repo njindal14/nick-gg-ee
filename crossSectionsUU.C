@@ -38,12 +38,17 @@ void crossSectionsUU() {
     TH1D * tofMatch_eff_pt2 = (TH1D*)tofmatchEfficiencies->Get("tof_eff_pt2");
     TH1D * tofMatch_eff_y = (TH1D*)tofmatchEfficiencies->Get("tof_eff_y");
 
+
     //embedding reco efficiencies 
-    TFile * simulationplots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
+    TFile * simulationplots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new.root");
     TEfficiency * mass_eff = (TEfficiency*)simulationplots->Get("mEff");
     TEfficiency * pt_eff = (TEfficiency*)simulationplots->Get("hEff");
     TEfficiency * pt2_eff = (TEfficiency*)simulationplots->Get("h2Eff");
     TEfficiency * y_eff = (TEfficiency*)simulationplots->Get("YEff");
+
+    TEfficiency * ptm_eff = (TEfficiency*)simulationplots->Get("PtMEff");
+
+    
 
     while(myReader.Next()){
 
@@ -83,7 +88,7 @@ void crossSectionsUU() {
                 mYAu->Fill(lv.Rapidity());    
 
             }   
-            if(lv.Pt() < 0.15  && abs(lv.Rapidity()) < 1){ 
+            if(lv.Pt() < 0.1  && abs(lv.Rapidity()) < 1){ 
                 mMass->Fill(lv.M()); mMassAu->Fill(lv.M());
             }
 
@@ -171,7 +176,7 @@ void crossSectionsUU() {
 
     double purity_corrections = 0.975*0.996; //subject to change
     double tpc_eff = 1*1; //100% for each track -- no missing sectors -- this may change after looking at simulation
-    double XnXn_correction = 0.49; //still an estimate, need to recalculate
+    double XnXn_correction = 0.552; //still an estimate, need to recalculate. got it from integral of zdcs less than 500 on both sides over the total integral
 
     double total_eff = luminosity*lumi_fraction*bbc_eff*purity_corrections*vertex_eff*XnXn_correction;
 
@@ -196,7 +201,7 @@ void crossSectionsUU() {
     mMass->Draw("PE");
     //mMassAu->SetLineColor(kRed);
     //mMassAu->Draw("PE;same");
-    //gPad->Print("note_plots/results_plots/UU_MassXSecBoth.png");
+    gPad->Print("note_plots/results_plots/UU_MassXSecBothNEW.png");
 
     makeCanvas();
     mPt->GetXaxis()->SetTitle("pT_{ee} (GeV/c)");
@@ -204,16 +209,16 @@ void crossSectionsUU() {
     mPt->Draw("PE");
     //mPtAu->SetLineColor(kRed);
     //mPtAu->Draw("PE;same");
-    //gPad->Print("note_plots/results_plots/UU_PtXSecBoth.png");
+    gPad->Print("note_plots/results_plots/UU_PtXSecBothNEW.png");
 
     makeCanvas();
     gPad->SetLogy();
     mPt2->GetXaxis()->SetTitle("pT_{ee}^{2} (GeV/c)^{2}");
     mPt2->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT^{2}} (mb/(GeV/c)^{2})");
     mPt2->Draw("PE");
-    //mPt2Au->SetLineColor(kRed);
+   // mPt2Au->SetLineColor(kRed);
     //mPt2Au->Draw("PE;same");
-    //gPad->Print("note_plots/results_plots/UU_Pt2XSecBoth.png");
+    gPad->Print("note_plots/results_plots/UU_Pt2XSecBothNEW.png");
 
 
     makeCanvas();
@@ -223,11 +228,11 @@ void crossSectionsUU() {
     mY->Draw("PE");
     //mYAu->SetLineColor(kRed);
     //mYAu->Draw("PE;same");
-    //gPad->Print("note_plots/results_plots/UU_YXSecBoth.png");
+    gPad->Print("note_plots/results_plots/UU_YXSecBothNEW.png");
 
    
     // calculate and plot the absolute cross sections
-    /*
+    
     Double_t error_m;
     Double_t error_pt;
     Double_t error_pt2;
@@ -252,13 +257,11 @@ void crossSectionsUU() {
     gr->GetXaxis()->SetBinLabel(84, "y_{ee} [1]");  
     gr->GetYaxis()->SetTitle("Absolute Cross Section (mb)");  
     gr->Draw("AP");
-    gPad->Print("note_plots/results_plots/UUAbsXSections.png");*/
-
-
+    gPad->Print("note_plots/results_plots/UUAbsXSectionsNEW.png");
 
 
     //write to root file
-    TFile file("output_root_files/crossSectionsUU.root", "RECREATE");
+    TFile file("output_root_files/crossSectionsUU_NEW.root", "RECREATE");
     mMass->Write();
     mPt->Write();
     mPt2->Write();

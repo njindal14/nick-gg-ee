@@ -61,7 +61,7 @@ double ddToffit(double *x, double *par){
 
 double phiFit(double *x, double *par){
     double fitval;
-    fitval = par[0]*(1+par[1]*cos(x[0]) + par[2]*cos(2*x[0]) + par[3]*cos(3*x[0]) + par[4]*cos(4*x[0]) + par[5]*cos(5*x[0]) + par[6]*cos(6*x[0]) + par[7]*cos(7*x[0]) + par[8]*cos(8*x[0]));
+    fitval = par[0]*(1+par[1]*cos(x[0]) + par[2]*cos(2*x[0]) + par[3]*cos(3*x[0]) + par[4]*cos(4*x[0]));
     return fitval;
 }
 
@@ -136,15 +136,18 @@ void masterPlots() {
     auto * mMass = new TH1F("Parent Mass PID + TOF cuts, P_{T} < 0.2 GeV/c", "Parent Mass (GeV/c^{2})", 50, 0, 3);
     auto * mEta = new TH1F("mEta", "Parent #eta", 100, -1, 1);
 
-    auto * phivPt = new TH2F("phivPt", "phivPt", 30, -3.14, 3.14, 10, edges);
+    auto * phivPt = new TH2F("phivPt", "phivPt", 20, -3.14, 3.14, 10, edges);
 
-    auto * cos4phivPt = new TH2F("Cos4#phivPt", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
-    auto * cos3phivPt = new TH2F("Cos3#phivPt", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
-    auto * cos2phivPt = new TH2F("Cos2#phivPt", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
-    auto * cosphivPt = new TH2F("Cos#phivPt", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cos4phivPt = new TH2F("Cos4#phivPt", "A_{4#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cos3phivPt = new TH2F("Cos3#phivPt", "A_{3#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cos2phivPt = new TH2F("Cos2#phivPt", "A_{2#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cosphivPt = new TH2F("Cos#phivPt", "A_{1#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
 
-    auto * cos5phivsPt = new TH2F("Cos5#phivPt", "A_{5#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
-    auto * cos6phivsPt = new TH2F("Cos6#phivPt", "A_{6#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cos5phivsPt = new TH2F("Cos5#phivPt", "A_{5#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    auto * cos6phivsPt = new TH2F("Cos6#phivPt", "A_{6#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+    
+    auto * cos8phivsPt = new TH2F("Cos8#phivPt", "A_{8#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 10, edges);
+
 
     auto * cos4phivM = new TH2F("Cos4#phivM", "A_{4#phi}, pT < 0.15 GeV", 400, -2, 2, 20, 0, 1);
     auto * cos3phivM = new TH2F("Cos3#phivM", "A_{3#phi}, pT < 0.15 GeV", 400, -2, 2, 20, 0, 1);
@@ -152,23 +155,17 @@ void masterPlots() {
     auto * cos1phivM = new TH2F("Cos1#phivM", "A_{1#phi}, pT < 0.15 GeV", 400, -2, 2, 20, 0, 1);
 
 
-    auto * cos4phivPt1n1n = new TH2F("Cos4#phivPt1n1n", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
-    auto * cos3phivPt1n1n = new TH2F("Cos3#phivPt1n1n", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
-    auto * cos2phivPt1n1n = new TH2F("Cos2#phivPt1n1n", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
-    auto * cosphivPt1n1n = new TH2F("Cos#phivPt1n1n", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
+    auto * cos4phivPt1n1n = new TH2F("Cos4#phivPt1n1n", "A_{4#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
+    auto * cos3phivPt1n1n = new TH2F("Cos3#phivPt1n1n", "A_{3#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
+    auto * cos2phivPt1n1n = new TH2F("Cos2#phivPt1n1n", "A_{2#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
+    auto * cosphivPt1n1n = new TH2F("Cos#phivPt1n1n", "A_{1#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 1n1n", 400, -2, 2, 20, 0, 0.3);
 
 
-    auto * cos4phivPt2nPlus = new TH2F("Cos4#phivPt2nPlus", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
-    auto * cos3phivPt2nPlus = new TH2F("Cos3#phivPt2nPlus", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
-    auto * cos2phivPt2nPlus = new TH2F("Cos2#phivPt2nPlus", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
-    auto * cosphivPt2nPlus = new TH2F("Cos#phivPt2nPlus", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
+    auto * cos4phivPt2nPlus = new TH2F("Cos4#phivPt2nPlus", "A_{4#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
+    auto * cos3phivPt2nPlus = new TH2F("Cos3#phivPt2nPlus", "A_{3#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
+    auto * cos2phivPt2nPlus = new TH2F("Cos2#phivPt2nPlus", "A_{2#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
+    auto * cosphivPt2nPlus = new TH2F("Cos#phivPt2nPlus", "A_{1#phi}, 0.45 < M_{ee} < 0.76 GeV/c^{2} 2n+", 400, -2, 2, 20, 0, 0.3);
 
-
-
-    // Open the file containing the tree.
-    /*TFile *myFile = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
-    TTreeReader myReader("PairDst", myFile);
-    TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");*/
 
     TChain * ch = new TChain("PairDst");
     ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
@@ -178,19 +175,36 @@ void masterPlots() {
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
  
 
-    TFile * starlight_out = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/SL_plotsBetter.root");
+    TFile * starlight_out = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/SL_plotsBetter.root");
     TH1F * slightPt = (TH1F*)starlight_out->Get("mPt");
     TH1F * slightMass = (TH1F*)starlight_out->Get("mMass");
     TH1F * slightEta = (TH1F*)starlight_out->Get("mEta");
     TH2D* slightcos4phipt = (TH2D*)starlight_out->Get("mCos4phivsPT");
     TH2D* slightcos2phipt = (TH2D*)starlight_out->Get("mCos2phivsPT");
+    TH2F * SLphipt = (TH2F*)starlight_out->Get("SLphivPt");
+
 
     auto * slight_4phiMoments = slightcos4phipt->ProfileY("slight_4phiMoments", 1, -1);
     auto * slight_2phiMoments = slightcos2phipt->ProfileY("slight_2phiMoments", 1, -1);
 
 
+    TFile * starlight_out_au = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/SL_plotsBetter_Au.root");
+    TH1F * slightPt_au = (TH1F*)starlight_out_au->Get("mPt");
+    TH1F * slightMass_au = (TH1F*)starlight_out_au->Get("mMass");
+    TH1F * slightEta_au = (TH1F*)starlight_out_au->Get("mEta");
+    TH2D* slightcos4phipt_Au = (TH2D*)starlight_out_au->Get("mCos4phivsPT");
+    TH2D* slightcos2phipt_Au = (TH2D*)starlight_out_au->Get("mCos2phivsPT");
+    TH2F * SLphipt_Au = (TH2F*)starlight_out_au->Get("SLphivPt");
 
-    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
+
+    auto * slight_4phiMoments_Au = slightcos4phipt_Au->ProfileY("slight_4phiMoments_Au", 1, -1);
+    auto * slight_2phiMoments_Au = slightcos2phipt_Au->ProfileY("slight_2phiMoments_Au", 1, -1);
+
+
+
+
+
+    TFile * sim_output = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new_Au.root");
 
     TH1F * McPt = (TH1F*)sim_output->Get("McPtPair");
     TH1F * McMass = (TH1F*)sim_output->Get("McMassPair");
@@ -208,9 +222,9 @@ void masterPlots() {
     TH1F * reco2phiRc = (TH1F*)sim_output->Get("m2Ptcos2phimomentsRecoRc");
     TH1F * reco4phiRc = (TH1F*)sim_output->Get("m2Ptcos4phimomentsRecoRc");
 
-    auto * phifit = new TF1("phifit", phiFit, -3.15,3.15,9);
-    auto * mPhi1n1n = new TH1F("mPhi", "#Delta#phi, 1n1n, pT < 0.15 ", 25, -3.14159, 3.14159);
-    auto * mPhi2nPlus = new TH1F("mPhi2nPlus", "#Delta#phi, 2n+, pT < 0.15", 25, -3.14159, 3.14159);
+    auto * phifit = new TF1("phifit", phiFit, -3.15,3.15,5);
+    phifit->SetParNames("p0","A_{1#phi}", "A_{2#phi}", "A_{3#phi}", "A_{4#phi}");
+
 
 
     TFile * embedded_signal = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/signal_embedded_results.root");
@@ -218,10 +232,17 @@ void masterPlots() {
     TH1F * embeddedreco4phi = (TH1F*)embedded_signal->Get("reco4phiReweighted");
 
 
-    TFile * mixed_purity = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/background_plots.root");
+    TFile * mixed_purity = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/background_plots_Au.root");
     TH1F * resampled_purity = (TH1F*)mixed_purity->Get("mPtUnlike");
     TH1F * twophiMomentsResampled = (TH1F*)mixed_purity->Get("m2phiMomentsResample");
     TH1F * fourphiMomentsResampled = (TH1F*)mixed_purity->Get("m4phiMomentsResample");
+
+    TFile * mixed_event_plots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventplots_Au.root");
+    TH2F * mixedphipt = (TH2F*)mixed_event_plots->Get("mULSLSphipt");
+
+    TFile * f = new TFile( "/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new.root" );
+    TH2 * mcphipt_sim = (TH2*)f->Get( "mcphipt" );
+
 
 
 
@@ -264,9 +285,10 @@ void masterPlots() {
         int chargesumval = pair->mChargeSum;
 
         if( fabs(mVertexZVal) < 100 && pair->mGRefMult <= 4 && chargesumval == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
-        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.4 && chiee < 10 && 3*chiee < chipipi && ddTofVal !=0) {
+        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(ddTofVal) < 0.5 && chiee < 10 && 3*chiee < chipipi && ddTofVal !=0) {
             
             if(mPtVal < 0.15){
+
                 mMass->Fill(lv.M());
                 double phival;
                 TRandom3 rng(123);
@@ -284,7 +306,7 @@ void masterPlots() {
 
             }
                 
-            if(lv.M() < 0.76 && lv.M() > .4) {
+            if(lv.M() < 0.76 && lv.M() > .45) {
                 double phival;
                 TRandom3 rng(123);
                 double uniform_double = rng.Uniform(0., 1.);
@@ -293,10 +315,6 @@ void masterPlots() {
                 }
                 else{
                     phival = calc_Phi(lv2,lv1);
-                }
-                if(lv.Pt() < 0.15){    
-                    if(mZDCEastVal < 1300 && mZDCWestVal < 1300) {mPhi1n1n->Fill(phival);}
-                    else if (mZDCEastVal > 220 && mZDCWestVal > 220) {mPhi2nPlus->Fill(phival);}
                 }
 
                 mPt->Fill( mPtVal ); 
@@ -308,26 +326,28 @@ void masterPlots() {
 
                 cos5phivsPt->Fill(2*cos(5*phival), mPtVal);
                 cos6phivsPt->Fill(2*cos(6*phival), mPtVal);
+                cos8phivsPt->Fill(2*cos(8*phival), mPtVal);
                 phivPt->Fill(phival, mPtVal);
 
-
-                /*if(mZDCEastVal < 85 && mZDCWestVal < 85){
-                    cos4phivPt1n1n->Fill( 2*cos(4*phival), mPtVal);
-                    cos3phivPt1n1n->Fill( 2*cos(3*phival), mPtVal);
-                    cos2phivPt1n1n->Fill( 2*cos(2*phival), mPtVal);
-                    cosphivPt1n1n->Fill( 2*cos(phival), mPtVal);
-                }
-                else if(mZDCEastVal > 85 && mZDCWestVal > 85){
-                    cos4phivPt2nPlus->Fill( 2*cos(4*phival), mPtVal);
-                    cos3phivPt2nPlus->Fill( 2*cos(3*phival), mPtVal);
-                    cos2phivPt2nPlus->Fill( 2*cos(2*phival), mPtVal);
-                    cosphivPt2nPlus->Fill( 2*cos(phival), mPtVal);
-                }*/
             } 
                  
         }
 
     }
+
+
+    
+    TH1F * sim_phi = (TH1F*)mcphipt_sim->ProjectionX("proj_sim",0., mcphipt_sim->GetYaxis()->FindBin(.1));
+    makeCanvas2();  
+    sim_phi->SetTitle("simulation #Delta#phi, pt < 0.1 GeV");
+    sim_phi->Scale(2*3.14/sim_phi->Integral(), "width");
+    sim_phi->Fit("phifit", "", "", -3.14, 3.14);
+    gStyle->SetOptFit(1111);
+    sim_phi->GetYaxis()->SetRangeUser(0.5, 1.5);
+    sim_phi->Draw("PE");
+
+    makeCanvas2();
+    mcphipt_sim->Draw("colz");
 
 
     makeCanvas2();
@@ -424,6 +444,9 @@ void masterPlots() {
 
     auto *m2Ptcos5phimoments = cos5phivsPt->ProfileY("m2Ptcos5phimoments",1, -1);
     auto *m2Ptcos6phimoments = cos6phivsPt->ProfileY("m2Ptcos6phimoments",1, -1);
+    
+    auto *m2Ptcos8phimoments = cos8phivsPt->ProfileY("m2Ptcos8phimoments",1, -1);
+
 
 
     auto *m2Mcos4phimoments = cos4phivM->ProfileY("m2Mcos4phimoments",1, -1);
@@ -454,7 +477,23 @@ void masterPlots() {
     auto * twophiCorrected = new TH1F("twophiCorrected", "A_{2#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 10, edges);
     auto * fourphiCorrected = new TH1F("fourphiCorrected", "A_{4#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 10, edges);
 
-    TH1D *phiproj = phivPt->ProjectionX("Pair #phi, Pt > 0.1 GeV", phivPt->GetYaxis()->FindFixBin(0.1), phivPt->GetYaxis()->FindFixBin(0.2));
+    TH1D *phiproj = phivPt->ProjectionX("Pair #phi, 0 < Pt < 0.15 GeV", phivPt->GetYaxis()->FindFixBin(0.), phivPt->GetYaxis()->FindFixBin(0.15));
+    TH1D *phiproj50to150 = phivPt->ProjectionX("Pair #phi, 0.05 < Pt < 0.15 GeV", phivPt->GetYaxis()->FindFixBin(0.05), phivPt->GetYaxis()->FindFixBin(0.15));
+    TH1D *phiproj0to50 = phivPt->ProjectionX("Pair #phi, 0 < Pt < 0.05 GeV", phivPt->GetYaxis()->FindFixBin(0.), phivPt->GetYaxis()->FindFixBin(0.05));
+    TH1D *phiproj20to60 = phivPt->ProjectionX("Pair #phi, 0.02 < Pt < 0.06 GeV", phivPt->GetYaxis()->FindFixBin(0.02), phivPt->GetYaxis()->FindFixBin(0.06));
+    TH1D *phiproj60to150 = phivPt->ProjectionX("Pair #phi, 0.06 < Pt < 0.15 GeV", phivPt->GetYaxis()->FindFixBin(0.06), phivPt->GetYaxis()->FindFixBin(0.15));
+
+
+    //starlgiht direct phi projections
+    TH1D *SLphiproj = SLphipt->ProjectionX("Starlight Pair #phi, 0 < Pt < 0.15 GeV", SLphipt->GetYaxis()->FindFixBin(0.), SLphipt->GetYaxis()->FindFixBin(0.15));
+    TH1D *SLphiproj50to150 = SLphipt->ProjectionX("Starlight Pair #phi, 0.05 < Pt < 0.15 GeV", SLphipt->GetYaxis()->FindFixBin(0.05), SLphipt->GetYaxis()->FindFixBin(0.15));
+    TH1D *SLphiproj0to50 = SLphipt->ProjectionX("Starlight Pair #phi, 0 < Pt < 0.05 GeV", SLphipt->GetYaxis()->FindFixBin(0.), SLphipt->GetYaxis()->FindFixBin(0.05));
+    TH1D *SLphiproj20to60 = SLphipt->ProjectionX("Starlight Pair #phi, 0.02 < Pt < 0.06 GeV", SLphipt->GetYaxis()->FindFixBin(0.02), SLphipt->GetYaxis()->FindFixBin(0.06));
+    TH1D *SLphiproj60to150 = SLphipt->ProjectionX("Starlight Pair #phi, 0.06 < Pt < 0.15 GeV", SLphipt->GetYaxis()->FindFixBin(0.06), SLphipt->GetYaxis()->FindFixBin(0.15));
+
+
+
+    TH1D *phiprojMixed = mixedphipt->ProjectionX("Mixed Pair #phi, Pt > 0.1 GeV", mixedphipt->GetYaxis()->FindFixBin(0.1), mixedphipt->GetYaxis()->FindFixBin(0.3));
 
 
     int nBinsMoments2 = twophiCorrected->GetNbinsX();
@@ -543,38 +582,24 @@ void masterPlots() {
     twophiCorrected->SetStats(false);
     QED2phi->SetLineColor(kBlue);
     QED2phi->SetLineWidth(6);
-    QED2phi->SetTitle("A_{2#phi}, 0.4 < M_{ee} < 0.76 (GeV/c^{2}) ");
+    QED2phi->SetTitle("A_{2#phi}, 0.45 < M_{ee} < 0.76 (GeV/c^{2}) AuAu");
     QED2phi->Draw();
 
     twophiCorrected->SetLineColor(kBlack);
     twophiCorrected->Draw("PE;same");
 
     m2Ptcos2phimoments->SetLineColor(kRed);
-    m2Ptcos2phimoments->Draw("PE;same");
-    //twophiCorrected->SetMarkerSize(0.7);
-    //twophiCorrected->SetMarkerStyle(kFullDotLarge);
-
-    //m2Ptcos2phimoments1n1n->SetLineColor(kMagenta);
-    //m2Ptcos2phimoments1n1n->Draw("PE;same");
-    //m2Ptcos2phimoments1n1n->SetStats(false);
-    //m2Ptcos2phimoments1n1n->SetMarkerSize(0.7);
-    //m2Ptcos2phimoments1n1n->SetMarkerStyle(kFullDotLarge);
-
-    //m2Ptcos2phimoments2nPlus->SetLineColor(kOrange+10);
-    //m2Ptcos2phimoments2nPlus->Draw("PE;same");
-    //m2Ptcos2phimoments2nPlus->SetStats(false);
-    //m2Ptcos2phimoments2nPlus->SetMarkerSize(0.7);
-    //m2Ptcos2phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
+    //m2Ptcos2phimoments->Draw("PE;same");
     
-    slight_2phiMoments->SetLineColor(kGreen);
-    slight_2phiMoments->Draw("PE;same");
-    slight_2phiMoments->SetStats(false);
-    mc2phi->SetLineColor(kBlack);
+    slight_2phiMoments_Au->SetLineColor(kGreen);
+    slight_2phiMoments_Au->Draw("PE;same");
+    slight_2phiMoments_Au->SetStats(false);
+    //mc2phi->SetLineColor(kBlack);
     //mc2phi->Draw("PE;same");
-    reco2phi->SetLineColor(kBlue);
-    reco2phi->Draw("PE;same");
-    //reco2phiRc->SetLineColor(kBlue);
-    //reco2phiRc->Draw("PE;same");
+    //reco2phi->SetLineColor(kBlue);
+    //reco2phi->Draw("PE;same");
+    reco2phiRc->SetLineColor(kBlue);
+    reco2phiRc->Draw("PE;same");
     reco2phi->SetStats(false);
     reco2phiRc->SetStats(false);
     mc2phi->SetStats(false);
@@ -587,16 +612,16 @@ void masterPlots() {
     twophiLegend->AddEntry(twophiCorrected,"Corrected Run 12");
     //twophiLegend->AddEntry(m2Ptcos2phimoments1n1n,"Raw Data Run 12 1n1n");
     //twophiLegend->AddEntry(m2Ptcos2phimoments2nPlus,"Raw Data Run 12 2n+");
-    twophiLegend->AddEntry(slight_2phiMoments, "slight.out A_{2#phi}");
+    twophiLegend->AddEntry(slight_2phiMoments_Au, "slight.out A_{2#phi}");
     //twophiLegend->AddEntry(mc2phi, "MC A_{2#phi}");
-    twophiLegend->AddEntry(reco2phi, "Reco A_{2#phi} (MC bins)");
-    //twophiLegend->AddEntry(reco4phiRc, "Reconstructed A_{2#phi}");
+    //twophiLegend->AddEntry(reco2phiRc, "Reco A_{2#phi} (RC bins)");
+    twophiLegend->AddEntry(reco2phiRc, "Reconstructed A_{2#phi}");
     twophiLegend->AddEntry(QED2phi, "QED Theory Curve");
     //twophiLegend->AddEntry(embeddedreco2phi, "Reco after Embedded Signal");
-    twophiLegend->AddEntry(m2Ptcos2phimoments, "Uncorrected Run 12");
+    //twophiLegend->AddEntry(m2Ptcos2phimoments, "Uncorrected Run 12");
     twophiLegend->SetTextSize(.03);
     twophiLegend->Draw("same");
-    gPad->Print("plot_pair2phimomentsall.pdf");
+    //gPad->Print("plot_pair2phimomentsall.pdf");
 
 
 
@@ -606,39 +631,28 @@ void masterPlots() {
     fourphiCorrected->SetStats(false);
     QED4phi->SetLineColor(kBlue);
     QED4phi->SetLineWidth(6);
-    QED4phi->SetTitle("A_{4#phi},  0.4 < M_{ee} < 0.76 (GeV/c^{2}) ");
+    QED4phi->SetTitle("A_{4#phi},  0.45 < M_{ee} < 0.76 (GeV/c^{2}) AuAu");
     QED4phi->Draw();
 
     fourphiCorrected->SetLineColor(kBlack);
     fourphiCorrected->Draw("PE;same");
 
-    m2Ptcos4phimoments->SetLineColor(kRed);
-    m2Ptcos4phimoments->Draw("PE;same");
+    //m2Ptcos4phimoments->SetLineColor(kRed);
+    //m2Ptcos4phimoments->Draw("PE;same");
     //fourphiCorrected->SetMarkerSize(0.7);
     //fourphiCorrected->SetMarkerStyle(kFullDotLarge);
 
-    //m2Ptcos4phimoments1n1n->SetLineColor(kMagenta);
-    //m2Ptcos4phimoments1n1n->Draw("PE;same");
-    //m2Ptcos4phimoments1n1n->SetStats(false);
-    //m2Ptcos4phimoments1n1n->SetMarkerSize(0.7);
-    //m2Ptcos4phimoments1n1n->SetMarkerStyle(kFullDotLarge);
-
-    //m2Ptcos4phimoments2nPlus->SetLineColor(kOrange+10);
-    //m2Ptcos4phimoments2nPlus->Draw("PE;same");
-    //m2Ptcos4phimoments2nPlus->SetStats(false);
-    //m2Ptcos4phimoments2nPlus->SetMarkerSize(0.7);
-    //m2Ptcos4phimoments2nPlus->SetMarkerStyle(kFullDotLarge);
     
-    slight_4phiMoments->SetLineColor(kGreen);
-    slight_4phiMoments->Draw("PE;same");
-    slight_4phiMoments->SetStats(false);
-    mc4phi->SetLineColor(kBlack);
+    slight_4phiMoments_Au->SetLineColor(kGreen);
+    slight_4phiMoments_Au->Draw("PE;same");
+    slight_4phiMoments_Au->SetStats(false);
+    //mc4phi->SetLineColor(kBlack);
     //mc4phi->Draw("PE;same");
-    reco4phi->SetLineColor(kBlue);
-    reco4phi->Draw("PE;same");
-    //reco4phiRc->SetLineColor(kBlue);
-    //reco4phiRc->Draw("PE;same");
-    embeddedreco4phi->SetLineColor(kBlack);
+    //reco4phi->SetLineColor(kBlue);
+    //reco4phi->Draw("PE;same");
+    reco4phiRc->SetLineColor(kBlue);
+    reco4phiRc->Draw("PE;same");
+    //embeddedreco4phi->SetLineColor(kBlack);
     //embeddedreco4phi->Draw("PE;same");
     QED4phi->GetXaxis()->SetTitle("Pair pT (GeV/c)");
     QED4phi->GetYaxis()->SetTitle("A_{4#phi}");
@@ -650,43 +664,17 @@ void masterPlots() {
     fourphiLegend->AddEntry(fourphiCorrected,"Corrected Run 12");
     //fourphiLegend->AddEntry(m2Ptcos4phimoments1n1n,"Raw Data Run 12 1n1n");
     //fourphiLegend->AddEntry(m2Ptcos4phimoments2nPlus,"Raw Data Run 12 2n+");
-    fourphiLegend->AddEntry(slight_4phiMoments, "slight.out A_{4#phi}");
+    fourphiLegend->AddEntry(slight_4phiMoments_Au, "slight.out A_{4#phi}");
     //fourphiLegend->AddEntry(mc4phi, "MC A_{4#phi}");
-    fourphiLegend->AddEntry(reco4phi, "Reco A_{4#phi} (MC bins)");
-    //fourphiLegend->AddEntry(reco4phiRc, "Reconstructed A_{4#phi}");
+    //fourphiLegend->AddEntry(reco4phiRc, "Reco A_{4#phi} (RC bins)");
+    fourphiLegend->AddEntry(reco4phiRc, "Reconstructed A_{4#phi}");
     fourphiLegend->AddEntry(QED4phi, "QED Theory Curve");
     //fourphiLegend->AddEntry(embeddedreco4phi, "Reco after Embedded Signal");
-    fourphiLegend->AddEntry(m2Ptcos4phimoments, "Uncorrected Run 12");
+    //fourphiLegend->AddEntry(m2Ptcos4phimoments, "Uncorrected Run 12");
     fourphiLegend->SetTextSize(.03);
     fourphiLegend->Draw("same");
-    gPad->Print("plot_pair4phimomentsall.pdf");
+    //gPad->Print("plot_pair4phimomentsall.pdf");
 
-    makeCanvas2();
-    mPhi1n1n->GetXaxis()->SetTitle("#Delta #phi");
-    mPhi1n1n->SetTitle("#Delta#phi, Pair pT < 0.15 GeV, 0.4 < M_{ee} < 0.76 GeV");
-    mPhi1n1n->GetYaxis()->SetTitle("Counts");
-    mPhi1n1n->Fit("phifit", "", "", -3.15,3.15);
-    gStyle->SetOptFit(1111);
-    mPhi1n1n->Draw("PE");
-
-    makeCanvas2();
-    mPhi2nPlus->GetXaxis()->SetTitle("#Delta #phi");
-    mPhi2nPlus->SetTitle("Modulation for ZDC tail (3n+)");
-    mPhi2nPlus->Fit("phifit", "", "", -3.15,3.15);
-    mPhi2nPlus->GetYaxis()->SetTitle("Counts");
-    gStyle->SetOptFit(1111);
-    mPhi2nPlus->Draw("PE");
-
-    makeCanvas2();
-    slight_4phiMoments->GetXaxis()->SetTitle("pT (GeV/c)");
-    slight_4phiMoments->GetYaxis()->SetTitle("A_{4#phi}");
-    slight_4phiMoments->Draw("PE");
-    
-
-    makeCanvas2();
-    slight_2phiMoments->GetXaxis()->SetTitle("pT (GeV/c)");
-    slight_2phiMoments->GetYaxis()->SetTitle("A_{2#phi}");
-    slight_2phiMoments->Draw("PE");
 
 
     TH1F * twophihist = new TH1F("QED2phi", "QED2phi", QED2phi->GetN(), 0, .3); 
@@ -706,14 +694,14 @@ void masterPlots() {
     twophihist->SetMarkerStyle(kFullDotLarge);
     twophihist->GetXaxis()->SetTitle("#Delta #phi");
     twophihist->GetYaxis()->SetTitle("A_{2#phi}");
-    twophihist->Draw("P");
+    twophihist->Draw("PE");
 
     makeCanvas2();
     fourphihist->SetMarkerSize(0.7);
     fourphihist->SetMarkerStyle(kFullDotLarge);
     fourphihist->GetXaxis()->SetTitle("#Delta #phi");
     fourphihist->GetYaxis()->SetTitle("A_{4#phi}");
-    fourphihist->Draw("P");
+    fourphihist->Draw("PE");
 
     TFile file("output_root_files/theory_modulations.root", "RECREATE");
     twophihist->Write();
@@ -724,7 +712,7 @@ void masterPlots() {
     resampled_purity->SetTitle("Purity from Mixed event");
     resampled_purity->Draw("PE");
 
-    makeCanvas2();
+    /*makeCanvas2();
     twophiMomentsResampled->Draw("PE");
 
     makeCanvas2();
@@ -744,17 +732,249 @@ void masterPlots() {
     m2Mcos1phimoments->Draw("PE");
 
     makeCanvas2();
-    m2Ptcos5phimoments->Draw("PE");
+    m2Ptcos5phimoments->Draw("PE");*/
+
+    TH1F * twophi = new TH1F("twophi", "twophi", 10, edges);
+    TH1F * fourphi = new TH1F("fourphi", "fourphi", 10, edges);
+    TH1F * sixphi = new TH1F("sixphi", "sixphi", 10, edges);
+    TH1F * eightphi = new TH1F("eightphi", "eightphi", 10, edges);
+
+
+    for(int i=1; i <= twophi->GetNbinsX(); i++){
+        double binwidth = twophi->GetBinWidth(i);
+        double bincontent2 = m2Ptcos2phimoments->GetBinContent(i);
+        double bincontent4 = m2Ptcos4phimoments->GetBinContent(i);
+        double bincontent6 = m2Ptcos6phimoments->GetBinContent(i);
+        double bincontent8 = m2Ptcos8phimoments->GetBinContent(i);
+        twophi->SetBinContent(i, bincontent2*2*binwidth/sin(2*binwidth));
+        twophi->SetBinError(i, m2Ptcos2phimoments->GetBinError(i));
+        fourphi->SetBinContent(i, bincontent4*4*binwidth/sin(4*binwidth));
+        fourphi->SetBinError(i, m2Ptcos4phimoments->GetBinError(i));
+        sixphi->SetBinContent(i, bincontent6*6*binwidth/sin(6*binwidth));
+        sixphi->SetBinError(i, m2Ptcos6phimoments->GetBinError(i));
+        eightphi->SetBinContent(i, bincontent8*8*binwidth/sin(8*binwidth));
+        eightphi->SetBinError(i, m2Ptcos8phimoments->GetBinError(i));
+        std::cout << "Bin " << i << ": 2 Content = " << twophi->GetBinContent(i) << ", Error = " << twophi->GetBinError(i) << std::endl;      
+        std::cout << "Bin " << i << ": 4 Content = " << fourphi->GetBinContent(i) << ", Error = " << fourphi->GetBinError(i) << std::endl;
+        std::cout << "Bin " << i << ": 6 Content = " << sixphi->GetBinContent(i) << ", Error = " << sixphi->GetBinError(i) << std::endl;
+        std::cout << "Bin " << i << ": 8 Content = " << eightphi->GetBinContent(i) << ", Error = " << eightphi->GetBinError(i) << std::endl;
+
+
+    }
+
+    //std::cout << "bin" << 10 << ": content = " << twophi->GetBinContent(10);
+
+    //makeCanvas2();
+    //twophi->Draw("PE");
+
 
     makeCanvas2();
+    m2Ptcos6phimoments->SetLineColor(kYellow+2);
+    m2Ptcos6phimoments->SetTitle("Even Harmonics vs PT");
+    m2Ptcos6phimoments->GetXaxis()-> SetTitle("pair pT (GeV/c)");
+    m2Ptcos6phimoments->GetYaxis()->SetRangeUser(-.5, 1.2);
+    m2Ptcos6phimoments->GetYaxis()-> SetTitle("A_{6#phi}");
     m2Ptcos6phimoments->Draw("PE");
+    m2Ptcos4phimoments->SetLineColor(kRed);
+    m2Ptcos4phimoments->Draw("PE;same");
+    m2Ptcos2phimoments->SetLineColor(kBlack);
+    m2Ptcos2phimoments->Draw("PE;same");
+    m2Ptcos8phimoments->SetLineColor(kGreen);
+    m2Ptcos8phimoments->Draw("PE;same");
+    
+   auto * evens = new TLegend(0.77,0.5,.97,0.65);
+    evens->SetHeader("Legend");
+    evens->AddEntry(m2Ptcos2phimoments,"A2");
+    evens->AddEntry(m2Ptcos4phimoments,"A4");
+    evens->AddEntry(m2Ptcos6phimoments,"A6");
+    evens->AddEntry(m2Ptcos8phimoments,"A8");
+    evens->Draw("same");
+
+    /*makeCanvas2();
+    m2Ptcos8phimoments->SetTitle("A_{8#phi}");
+    m2Ptcos8phimoments->GetXaxis()-> SetTitle("pair pT (GeV/c)");
+    m2Ptcos8phimoments->GetYaxis()-> SetTitle("A_{8#phi}");
+    m2Ptcos8phimoments->Draw("PE");*/
+
+
+     //corrected
+    makeCanvas2();
+    twophi->SetLineColor(kYellow+2);
+    twophi->SetTitle("Evens vs PT");
+    twophi->GetXaxis()-> SetTitle("pair pT (GeV/c)");
+    twophi->GetYaxis()->SetRangeUser(-.5, 1.2);
+    twophi->GetYaxis()-> SetTitle("A_{n#phi}");
+    twophi->Draw("PE");
+    fourphi->SetLineColor(kRed);
+    fourphi->Draw("PE;same");
+    sixphi->SetLineColor(kBlack);
+    sixphi->Draw("PE;same");
+    eightphi->SetLineColor(kGreen);
+    eightphi->Draw("PE;same");
+    
+    auto * evenscorr = new TLegend(0.77,0.5,.97,0.65);
+    evenscorr->SetHeader("Corrected Legend");
+    evenscorr->AddEntry(twophi,"A2");
+    evenscorr->AddEntry(fourphi,"A4");
+    evenscorr->AddEntry(sixphi,"A6");
+    evenscorr->AddEntry(eightphi,"A8");
+    evenscorr->Draw("same");
+
+
+    
 
     makeCanvas2();
     phivPt->Draw("colz");
 
+
     makeCanvas2();
+    phiproj->Scale(2*3.14/phiproj->Integral(), "width");
+    phiproj->GetYaxis()->SetRangeUser(0.5, 1.8);
+    //phiprojMixed->Scale(2*3.14/phiprojMixed->Integral(), "width");
+    phiproj->SetLineColor(kBlue);
+    phiproj->SetTitle("#phi, 0. < pT < 0.15 [GeV/c], 0.45 < M_{ee} < 0.76 [GeV/c], UU");
+    phiproj->GetXaxis()->SetTitle("#Delta#phi");
     phiproj->Fit("phifit", "", "", -3.14, 3.14);
+    //double A0 = phifit->GetParameter(0);
+    //double A1 = phifit->GetParameter(1);
+    //double A2 = phifit->GetParameter(2);
+    //double A3 = phifit->GetParameter(3);
+    //double A4 = phifit->GetParameter(4);
+    gStyle->SetOptFit(111);
+
+
+
+    //double A5 = phifit->GetParameter(5);
+    //double A6 = phifit->GetParameter(6);
+    //double A7 = phifit->GetParameter(7);
+    //double A8 = phifit->GetParameter(8);
+    auto a2 = new TF1("a2", "1+[0]*cos(2*x)", -3.14, 3.14);
+    auto a4 = new TF1("a4", "1+[0]*cos(4*x)", -3.14, 3.14);
+    //auto a6 = new TF1("a6", "1+[0]*cos(6*x)", -3.14, 3.14);
+    //auto a8 = new TF1("a8", "1+[0]*cos(8*x)", -3.14, 3.14);
+
+    //a2->SetParameter(0, A2);
+    //a4->SetParameter(0, A4);
+    //a6->SetParameter(0, A6);    
+    //a8->SetParameter(0, A8);
+    //a2->SetLineColor(kBlue);
+    //a4->SetLineColor(kBlack);
+    //a6->SetLineColor(kGreen);
+    //a8->SetLineColor(kPink);
+    //a2->Draw("same");
+    //a4->Draw("same");
+    //a6->Draw("same");
+    //a8->Draw("same");
     phiproj->Draw("PE");
+    //gPad->Print("./note_plots/uuphi_0to150.png");
+
+
+
+    makeCanvas2();
+    phiproj50to150->Scale(2*3.14/phiproj50to150->Integral(), "width");
+    phiproj50to150->GetYaxis()->SetRangeUser(0.5, 1.8);
+    //phiprojMixed->Scale(2*3.14/phiprojMixed->Integral(), "width");
+    phiproj50to150->SetLineColor(kBlue);
+    phiproj50to150->SetTitle("#phi, 0.05 < pT < 0.15 [GeV/c], 0.45 < M_{ee} < 0.76 [GeV/c], UU");
+    phiproj50to150->GetXaxis()->SetTitle("#Delta#phi");
+    phiproj50to150->Fit("phifit", "", "", -3.14, 3.14);
+    //double A0 = phifit->GetParameter(0);
+    //double A1 = phifit->GetParameter(1);
+    //double A2 = phifit->GetParameter(2);
+    //double A3 = phifit->GetParameter(3);
+    //double A4 = phifit->GetParameter(4);
+    gStyle->SetOptFit(111);
+    phiproj50to150->Draw("PE");
+    //gPad->Print("./note_plots/uuphi_50to150.png");
+
+    makeCanvas2();
+    phiproj0to50->Scale(2*3.14/phiproj0to50->Integral(), "width");
+    phiproj0to50->GetYaxis()->SetRangeUser(0.5, 1.8);
+    //phiprojMixed->Scale(2*3.14/phiprojMixed->Integral(), "width");
+    phiproj0to50->SetLineColor(kBlue);
+    phiproj0to50->SetTitle("#phi, 0 < pT < 0.05 [GeV/c], 0.45 < M_{ee} < 0.76 [GeV/c], Au");
+    phiproj0to50->GetXaxis()->SetTitle("#Delta#phi");
+    phiproj0to50->Fit("phifit", "", "", -3.14, 3.14);
+    gStyle->SetOptFit(111);
+    phiproj0to50->Draw("PE");
+    gPad->Print("./note_plots/auphi_0to50.png");
+
+
+
+
+    makeCanvas2();
+    slight_2phiMoments->GetYaxis()->SetRangeUser(-2,2);
+    slight_2phiMoments->SetTitle("starlight cos2phi moments both");
+    slight_2phiMoments->GetXaxis()->SetTitle("Pt (GeV/c)");
+    slight_2phiMoments->SetLineColor(kGreen);
+    slight_2phiMoments->Draw("PE");
+    slight_2phiMoments_Au->SetLineColor(kRed);
+    slight_2phiMoments_Au->Draw("PE;same");
+     auto * slight_2phi = new TLegend(0.77,0.5,.97,0.65);
+    slight_2phi->SetHeader("Legend");
+    slight_2phi->AddEntry(slight_2phiMoments,"A2 Slight UU");
+    slight_2phi->AddEntry(slight_2phiMoments_Au,"A2 Slight AuAu");
+    slight_2phi->Draw("same");
+
+    makeCanvas2();
+    slight_4phiMoments->GetYaxis()->SetRangeUser(-2,2);
+    slight_4phiMoments->SetTitle("starlight cos4phi moments both");
+    slight_4phiMoments->GetXaxis()->SetTitle("Pt (GeV/c)");
+    slight_4phiMoments->SetLineColor(kGreen);
+    slight_4phiMoments->Draw("PE");
+    slight_4phiMoments_Au->SetLineColor(kRed);
+    slight_4phiMoments_Au->Draw("PE;same");
+      auto * slight_4phi = new TLegend(0.77,0.5,.97,0.65);
+    slight_4phi->SetHeader("Legend");
+    slight_4phi->AddEntry(slight_4phiMoments,"A4 Slight UU");
+    slight_4phi->AddEntry(slight_4phiMoments_Au,"A4 Slight AuAu");
+    slight_4phi->Draw("same");
+
+
+
+    /*TFile file2("output_root_files/master_plots_UU.root", "RECREATE");
+    m2Ptcos2phimoments->Write();
+    m2Ptcos4phimoments->Write();
+
+    twophiCorrected->Write();
+    fourphiCorrected->Write();*/
+
+    phiproj20to60->Scale(2*3.14/phiproj20to60->Integral(), "width");
+    phiproj60to150->Scale(2*3.14/phiproj60to150->Integral(), "width");
+
+
+    /*TFile file3("output_root_files/direct_phis.root", "RECREATE");
+    phiproj->Write("UUphi_pt0to150");
+    phiproj50to150->Write("UUphi_pt50to150");
+    phiproj0to50->Write("UUphi_pt0to50");
+    phiproj20to60->Write("UUphi_20to60");
+    phiproj60to150->Write("UUphi_60to150");
+    
+    SLphiproj->Write("SLUUphi_pt0to150");
+    SLphiproj50to150->Write("SLUUphi_pt50to150");
+    SLphiproj0to50->Write("SLUUphi_pt0to50");
+    SLphiproj20to60->Write("SLUUphi_20to60");
+    SLphiproj60to150->Write("SLUUphi_60to150");*/
+    
+    
+
+
+
+
+    /*TFile file3("output_root_files/direct_phis_au.root", "RECREATE");
+    phiproj->Write("Auphi_pt0to150");
+    phiproj50to150->Write("Auphi_pt50to150");
+    phiproj0to50->Write("Auphi_pt0to50");
+    phiproj20to60->Write("Auphi_20to60");
+    phiproj60to150->Write("Auphi_60to150");
+    
+    SLphiproj->Write("SLAuphi_pt0to150");
+    SLphiproj50to150->Write("SLAuphi_pt50to150");
+    SLphiproj0to50->Write("SLAuphi_pt0to50");
+    SLphiproj20to60->Write("SLAuphi_20to60");
+    SLphiproj60to150->Write("SLAuphi_60to150");*/
+
+
 
 
 

@@ -7,6 +7,10 @@
 
 void SLAna()
 {
-  Analyze a("/Users/Nick/STAR/starlight/utils/slight.out", 1000000);
+  //uranium
+  Analyze a("/Users/Nick/STAR/starlight/utils/slight.out", 10000000);
+
+  //gold 
+  //Analyze a("/Users/Nick/STAR/docker_mount/JobFilesAu1M/slight.out", 1000000);
   a.doAnalysis();
 }

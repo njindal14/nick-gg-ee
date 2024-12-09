@@ -23,7 +23,7 @@ void phiEmbedding(){
     TFile * starlight_out = new TFile("/Users/Nick/STAR/starlight/utils/SL_plotsBetter.root");
     TH2F * slightPhiPt = (TH2F*)starlight_out->Get("mDeltaPhiPt");
 
-    TFile * sim_out = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots.root");
+    TFile * sim_out = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new.root");
     TH2F * mcphipt = (TH2F*)sim_out->Get("mcphipt");
     TH2F * recophipt = (TH2F*)sim_out->Get("recophipt");
 

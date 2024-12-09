@@ -27,9 +27,15 @@ double phiFit(double *x, double *par){
 
 void backgroundCorrection() {
 
-    TFile *myFile = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
-    TTreeReader myReader("PairDst", myFile);
+    //TFile *myFile = TFile::Open("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
+    TChain * ch = new TChain("PairDst");
+    //ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run10AuAu.root");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run11AuAu.root");
+    TTreeReader myReader(ch); 
+    //TTreeReader myReader("PairDst", myFile);
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
+
     TLorentzVector lv1, lv2, lv, lvn;
 
     auto * mPtUnlike = new TH1F("mPtUnlike", "Pair pTUnlike", 20, 0, 1);
@@ -52,7 +58,7 @@ void backgroundCorrection() {
     auto * mMassUnlike = new TH1F("mMassUnlike", "Pair Mass Data", 60, 0, 3);
 
 
-    TFile * starlight_out = new TFile("/Users/Nick/STAR/starlight/utils/SL_plotsBetter.root");
+    TFile * starlight_out = new TFile("/Users/Nick/STAR/starlight/utils/SL_plotsBetter_Au.root");
     TH1F * negpt = (TH1F*)starlight_out->Get("mNegPt");
     TH1F * pospt = (TH1F*)starlight_out->Get("mPosPt"); 
 
@@ -63,7 +69,7 @@ void backgroundCorrection() {
     TH1F * posphi = (TH1F*)starlight_out->Get("mPosPhi"); 
 
 
-    TFile * mixedeventmoments = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventMoments.root");
+    TFile * mixedeventmoments = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventMoments_Au.root");
     TH1F * cos1phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos1phivsPTvsMass_p0");
     TH1F * cos2phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos2phivsPTvsMass_p1");
     TH1F * cos3phimixed = (TH1F*)mixedeventmoments->Get("mULSULSCos3phivsPTvsMass_p2");
@@ -126,7 +132,7 @@ void backgroundCorrection() {
     TH2F * cos1phivPtResample= new TH2F("cos1phivPtResample", "A_{1#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
     TH2F * cos3phivPtResample = new TH2F("cos3phivPtResample", "A_{3#phi}, 0.4 < M_{ee} < 0.76 GeV/c^{2}", 400, -2, 2, 30, 0, 0.6);
 
-    TH1F * acoResample = new TH1F("acoResample", "acoResample", 20, 0, .2);
+    TH1F * acoResample = new TH1F("acoResample", "acoResample", 20, 0, .2); 
 
     TH1F * resamplePt = new TH1F("resamplePt", "", 20, 0, 1);
 
@@ -554,7 +560,7 @@ void backgroundCorrection() {
 
 
 
-    TFile file("output_root_files/background_plots.root", "RECREATE");
+    TFile file("output_root_files/background_plots_Au.root", "RECREATE");
     purity->Write();
     m2phiMomentsResampleUniform->Write();
     m4phiMomentsResampleUniform->Write();

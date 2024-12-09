@@ -10,8 +10,8 @@
 #include "TRandom3.h"
 #include <vector>
 //#include "../Include/FemtoPairFormat.h"
-#include "../AnalysisFunctions.h"
-#include "../PlottingFunctions.h"
+#include "AnalysisFunctions.h"
+#include "PlottingFunctions.h"
 
 std::random_device global_rng;
 TRandom3 rng(global_rng());
@@ -19,11 +19,13 @@ TRandom3 rng(global_rng());
 void MixedEvent() {
 
     TH1F("h1", "ntuple", 100, -4, 4);
-    TFile * fo = new TFile( "output_root_files/MixedEventplots.root", "RECREATE" );
+    TFile * fo = new TFile( "output_root_files/MixedEventplots_Au.root", "RECREATE" );
 
     auto * mAllTrackPt = new TH1F("mAllTrackPt", "e Track P_{T}; P_{T} (GeV/c); counts", 50, 0, 0.8);
     auto * mLSTrackPt = new TH1F("mLSTrackPt", "LS e Track P_{T}; P_{T} (GeV/c); counts", 50, 0, 0.8);
     auto * mULSTrackPt = new TH1F("mULSTrackPt", "ULS e Track P_{T}; P_{T} (GeV/c); counts", 50, 0, 0.8);
+
+    auto * mULSLSphipt = new TH2F("mULSLSphipt", "mULSLSphipt; #phi; pT (GeV/c)", 30, -3.14, 3.14, 30, 0, .3);
 
     auto * mLSLSPtvsM = new TH2F("mLSLSPtvsM", "LSLS pair P_{T}; P_{T} (GeV/c); counts", 300, 0, 5, 300, 0, 2);
     auto * mLSULSPtvsM = new TH2F("mLSULSPtvsM", "LSULS pair P_{T}; P_{T} (GeV/c); counts", 300, 0, 5, 300, 0, 2);
@@ -56,9 +58,9 @@ void MixedEvent() {
 
 
     TChain * ch = new TChain("PairDst");
-    //ch->Add("data_files/slim_pair_dst_Run10AuAu.root");
-    //ch->Add("data_files/slim_pair_dst_Run11AuAu.root");
-    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run10AuAu.root");
+    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run11AuAu.root");
+    //ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/pair_dst_Run12UU.root");
 
     TTreeReader myReader(ch);
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
@@ -185,6 +187,7 @@ void MixedEvent() {
                         mLSULSCos2phivsPTvsMass->Fill( 2*cos(2*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mLSULSCos3phivsPTvsMass->Fill( 2*cos(3*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mLSULSCos4phivsPTvsMass->Fill( 2*cos(4*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
+
                     }
                 }
                 for ( TLorentzVector mixed_lv2 : LSPosBuffer ) {
@@ -196,6 +199,7 @@ void MixedEvent() {
                         mLSULSCos2phivsPTvsMass->Fill( 2*cos(2*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mLSULSCos3phivsPTvsMass->Fill( 2*cos(3*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mLSULSCos4phivsPTvsMass->Fill( 2*cos(4*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
+
                     }
                 }
                 int buff_index = rng.Integer(LS_buffer_size - 1 );
@@ -222,6 +226,8 @@ void MixedEvent() {
                         mULSLSCos2phivsPTvsMass->Fill( 2*cos(2*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mULSLSCos3phivsPTvsMass->Fill( 2*cos(3*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mULSLSCos4phivsPTvsMass->Fill( 2*cos(4*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
+                        if(mixed_lv.M() > 0.4 && mixed_lv.M() < 0.76 && mixed_lv.Pt() > 0.1) {mULSLSphipt->Fill(mixedPairPhi, mixed_lv.Pt());}
+
                     }
                 }
                 for ( TLorentzVector mixed_lv2 : ULSPosBuffer ) {
@@ -233,6 +239,8 @@ void MixedEvent() {
                         mULSLSCos2phivsPTvsMass->Fill( 2*cos(2*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mULSLSCos3phivsPTvsMass->Fill( 2*cos(3*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
                         mULSLSCos4phivsPTvsMass->Fill( 2*cos(4*mixedPairPhi), mixed_lv.Pt(), mixed_lv.M() );
+                        if(mixed_lv.M() < 0.76) {mULSLSphipt->Fill(mixedPairPhi, mixed_lv.Pt());}
+
                     }
                 }
 //MAKE ULS PAIRS

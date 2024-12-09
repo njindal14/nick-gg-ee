@@ -23,6 +23,9 @@
 using namespace std;
 Analyze::Analyze() :
   fInfile("/Users/Nick/STAR/starlight/utils/slight.out"),
+
+  //running for gold
+  //fInfile("/Users/Nick/STAR/docker_mount/JobFilesAu1M/slight.out"),
   fNEvents(1)
 {
   //Constructor
@@ -39,8 +42,14 @@ Analyze::Analyze() :
   mSLCos3phivsPTvsMass = new TH3F("mSLCos3phivsPTvsMass", "Pair P_{T} (GeV/c); pair Mass (GeV); 2<cos3#phi>; counts", 50, -2, 2, 10, 0, 0.4, 20, 0, 1.5);
   mSLCos4phivsPTvsMass = new TH3F("mSLCos4phivsPTvsMass", "Pair P_{T} (GeV/c); pair Mass (GeV); 2<cos4#phi>; counts", 50, -2, 2, 10, 0, 0.4, 20, 0, 1.5);
 
-  mcos2phivspt = new TH2F("mCos2phivsPT", "pair pT; 2<cos2#phi>", 50, -2, 2, 20, 0, 0.4);
-  mcos4phivspt = new TH2F("mCos4phivsPT", "pair pT; 2<cos4#phi>", 50, -2, 2, 20, 0, 0.4);
+
+  /*const Int_t ptbins = 10;
+  Double_t edges[ptbins + 1] = {0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.14, .2};*/
+
+  mcos2phivspt = new TH2F("mCos2phivsPT", "pair pT; 2<cos2#phi>", 50, -2, 2, 7, 0, 0.1);
+  mcos4phivspt = new TH2F("mCos4phivsPT", "pair pT; 2<cos4#phi>", 50, -2, 2, 7, 0, 0.1);
+
+  SLphivPt = new TH2F("SLphivPt", "SLphivPt", 20, -3.14, 3.14, 7, 0, 0.1);
 }
 
 Analyze::Analyze(TString infile, Int_t nEvents) :
@@ -62,8 +71,13 @@ Analyze::Analyze(TString infile, Int_t nEvents) :
   mSLCos3phivsPTvsMass = new TH3F("mSLCos3phivsPTvsMass", ";pair P_{T} (GeV/c); pair Mass (GeV); 2<cos3#phi>; counts", 50, -2, 2, 10, 0, 0.4, 20, 0, 1.5);
   mSLCos4phivsPTvsMass = new TH3F("mSLCos4phivsPTvsMass", ";pair P_{T} (GeV/c); pair Mass (GeV); 2<cos4#phi>; counts", 50, -2, 2, 10, 0, 0.4, 20, 0, 1.5);
 
-  mcos2phivspt = new TH2F("mCos2phivsPT", "pair pT; 2<cos2#phi>", 50, -2, 2, 20, 0, 0.4);
-  mcos4phivspt = new TH2F("mCos4phivsPT", "pair pT; 2<cos4#phi>", 50, -2, 2, 20, 0, 0.4);
+  const Int_t ptbins = 10;
+  Double_t edges[ptbins + 1] = {0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.14, .2};
+
+  mcos2phivspt = new TH2F("mCos2phivsPT", "pair pT; 2<cos2#phi>", 50, -2, 2, 10, edges);
+  mcos4phivspt = new TH2F("mCos4phivsPT", "pair pT; 2<cos4#phi>", 50, -2, 2, 10, edges);
+  SLphivPt = new TH2F("SLphivPt", "SLphivPt", 20, -3.14, 3.14, 10, edges);
+
 }
 
 Analyze::~Analyze()
@@ -83,6 +97,7 @@ Analyze::~Analyze()
 
   delete mcos2phivspt;
   delete mcos4phivspt;
+  delete SLphivPt;
 }
 
 Int_t Analyze::Init()
@@ -220,33 +235,38 @@ void Analyze::doAnalysis()
     //if ( abs(lvm.Eta()) < 10 ){ mPionPt->Fill(lvm.Pt()); }
 
     if ( abs(lvp.Eta()) < 1 && abs(lvm.Eta()) <1) {
-    lv = lvp+lvm;
+      lv = lvp+lvm;
 
-    double PhiVal = calc_Phi(lvp, lvm);
-    double cos1phi = 2*cos(PhiVal);
-    double cos2phi = 2*cos(2*PhiVal);
-    double cos3phi = 2*cos(3*PhiVal);
-    double cos4phi = 2*cos(4*PhiVal);
+      double PhiVal = calc_Phi(lvp, lvm);
+      double cos1phi = 2*cos(PhiVal);
+      double cos2phi = 2*cos(2*PhiVal);
+      double cos3phi = 2*cos(3*PhiVal);
+      double cos4phi = 2*cos(4*PhiVal);
 
-    if(lv.Pt() !=0) mPt->Fill(lv.Pt());
-    mPtEl->Fill(lvm.Pt());
-    //if(lv.M() != 0) 
-    mMass->Fill(lv.M());
-    mPhi->Fill(PhiVal);
-    if(lv.Eta() != 0) mEta->Fill(lv.Eta());
+      if(lv.Pt() !=0) mPt->Fill(lv.Pt());
+      mPtEl->Fill(lvm.Pt());
+      //if(lv.M() != 0) 
+      mMass->Fill(lv.M());
+      mPhi->Fill(PhiVal);
+      if(lv.Eta() != 0) mEta->Fill(lv.Eta());
 
-    mSLCos1phivsPTvsMass->Fill(cos1phi, lv.Pt(), lv.M());
-    mSLCos2phivsPTvsMass->Fill(cos2phi, lv.Pt(), lv.M());
-    mSLCos3phivsPTvsMass->Fill(cos3phi, lv.Pt(), lv.M());
-    mSLCos4phivsPTvsMass->Fill(cos4phi, lv.Pt(), lv.M());  
+      mSLCos1phivsPTvsMass->Fill(cos1phi, lv.Pt(), lv.M());
+      mSLCos2phivsPTvsMass->Fill(cos2phi, lv.Pt(), lv.M());
+      mSLCos3phivsPTvsMass->Fill(cos3phi, lv.Pt(), lv.M());
+      mSLCos4phivsPTvsMass->Fill(cos4phi, lv.Pt(), lv.M());
 
-    mcos2phivspt->Fill(cos2phi, lv.Pt());
-    mcos4phivspt->Fill(cos4phi, lv.Pt());
+
+      if(lv.M() > 0.45 && lv.M() < 0.76){
+        mcos2phivspt->Fill(cos2phi, lv.Pt());
+        mcos4phivspt->Fill(cos4phi, lv.Pt());
+        SLphivPt->Fill(PhiVal, lv.Pt());
+      }
+
     }
   }
 
   //Writing the histograms to file
-  TFile file("SL_plotsBetter.root", "RECREATE");
+  TFile file("./output_root_files/SL_plotsBetter.root", "RECREATE");
   mMass->Write();
   mPt->Write();
   mPtEl->Write();
@@ -261,5 +281,6 @@ void Analyze::doAnalysis()
 
   mcos2phivspt->Write();
   mcos4phivspt->Write();
+  SLphivPt->Write();
   std::cout << "wrote";
 }

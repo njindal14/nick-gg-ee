@@ -17,7 +17,7 @@ double phiFit(double *x, double *par){
 void MixedEventPlots(){
     
 
-    TFile * mixedeventplots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventplots.root");
+    TFile * mixedeventplots = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/MixedEventplots_Au.root");
 
     TH3F * mULSULSCos1phivsPTvsMass = (TH3F*)mixedeventplots->Get("mULSULSCos1phivsPTvsMass");
     TH3F * mULSULSCos2phivsPTvsMass = (TH3F*)mixedeventplots->Get("mULSULSCos2phivsPTvsMass");    
@@ -28,6 +28,7 @@ void MixedEventPlots(){
     TH3F * mULSLSCos2phivsPTvsMass = (TH3F*)mixedeventplots->Get("mULSLSCos2phivsPTvsMass");    
     TH3F * mULSLSCos3phivsPTvsMass = (TH3F*)mixedeventplots->Get("mULSLSCos3phivsPTvsMass");    
     TH3F * mULSLSCos4phivsPTvsMass = (TH3F*)mixedeventplots->Get("mULSLSCos4phivsPTvsMass");
+    
 
     TH1F * acoULSULS = (TH1F*)mixedeventplots->Get("acoULSULS");
     
@@ -110,7 +111,7 @@ void MixedEventPlots(){
     acoULSULS->GetYaxis()->SetTitle("1/N * dN/d#alpha");
     acoULSULS->Draw("PE");
 
-    TFile * fo = new TFile( "output_root_files/MixedEventMoments.root", "RECREATE" );
+    TFile * fo = new TFile( "output_root_files/MixedEventMoments_Au.root", "RECREATE" );
     cos1phimoments->Write();
     cos2phimoments->Write();
     cos3phimoments->Write();
