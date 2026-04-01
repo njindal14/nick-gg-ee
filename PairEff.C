@@ -21,20 +21,19 @@ void PairEff(){
     ch->Add("/Users/Nick/STAR/docker_mount/JobResultsAu1M/*");
     TTreeReader myReader(ch);
 
-    
+
     TTreeReaderArray<float> MCPtVals(myReader, "McTracks.mPt");
     TTreeReaderArray<float> MCEtaVals(myReader, "McTracks.mEta");
     TTreeReaderArray<float> MCPhiVals(myReader, "McTracks.mPhi");
 
     TTreeReaderArray<short> MCIdx(myReader, "Tracks.mMcIndex");
-    TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit"); 
+    TTreeReaderArray<short> NHitsFit(myReader, "Tracks.mNHitsFit");
     TTreeReaderArray<short> NHitsDedx(myReader, "Tracks.mNHitsDedx");
     TTreeReaderArray<float> DCA(myReader, "Tracks.mDCA");
 
     TTreeReaderArray<float> RCPtVals(myReader, "Tracks.mPt");
     TTreeReaderArray<float> RCEtaVals(myReader, "Tracks.mEta");
     TTreeReaderArray<float> RCPhiVals(myReader, "Tracks.mPhi");
-
 
 
 
@@ -63,10 +62,10 @@ void PairEff(){
     auto McPtM = new TH2F("McMassPt", "McMassPt", 50, 0, 0.2, 50, .3, 3);
     auto RcPtM = new TH2F("RcMassPt", "RcMassPt", 50, 0, 0.2, 50, .3, 3);
 
-    auto McPtMY = new TH3F("McPtMY", "McPtMY", 50, 0, 0.2, 50, .3, 3, 20, -1, 1);    
+    auto McPtMY = new TH3F("McPtMY", "McPtMY", 50, 0, 0.2, 50, .3, 3, 20, -1, 1);
     auto RcPtMY = new TH3F("RcPtMY", "RcPtMY", 50, 0, 0.2, 50, .3, 3, 20, -1, 1);
 
-    auto McPt2Mcostheta = new TH3F("McPt2Mcostheta", "McPt2Mcostheta", 50, 0, 0.02, 50, .3, 3, 20, 0, 1);    
+    auto McPt2Mcostheta = new TH3F("McPt2Mcostheta", "McPt2Mcostheta", 50, 0, 0.02, 50, .3, 3, 20, 0, 1);
     auto RcPt2Mcostheta = new TH3F("RcPt2Mcostheta", "RcPt2Mcostheta", 50, 0, 0.02, 50, .3, 3, 20, 0, 1);
 
 
@@ -100,7 +99,7 @@ void PairEff(){
 
     auto cos2phivPtRecoRc = new TH2F("Cos2#phivPtRecoRc", "cos2#phi Moments vs P_{T} Reco Pairs (binned in RC); 2<cos(2#phi)>; pT (GeV/c)", 100, -2, 2, 10, edges);
     auto cos4phivPtRecoRc = new TH2F("Cos4#phivPtRecoRc", "cos4#phi Moments vs P_{T} Reco Pairs (binned in RC); 2<cos(4#phi)>; pT (GeV/c)", 100, -2, 2, 10, edges);
-    
+
     auto mcphipt = new TH2F("mcphipt", "mcphipt (binned in MC); #phi; pT (GeV/c)", 25, -3.1415927, 3.1415927, 20, 0, 0.3);
     auto recophipt = new TH2F("recophipt", "recophipt (binned in RC); #phi>; pT (GeV/c)", 25, -3.1415927, 3.1415927, 20, 0, 0.3);
 
@@ -122,11 +121,11 @@ void PairEff(){
 
 
     while(myReader.Next()) {
-        
+
         TLorentzVector mcneg, mcpos, mcpair;
         TLorentzVector rcneg, rcpos, rcpair; //(these are still MC values, just from the RC tracks matched MC )
 
-        TLorentzVector rcnegreco, rcposreco, rcpairreco; //rc values    
+        TLorentzVector rcnegreco, rcposreco, rcpairreco; //rc values
 
 
         if ( PIDs.GetSize() == 0){
@@ -144,7 +143,7 @@ void PairEff(){
 
         if ( MCPtVals[0] < 0.2 || MCPtVals[1] < 0.2 ) continue;
 
-        if ( fabs(MCEtaVals[0]) > 0.9 || fabs(MCEtaVals[1]) > 0.9 ) continue;
+        if ( fabs(MCEtaVals[0]) > 1 || fabs(MCEtaVals[1]) > 1 ) continue;
 
         if ( PIDs[0] == 2 && PIDs[1] == 3 ){
             mcpos.SetPtEtaPhiM( MCPtVals[0], MCEtaVals[0], MCPhiVals[0], 0.00051099895000 );
@@ -182,7 +181,7 @@ void PairEff(){
         cos4phivPtMC->Fill(2*cos(4*phival), mcpair.Pt());
         mcphipt->Fill(phival, mcpair.Pt());
 
-        if(mcpair.M() > 0.4 && mcpair.M() < 1){
+        if(mcpair.M() > 0.4 && mcpair.M() < .76){
             double aco = 1 - abs(mcpos.Phi() - mcneg.Phi())/M_PI;
             MCaco->Fill(aco);
         }
@@ -219,20 +218,28 @@ void PairEff(){
         rcpair = rcpos + rcneg;
         rcpairreco = rcposreco + rcnegreco;
         double phivalreco = calc_Phi(rcposreco, rcnegreco);
-        
-        if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 10 && abs(NHitsFit[1]) >= 10 && DCA[0] < 1 && DCA[1] < 1){
-            
+
+        if(NHitsDedx[0] >= 15 && NHitsDedx[1] >= 15 && abs(NHitsFit[0]) >= 20 && abs(NHitsFit[1]) >= 20 && DCA[0] < 1 && DCA[1] < 1){
+
             //std::cout << "Filled reco stuff" << "\n";
-            
 
 
-            RcPtPair->Fill(rcpair.Pt());
+            if(rcpair.M() > 0.4 && rcpair.M() < .76 && rcpair.Rapidity() < 1 && rcpair.Rapidity() > -1){
+                RcPtPair->Fill(rcpair.Pt());
+                RcPtMY->Fill(rcpair.Pt(), rcpair.M(), rcpair.Rapidity());
+
+                
+
+            }
             RcPt2Pair->Fill(rcpair.Pt()*rcpair.Pt());
-            RcMassPair->Fill(rcpair.M());
-            RcRapidityPair->Fill(rcpair.Rapidity());
+            if(mcpair.Pt() < 0.1 && fabs(mcpair.Rapidity()) < 1.0) {
+                RcMassPair->Fill(rcpair.M());
+                RcRapidityPair->Fill(rcpair.Rapidity());
+            }
+
+            //RcMassPair->Fill(rcpair.M());
 
             RcPtM->Fill(rcpair.Pt(), rcpair.M());
-            RcPtMY->Fill(rcpair.Pt(), rcpair.M(), rcpair.Rapidity());
 
             TLorentzVector lvbeamRC;
             lvbeamRC.SetPxPyPzE(0, 0, sqrt(100*100 - .938*.938), 100 );
@@ -252,12 +259,12 @@ void PairEff(){
             RCPosnhitsdedxvpT->Fill(NHitsDedx[0], rcpos.Pt());
             RCNegnhitsdedxvpT->Fill(NHitsDedx[1], rcneg.Pt());
 
-            if(rcpairreco.M() > 0.45 && rcpairreco.M() < 0.76){
+            if(rcpairreco.M() > 0.4 && rcpairreco.M() < 0.76){
                 cos2phivPtReco->Fill(2*cos(2*phival), rcpair.Pt());
-                cos4phivPtReco->Fill(2*cos(4*phival), rcpair.Pt()); 
+                cos4phivPtReco->Fill(2*cos(4*phival), rcpair.Pt());
 
                 cos2phivPtRecoRc->Fill(2*cos(2*phivalreco), rcpair.Pt());
-                cos4phivPtRecoRc->Fill(2*cos(4*phivalreco), rcpair.Pt()); 
+                cos4phivPtRecoRc->Fill(2*cos(4*phivalreco), rcpair.Pt());
             }
 
             recophipt->Fill(phivalreco, rcpair.Pt());
@@ -281,43 +288,44 @@ void PairEff(){
             recophiptmass->Fill(phivalreco, rcpairreco.Pt(), rcpairreco.M());
 
         }
-        
+
     }
 
 
-   
-    makeCanvas();    
+
+    makeCanvas();
     McPtPair->Draw();
     RcPtPair->SetLineColor(kRed);
     RcPtPair->Draw("same");
     McPtPair->GetXaxis()->SetTitle("pT (GeV/c)");
     McPtPair->GetYaxis()->SetTitle("Counts");
-    auto * hlegend = new TLegend(0.8,0.75,1.,.9);
-    hlegend->SetHeader("Legend");
+    auto * hlegend = new TLegend(0.55,0.4,.85,0.55);
+    hlegend->SetBorderSize(0);
+    hlegend->SetTextSize(0.025);
     hlegend->AddEntry(McPtPair,"MC Pairs","l");
     hlegend->AddEntry(RcPtPair,"Reconstructed Pairs","l");
     hlegend->Draw("same");
     //gPad->Print("note_plots/sim_and_eff_plots/simptNEW.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     TEfficiency * hEff = new TEfficiency(* RcPtPair, * McPtPair);
-    hEff->SetTitle("pT Pair Efficiency; P_{T} (GeV/c; Efficiency)");
+    hEff->SetTitle("pT Pair Efficiency; P_{T} (GeV/c); Efficiency");
     hEff->Draw("PE");
 
     //gPad->Print("note_plots/sim_and_eff_plots/pteffNEW.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     TEfficiency * mEff = new TEfficiency(* RcMassPair, * McMassPair);
     mEff->SetTitle("Pair Invariant Mass Efficiency; M_{ee} (GeV/c^{2}); Efficiency");
     mEff->Draw("PE");
-    
+
     //gPad->Print("note_plots/sim_and_eff_plots/masseffNEW.png");
 
 
 
-    makeCanvas();    
+    makeCanvas();
     McMassPair->Draw();
     RcMassPair->SetLineColor(kRed);
     RcMassPair->Draw("same");
@@ -331,14 +339,14 @@ void PairEff(){
     //gPad->Print("note_plots/sim_and_eff_plots/simmassNEW.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     TEfficiency * YEff = new TEfficiency(* RcRapidityPair, * McRapidityPair);
     YEff->SetTitle("Pair Rapidity Efficiency; y_{ee}; Efficiency");
     YEff->Draw("PE");
     //gPad->Print("note_plots/sim_and_eff_plots/yeff.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     McRapidityPair->Draw();
     RcRapidityPair->SetLineColor(kRed);
     RcRapidityPair->Draw("same");
@@ -354,14 +362,14 @@ void PairEff(){
     //gPad->Print("note_plots/sim_and_eff_plots/simyNEW.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     TEfficiency * h2Eff = new TEfficiency(* RcPt2Pair, * McPt2Pair);
     h2Eff->SetTitle("Pair pT^{2} Efficiency; P_{T}^{2} (GeV/c)^{2}; Efficiency");
     h2Eff->Draw("PE");
     //gPad->Print("note_plots/sim_and_eff_plots/pt2effNEW.png");
 
 
-    makeCanvas();    
+    makeCanvas();
     McPt2Pair->Draw();
     RcPt2Pair->SetLineColor(kRed);
     RcPt2Pair->Draw("same");
@@ -426,7 +434,7 @@ void PairEff(){
     rcaco->Scale(1/rcaco->GetEntries());
     for(int i = 0; i < MCaco->GetNbinsX(); ++i){
         double binwidth = MCaco->GetBinWidth(i);
-        std::cout << "bin width " << binwidth; 
+        std::cout << "bin width " << binwidth;
         std::cout << "bin content: " << MCaco->GetBinContent(i);
         double content = MCaco->GetBinContent(i)/binwidth;
         double rccontent = rcaco->GetBinContent(i)/binwidth;
@@ -440,11 +448,11 @@ void PairEff(){
     rcaco->Draw("PE;same");
 
 
-    makeCanvas();    
+    makeCanvas();
     TEfficiency * PtMEff = new TEfficiency(* RcPtM, * McPtM);
     PtMEff->SetTitle("Pair Pt M Efficiency");
     PtMEff->Draw("colz");
-    
+
     //gPad->Print("note_plots/sim_and_eff_plots/ptmEff.png");
 
 
@@ -472,15 +480,15 @@ void PairEff(){
 
     TFile file("output_root_files/simulation_plots_new_Au.root", "RECREATE");
     McPtPair->Write();
-    RcPtPair->Write();   
-    McMassPair->Write(); 
-    RcMassPair->Write(); 
-    McRapidityPair->Write(); 
+    RcPtPair->Write();
+    McMassPair->Write();
+    RcMassPair->Write();
+    McRapidityPair->Write();
     RcRapidityPair->Write();
     McPtM->Write();
-    RcPtM->Write(); 
+    RcPtM->Write();
     hEff->Write("hEff");
-    h2Eff->Write("h2Eff");    
+    h2Eff->Write("h2Eff");
     mEff->Write("mEff");
     YEff->Write("YEff");
     PtMEff->Write("PtMEff");
@@ -524,5 +532,5 @@ void PairEff(){
     recophiptmass->Write();
 
 
- 
+
 }

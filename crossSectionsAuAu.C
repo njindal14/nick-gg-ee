@@ -29,22 +29,22 @@ void crossSectionsAuAu() {
 
     TChain * ch = new TChain("PairDst");
     ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run10AuAu.root");
-    ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run11AuAu.root");
+    //ch->Add("/Users/Nick/STAR/breit-wheeler/rootFiles/slim_pair_dst_Run11AuAu.root");
     TTreeReader myReader(ch);
     TTreeReaderValue<FemtoPair> pair(myReader, "Pairs");
 
     TLorentzVector lv1, lv2, lv, lvn;
 
     //open efficiency root files  get the 1d histograms for relevant efficiencies
-    /*TFile * trackingEfficiencies = new TFile("/Users/Nick/STAR/breit-wheeler/rootFiles/output_eff_3D_NOMINAL.root");
-    TH3D * masspty = (TH3D*)trackingEfficiencies->Get("mMass");  
-    TH3D * mc_masspty = (TH3D*)trackingEfficiencies->Get("mc_mMass");*/
+    TFile * trackingEfficiencies = new TFile("/Users/Nick/STAR/breit-wheeler/rootFiles/output_eff_3D_NOMINAL.root");
+    TH3D * masspty = (TH3D*)trackingEfficiencies->Get("mMass");
+    TH3D * mc_masspty = (TH3D*)trackingEfficiencies->Get("mc_mMass");
 
-    //trying with my simulation results 
-    TFile * trackingEfficiencies = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new_Au.root");
-    TH3D * masspty = (TH3D*)trackingEfficiencies->Get("RcPtMY");  
-    TH3D * mc_masspty = (TH3D*)trackingEfficiencies->Get("McPtMY");
-    
+    //trying with my simulation results
+    /*TFile * trackingEfficiencies = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/simulation_plots_new_Au.root");
+    TH3D * masspty = (TH3D*)trackingEfficiencies->Get("RcPtMY");
+    TH3D * mc_masspty = (TH3D*)trackingEfficiencies->Get("McPtMY");*/
+
     TEfficiency * ptmy_eff = new TEfficiency( * masspty, * mc_masspty);
 
     TH1D * pt_rc = masspty->ProjectionX();
@@ -65,21 +65,25 @@ void crossSectionsAuAu() {
     TH1D * tofMatch_eff_pt2 = (TH1D*)tofmatchEfficiencies->Get("tof_eff_pt2");
     TH1D * tofMatch_eff_y = (TH1D*)tofmatchEfficiencies->Get("tof_eff_y");
 
-    TFile * QED = new TFile("/Users/Nick/STAR/QED_new/QED_MB_pt50100_0.40_0.76.root");
+    TFile * QED = new TFile("/Users/Nick/STAR/breit-wheeler/nick-gg-ee/output_root_files/QED_MB_pt_200GeVUPC_WangmeiPro.root");
     TH1D * qed_pt = (TH1D*)QED->Get("ht");
     TH1D * qed_pt2 = (TH1D*)QED->Get("ht2");
+    qed_pt->Scale(10);
 
-    
+    TH1F * zVertex11 = new TH1F("zVertex11", "zVertex11", 500, -200, 200);
+
+
+
 
     while (myReader.Next()) {
         //values we will want to use for PID cuts
         double chiee = pow( pair->d1_mNSigmaElectron, 2 ) + pow( pair->d2_mNSigmaElectron, 2 );
         double chipipi = pow( pair -> d1_mNSigmaPion, 2) + pow( pair -> d2_mNSigmaPion, 2);
         double c = 3.0e1; //in cm/ns
-    
+
         //Lorentz vectors for each pair track and get lorentz sum and diff
         lv1.SetPtEtaPhiM( pair->d1_mPt, pair->d1_mEta, pair->d1_mPhi, 0.00051 );
-        lv2.SetPtEtaPhiM( pair->d2_mPt, pair->d2_mEta, pair->d2_mPhi, 0.00051 ); 
+        lv2.SetPtEtaPhiM( pair->d2_mPt, pair->d2_mEta, pair->d2_mPhi, 0.00051 );
 
         lv = lv1 + lv2;
         lvn = lv1 - lv2;
@@ -90,11 +94,12 @@ void crossSectionsAuAu() {
         Float_t dTofexpVal = pair->d1_mLength/c * sqrt(1 + me2/p1_2) - pair->d2_mLength/c * sqrt(1 + me2/p2_2);
         Float_t ddTofVal = dTofVal - dTofexpVal;
 
+        zVertex11->Fill(pair->mVertexZ);
+
+
         if(lv1.Pt() < 0.2 || lv2.Pt() < 0.2) continue;
-
         if( fabs(lv1.Eta()) > 1 || fabs(lv2.Eta()) > 1 || fabs(lv.Rapidity()) > 1) continue;
-
-        if(pair->d1_mNHitsFit < 10 || pair->d2_mNHitsFit < 10) continue;
+        if(pair->d1_mNHitsFit < 20 || pair->d2_mNHitsFit < 20) continue;
         if(pair->d1_mNHitsDedx < 15 || pair->d2_mNHitsDedx < 15) continue;
 
 
@@ -104,9 +109,10 @@ void crossSectionsAuAu() {
         float costheta = fabs(cos( lv1.Angle(lvbeam.Vect() ) ));
 
 
-        if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && pair->mChargeSum == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 && 
-        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(lv.Rapidity()) <= 1 && fabs(ddTofVal) < 0.5 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi) {
-            
+
+        if( fabs(pair->mVertexZ) < 100 &&  pair->mGRefMult <= 4 && pair->mChargeSum == 0 && pair->d1_mDCA < 1 && pair->d2_mDCA < 1 &&
+        pair->d1_mMatchFlag !=0 && pair->d2_mMatchFlag!=0 && fabs(lv.Rapidity()) <= 1 && fabs(ddTofVal) < 0.4 && ddTofVal !=0 && chiee < 10 && 3*chiee < chipipi) {
+
             PtMY->Fill(lv.Pt(), lv.M(), lv.Rapidity());
             mPt2Mcostheta->Fill(pow(lv.Pt(), 2), lv.M(), costheta);
 
@@ -114,6 +120,7 @@ void crossSectionsAuAu() {
         }
 
     }
+
 
         //3d correction
     for(int ix = 1; ix <= PtMY->GetNbinsX(); ix ++){
@@ -133,7 +140,7 @@ void crossSectionsAuAu() {
                 std::cout << "m val: " << m_val << "\n";
                 std::cout << "y val: " << y_val << "\n";
 
-            
+
                 int eff_bin = ptmy_eff->FindFixBin(pt_val, m_val, y_val);
                 double reco_eff = ptmy_eff->GetEfficiency(eff_bin);
 
@@ -148,7 +155,7 @@ void crossSectionsAuAu() {
             }
         }
     }
-    
+
 
         //3d correction
     for(int ix = 1; ix <= mPt2Mcostheta->GetNbinsX(); ix ++){
@@ -186,29 +193,31 @@ void crossSectionsAuAu() {
 
     //project onto 1d axes
     TH1D *mass = PtMY->ProjectionY("mass", PtMY->GetXaxis()->FindFixBin(0.), PtMY->GetXaxis()->FindFixBin(0.1) );
-    TH1D *pt = PtMY->ProjectionX("pt", PtMY->GetYaxis()->FindFixBin(0.4), PtMY->GetYaxis()->FindFixBin(0.76) );
-    TH1D * mY = PtMY->ProjectionZ("rapidity", PtMY->GetXaxis()->FindFixBin(0.), PtMY->GetXaxis()->FindFixBin(0.1), 
+    TH1D *pt = PtMY->ProjectionX("pt", PtMY->GetYaxis()->FindFixBin(0.4), PtMY->GetYaxis()->FindFixBin(.76 ));
+    TH1D * mY = PtMY->ProjectionZ("rapidity", PtMY->GetXaxis()->FindFixBin(0.), PtMY->GetXaxis()->FindFixBin(0.1),
         PtMY->GetYaxis()->FindFixBin(0.4), PtMY->GetYaxis()->FindFixBin(0.76));
 
-    
+
     //get pt2 and cos(theta)
     TH1D * mPt2AuAu = mPt2Mcostheta->ProjectionX("pt2", mPt2Mcostheta->GetYaxis()->FindFixBin(0.4), mPt2Mcostheta->GetYaxis()->FindFixBin(0.76) );
     TH1D * cosTheta = mPt2Mcostheta->ProjectionZ("cosTheta", mPt2Mcostheta->GetYaxis()->FindFixBin(0.4), mPt2Mcostheta->GetYaxis()->FindFixBin(.76) );
 
 
-    
+
     //global correction factors (not bin-by-bin)
-    double luminosity = 697000; 
-    double lumi_fraction = .8017; //taken from jdb
+    double luminosity = 679262; //for run 10
+    //double luminosity = 859435;
+    double lumi_fraction = .69677721; //taken from jdb
     double bbc_eff = 0.683; //taken from jdb
-    double vertex_eff = 0.584; //taken from JDB analysis, same as eEvent
+    double vertex_eff = 0.633; //taken from JDB analysis
     double purity_correction = 0.9917*.975; //subject to change, from chi2
     double pid_eff = 0.96*0.97; //first is tof eff, second is chi2 eff
-    double tpc_eff = .8*.8; //100% for each track -- no missing sectors -- this may change after looking at simulation
-    double XnXn_correction = 1/2.43; //still an estimate, need to recalculate
+    //double tpc_eff = 1.0; //.85; //0.646;//.8*.8; //100% for each track -- no missing sectors -- this may change after looking at simulation
+    double XnXn_correction = 1/2.46; //still an estimate, need to recalculate
 
 
-    double total_eff = luminosity*lumi_fraction*bbc_eff*vertex_eff*tpc_eff*XnXn_correction*pid_eff/purity_correction;
+    double total_eff = luminosity*lumi_fraction*bbc_eff*vertex_eff*XnXn_correction*pid_eff/purity_correction;
+
 
 
       //scale and draw cross sections
@@ -217,41 +226,13 @@ void crossSectionsAuAu() {
     mPt2AuAu->Scale(1/total_eff);
     mY->Scale(1/total_eff);
     cosTheta->Scale(1/total_eff);
+    mass->Scale(1.0, "width");
+    pt->Scale(1.0, "width");
+    mPt2AuAu->Scale(1.0, "width");
+    mY->Scale(1.0, "width");
+    cosTheta->Scale(1.0, "width");
 
-    //scale each cross section by bin width
-    for(int ix = 1; ix <= mass->GetNbinsX(); ix ++){
-        double binwidth = mass->GetBinWidth(ix);
-        mass->SetBinContent(ix, mass->GetBinContent(ix)/binwidth);
-        mass->SetBinError(ix, mass->GetBinError(ix)/binwidth);
-    }
 
-    for(int ix = 1; ix <= pt->GetNbinsX(); ix ++){
-        double binwidth = pt->GetBinWidth(ix);
-        pt->SetBinContent(ix, pt->GetBinContent(ix)/binwidth);
-        pt->SetBinError(ix, pt->GetBinError(ix)/binwidth);
-
-    }
-
-    for(int ix = 1; ix <= mPt2AuAu->GetNbinsX(); ix ++){
-        double binwidth = mPt2AuAu->GetBinWidth(ix);
-        mPt2AuAu->SetBinContent(ix, mPt2AuAu->GetBinContent(ix)/binwidth);
-        mPt2AuAu->SetBinError(ix, mPt2AuAu->GetBinError(ix)/binwidth);
-
-    }
-
-    for(int ix = 1; ix <= mY->GetNbinsX(); ix ++){
-        double binwidth = mY->GetBinWidth(ix);
-        mY->SetBinContent(ix, mY->GetBinContent(ix)/binwidth);
-        mY->SetBinError(ix, mY->GetBinError(ix)/binwidth);
-
-    }
-
-    for(int ix = 1; ix <= cosTheta->GetNbinsX(); ix ++){
-        double binwidth = cosTheta->GetBinWidth(ix);
-        cosTheta->SetBinContent(ix, cosTheta->GetBinContent(ix)/binwidth);
-        cosTheta->SetBinError(ix, cosTheta->GetBinError(ix)/binwidth);
-
-    }
 
 
     makeCanvas();
@@ -268,22 +249,24 @@ void crossSectionsAuAu() {
     //gPad->Print("note_plots/results_plots/Au_MassXSec.png");
 
     makeCanvas();
+    //pt->Scale(0.000000403);
     pt->GetXaxis()->SetTitle("pT_{ee} (GeV/c)");
     pt->GetYaxis()->SetTitle("#frac{d#sigma (#gamma#gamma --> e^{+}e^{-})}{dpT} (mb/(GeV/c))");
-    pt->SetTitle("P_{T} Differential Cross Section, Au+Au at 200 GeV");
+    pt->SetTitle("Differential Cross Section, Au+Au Run 10 at 200 GeV");
     pt->SetMarkerStyle(29);
     pt->SetMarkerColor(46);
     pt->SetMarkerSize(1.5);
-    pt->SetStats(false);
+    //pt->SetStats(false);
     pt->Draw("PE");
-    //qed_pt->SetLineColor(kRed);
+    qed_pt->SetLineColor(kRed);
     //qed_pt->Scale(pt->Integral("width")/qed_pt->Integral("width"));
-    //qed_pt->Draw("hist;same");
+    qed_pt->Draw("hist;same;c");
+    qed_pt->SetLineWidth(3);
 
     auto * legend = new TLegend(0.8,0.75,1.,.9);
     legend->SetHeader("Legend");
-    legend->AddEntry(pt,"AuAu Run10+11","l");
-    legend->AddEntry(qed_pt,"qed code result, scaled","l");
+    legend->AddEntry(pt,"AuAu Run10","l");
+    legend->AddEntry(qed_pt,"QED Au+Au (XnXn)","l");
     legend->Draw("same");
 
     //gPad->Print("note_plots/results_plots/Au_PtXSec.png");
@@ -350,16 +333,25 @@ void crossSectionsAuAu() {
     gr->SetMarkerStyle(21);
     gr->GetXaxis()->SetBinLabel(20,"M_{ee} (GeV/c^{2})");
     gr->GetXaxis()->SetBinLabel(50, "pT (GeV/c)");
-    gr->GetXaxis()->SetBinLabel(75, "y_{ee} [1]");  
-    gr->GetYaxis()->SetTitle("Integrated Cross Section (mb)");  
+    gr->GetXaxis()->SetBinLabel(75, "y_{ee} [1]");
+    gr->GetYaxis()->SetTitle("Integrated Cross Section (mb)");
     gr->Draw("AP");
 
     //write to root file
-    /*TFile file("output_root_files/crossSectionsAuAu.root", "RECREATE");
+    TFile file("output_root_files/crossSectionsAuAu.root", "RECREATE");
     mass->Write("mass");
     pt->Write("pt");
     mPt2AuAu->Write("pt2");
     mY->Write("y");
-    cosTheta->Write("costheta");*/
+    cosTheta->Write("costheta");
+
+    makeCanvas();
+    zVertex11->Draw();
+
+
+    makeCanvas();
+    pt_eff->Draw();
+
+    std::cout << "Integral of vz from -100 to 100 vs total: " << zVertex11->Integral(zVertex11->FindBin(-100), zVertex11->FindBin(100)) << " vs " << zVertex11->Integral() << "\n";
 
 }
